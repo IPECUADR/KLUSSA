@@ -15,7 +15,7 @@
          <!--Acciones Propias-->
 
    
-    <script src="../JS/sys.klussa.serv.fn.js"></script>
+    <script src="../JS/sys.klussa.fn.js"></script>
    
  <!--Data Tables-->
 

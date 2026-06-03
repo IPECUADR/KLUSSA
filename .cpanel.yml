@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/kluaneitdospunto/public_html/klussa
+    - /bin/cp -R . $DEPLOYPATH

@@ -1,0 +1,225 @@
+   @media screen and (max-width: 991px) {
+    table {
+        width:100%;
+    }
+    thead {
+        display: none;
+    }
+    tr:nth-of-type(2n) {
+        background-color: inherit;
+    }
+    tr td:first-child {
+        background: #2c2828;
+        font-weight:bold;
+      
+        color: antiquewhite;
+    }
+    tbody td {
+        display: block;
+        text-align:center;
+    }
+    tbody td:before {
+        content: attr(data-th);
+        display: block;
+        text-align:center;
+      
+    }
+    tfoot td {
+        display: block;
+        text-align:center;
+    }
+    tfoot td:before {
+        content: attr(data-th);
+        display: block;
+        text-align:center;
+       
+    }
+}
+
+
+td{
+    font-size: 11px;
+   
+}
+th{
+    font-size: 12px;
+    font-weight: bold;
+}
+
+
+.tab td{
+    
+    vertical-align: middle;
+    text-align: center;
+    cursor: pointer;
+    text-transform: uppercase;
+
+}
+
+.tab th{
+
+ vertical-align: middle;
+ background-color: #101010;
+ color: rgba(243, 238, 238, 0.93);
+ text-align: center;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+/* ====== CONTENEDOR GENERAL ====== */
+.fc {
+  background: #ffffff;
+  font-family: 'Roboto', sans-serif;
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* ====== TOOLBAR (TÍTULO Y BOTONES) ====== */
+.fc-toolbar.fc-header-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  background: linear-gradient(45deg, #3b82f6, #4f46e5);
+  color: #fff;
+  padding: 10px 15px;
+  border-radius: 10px;
+}
+
+/* TÍTULO DEL MES */
+.fc-toolbar-title {
+  font-size: 22px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* BOTONES DE NAVEGACIÓN */
+.fc .fc-button {
+  background: #ffffff;
+  color: #3b82f6;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.fc .fc-button:hover {
+  background: #2563eb;
+  color: #fff;
+}
+
+/* ====== CABECERA DE LOS DÍAS (Lun, Mar, Mié...) ====== */
+.fc-col-header-cell {
+  background: #f1f5f9;
+  color: #111827;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 13px;
+  padding: 10px 0;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+/* Fines de semana en la cabecera */
+.fc-col-header-cell.fc-day-sat,
+.fc-col-header-cell.fc-day-sun {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+/* ====== CELDAS DE LOS DÍAS ====== */
+.fc-daygrid-day {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  transition: background 0.3s, transform 0.2s;
+}
+
+/* Hover en cada día */
+.fc-daygrid-day:hover {
+  background: #f0f9ff;
+  transform: scale(1.01);
+  cursor: pointer;
+}
+
+/* Número del día */
+.fc-daygrid-day-number {
+  font-weight: 600;
+  font-size: 14px;
+  color: #1f2937;
+  padding: 4px;
+}
+
+/* Días fuera del mes actual */
+.fc-day-other .fc-daygrid-day-number {
+  color: #9ca3af;
+}
+
+/* Hoy resaltado */
+.fc-day-today {
+  background: rgba(59, 130, 246, 0.1) !important;
+  border: 2px solid #3b82f6;
+  font-weight: bold;
+}
+
+/* Fines de semana */
+.fc-day-sat,
+.fc-day-sun {
+  background: #fef2f2;
+}
+
+/* ====== EVENTOS ====== */
+.fc-event {
+  border-radius: 8px;
+  padding: 4px 6px;
+  font-size: 13px;
+  color: #180278;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+/* Hover en evento */
+.fc-event:hover {
+  filter: brightness(1.1);
+  transform: scale(1.02);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* ====== LIST VIEW (si usas lista de eventos) ====== */
+.fc-list-event {
+  border-left: 4px solid #3b82f6;
+  background: #011223;
+  padding: 8px;
+  transition: all 0.3s ease;
+}
+.fc-list-event:hover {
+  background: #e0f2fe;
+}
+
+/* ====== FOOTER Y ESPACIADOS ====== */
+.fc-view-harness {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+
+ .hover-box {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+  }
+
+  .hover-box:hover {
+    transform: scale(1.03);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    background-color: #e6f4ea; /* opcional: cambiar fondo */
+  }

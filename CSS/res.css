@@ -1,0 +1,337 @@
+
+ @media screen and (max-width: 991px) {
+    table {
+        width:100%;
+    }
+    thead {
+        display: none;
+    }
+    tr:nth-of-type(2n) {
+        background-color: inherit;
+    }
+    tr td:first-child {
+        background: #f0f0f0;
+        font-weight:bold;
+        font-size:1.3em;
+    }
+    tbody td {
+        display: block;
+        text-align:center;
+    }
+    tbody td:before {
+        content: attr(data-th);
+        display: block;
+        text-align:center;
+    }
+    tfoot td {
+        display: block;
+        text-align:center;
+    }
+    tfoot td:before {
+        content: attr(data-th);
+        display: block;
+        text-align:center;
+    }
+}
+ .tfoot-minimal {
+    background: #f9fafb;
+    border-top: 1px solid #dee2e6;
+    padding: 10px 15px;
+    font-size: 13px;
+}
+
+.tfoot-row {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 15px;
+    color: #495057;
+}
+
+.tfoot-row span {
+    white-space: nowrap;
+}
+
+.tfoot-row strong {
+    color: #212529;
+    font-weight: 600;
+}
+
+/* 🔥 Destacar total sin exagerar */
+.tfoot-row .total {
+    margin-left: 10px;
+    padding-left: 10px;
+    border-left: 2px solid #dee2e6;
+}
+
+.tfoot-row .total strong {
+    color: #198754;
+}
+
+/* 📱 Responsive (mismo concepto que tu tabla) */
+@media screen and (max-width: 991px) {
+
+    .tfoot-row {
+        display: block;
+        text-align: left;
+    }
+
+    .tfoot-row span {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .tfoot-row .total {
+        border-left: none;
+        border-top: 1px solid #dee2e6;
+
+        text-align: center;
+        margin-top: 5px;
+        padding-top: 5px;
+    }
+}
+ 
+.nav_dis a{
+
+cursor: pointer;
+font-family: arial; 
+
+font-weight: 600;
+    
+}
+
+@media screen and (max-width: 991px) {
+
+.nav_dis a{
+
+    
+    font-size: 13px;
+    font-weight: 900;
+
+}
+
+.card .table {
+     margin: 0%;
+    width: 300px;
+   
+}
+
+
+.offcanvas-body a{
+
+    align-items:center;
+    font-size: 15px;
+    text-align: left;
+    cursor: pointer;
+
+}
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .offcanvas-body a{
+
+     text-align: left;
+
+  }
+
+  .offcanvas-body a:hover{
+
+    background-color: rgb(255, 255, 255);
+    cursor: pointer;
+    transform: translateY(-2px);
+    transition: transform 0.2s ease;
+    color: #000;
+}
+.text-nowrap th {
+  white-space: nowrap;
+  font-size: 0.85rem; /* más pequeño para que quepa mejor */
+}
+
+
+/* Fondo suave para cada fila de detalle */
+/* Etiquetas */
+.modal-body .label {
+  font-weight: 500;
+  color: #6c757d; /* gris elegante */
+  font-size: 0.95rem;
+}
+
+/* Valores */
+.modal-body .value {
+  font-weight: 400;
+  color: #212529; /* texto principal */
+  font-size: 1rem;
+}
+
+/* Separación entre filas */
+.modal-body .row {
+  border-bottom: 1px solid #e9ecef;
+}
+
+.modal-body .row:last-child {
+  border-bottom: none; /* sin borde en la última fila */
+}
+
+/* Header minimalista */
+.modal-header {
+  background: #fff;
+  border-bottom: 1px solid #e9ecef;
+}
+
+/* Botón cerrar más limpio */
+.modal-header .btn-close {
+  filter: grayscale(1);
+}
+
+/* Modal más suave */
+.modal-content {
+  border-radius: 10px;
+}
+
+/* Espaciado general */
+.modal-body {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+
+    .footer-corp {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: linear-gradient(90deg, #0f0f0f, #003366);
+        color: #9da5b4;
+        padding: 6px 0;
+        font-size: 12px;
+        text-align: center;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: slideUp 1s ease forwards;
+        letter-spacing: 0.5px;
+        z-index: 9999;
+    }
+
+    @keyframes slideUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+
+#nav_systema {
+    background: linear-gradient(90deg, #0f0f0f, #003366);
+    border-bottom: 2px solid #003366;
+    box-shadow: 0 2px 8px rgba(0,51,102,0.45); /* Azul corporativo */
+}
+
+/* MARCA */
+.navbar-brand {
+    font-weight: 600;
+    font-size: 17px;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #e6f0ff !important; /* Azul muy claro elegante */
+}
+
+/* LOGO */
+.logo-nav {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    object-fit: contain;
+    background: #ffffff;
+    padding: 2px;
+    box-shadow: 0 0 6px rgba(0,51,102,0.4);
+}
+
+/* OFFCANVAS */
+.offcanvas-dark-custom {
+    background: #0a1a2a !important; /* Azul oscuro elegante */
+}
+
+.offcanvas-header h5 {
+    font-weight: 600;
+    color: #ffffff; /* Azul claro corporativo */
+}
+
+/* BOTONES DEL MENÚ (adaptados del verde a azul corporativo elegante) */
+#opciones_sys_qr .btn {
+    background: #093a6c;
+    border: none;
+    color: #ffffff;
+    font-weight: 600;
+    transition: 0.25s ease;
+    border-radius: 8px;
+}
+
+#opciones_sys_qr .btn:hover {
+    background: #1260a4;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,119,221,0.4);
+}
+
+/* EFECTO DEL TOGGLER */
+.navbar-toggler {
+    border-color: #66b3ff;
+}
+
+.navbar-toggler-icon {
+    filter: brightness(2);
+}
+
+/* Texto del módulo */
+.modulo-sistema {
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    color: #cfe2ff; /* Azul claro elegante */
+    margin-left: 4px;
+}
+
+/* Ocultar el texto del módulo en pantallas pequeñas */
+@media (max-width: 576px) {
+    .modulo-sistema {
+        display: none;
+    }
+}
+
+.sup-item i{
+
+    background-color: #000;
+}
+
+input:not(:disabled):not([readonly]):hover,
+select:not(:disabled):hover,
+textarea:not(:disabled):hover {
+  cursor: pointer;
+  box-shadow: 0 0 0 .15rem rgba(13,110,253,.15);
+}
+
+#bnn_int {
+
+ background:linear-gradient(120deg,#040D29,#037752);
+
+}
+
+
+

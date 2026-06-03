@@ -1,0 +1,52 @@
+/* contenedor */
+.table-responsive{
+    background:#ffffff9e;
+    padding:15px;
+    border-radius:14px;
+}
+
+/* tabla */
+#tabla_res{
+    border-collapse:separate;
+    border-spacing:0 14px;
+    font-size:13px;
+}
+
+/* encabezado */
+#tabla_res thead th{
+    border:none;
+    font-weight:600;
+    font-size:12px;
+    letter-spacing:.6px;
+    color:#ebedf0;
+    background:#062e5192;
+    padding:14px;
+}
+
+/* filas */
+#tabla_res tbody tr{
+    background:#ffffff;
+    box-shadow:0 2px 8px rgba(0,0,0,0.06);
+    border-radius:10px;
+}
+
+#tabla_res td{
+    border:none;
+    padding:18px 18px;
+    vertical-align:middle;
+    white-space:normal;
+    word-wrap:break-word;
+}
+/* efecto hover */
+#tabla_res tbody tr:hover{
+    transform:scale(1.01);
+    box-shadow:0 5px 14px rgba(0,0,0,0.08);
+    transition:.2s;
+     cursor: pointer;
+   
+}
+
+
+
+
+

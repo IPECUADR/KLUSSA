@@ -1,6 +1,4 @@
 
-
-
 $(document).ready(function () {
 
 
@@ -23,432 +21,365 @@ $(document).ready(function () {
 function cargar_menu(user_log){
 
 
-  $('#opciones_sistema').empty();
-
-
-
-   
-   
-
-$.ajax({
-  url: '../DATABASE/home_permisos.php',
-  type: 'POST',
-  data:{user_log},
-  success: function(response){
-    var json = JSON.parse(response);
-    console.log(response);
-    // limpieza de seccion
-  $('#opciones_sistema').empty();
-
-    if(!json.err){
-      var contador=1;
-      $.each(json, function(i,item){
-        if(i!="err"){
-        
-        //administrador
-        
-        if(item.FK_t_user == 1){
- 
- 
-      
-
-
-             opciones =`
 
 
 
 
+                    
+                    
+
+                    $.ajax({
+                    url: '../DATABASE/home_permisos.php',
+                    type: 'POST',
+                    data:{user_log},
+                    success: function(response){
+                        var json = JSON.parse(response);
+                        console.log(response);
+                        // limpieza de seccion
+                       
+
+                        if(!json.err){
+                        var contador=1;
+                        $.each(json, function(i,item){
+                            if(i!="err"){
+                            
+
+                                perfil = `
+                            
                     <div class="col-lg-12 col-md-12 col-sm-12 mt-4 op" id="seccion_user">
 
-                                <H3 class="py-3 ">PERFIL DE USUARIO</H3>
+                    
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h3 class="py-3 text-white mb-0">PERFIL DE USUARIO</h3>
                                 
-                                    <div class="card shadow-lg   rounded">
+                                <span class="badge badge-rol">
+                                    ${item.des_t_user}
+                                </span>
+                            </div>
 
 
-                                        <div class="row no-gutters">
-                                            <div class="col-md-4">
-                                            <img src="../IMAGE/u.png" class="card-img-top p-4  " alt="...">
-                                            </div>
-                                            <div class="col-md-8">
-                                            <div class="card-body  text-white">
-                                                <h5 class="card-title">`+item.nom_user+ ` `+item.ap_user+`</h5>
-                                                <h5 class="card-title">`+item.cargo_user+`</h5>
-                                                 <h5 class="card-title">`+item.agencia_reg_user+`</h5>
-                                                <p class="card-text">`+item.username_user+`</p>
-                                            </div>
-                                            </div>
+                        <div class="card. p-4 shadow-lg rounded perfil-card">
+                            <div class="row no-gutters align-items-center">
+
+                                <!-- Imagen -->
+                                <div class="col-md-3 text-center">
+                                    <img src="../IMAGE/u.png" class="img-perfil" alt="usuario">
+                                </div>
+
+                                <!-- Información -->
+                                <div class="col-md-9">
+                                    <div class="card-body text-white">
+
+                                        <h4 class="nombre-user">
+                                            ${item.nom_user} ${item.ap_user}
+                                        </h4>
+
+                                        <div class="datos-user">
+                                            <p>${item.cargo_user}</p>
+                                            <p>${item.agencia_reg_user}</p>
                                         </div>
-                                    
-                                    
-                                    
+
+                                        <div class="usuario-email">
+                                            ${item.username_user}
                                         </div>
-                                
-                                
-                    </div>
-            
-          
-         
 
+                                    </div>
+                                </div>
 
-
-
-
-
-
-  <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="seccion_pedido">
-
-             <H3 class="py-3 ">AGENCIAS</H3>
-            
-                  <div class="card shadow-lg   rounded">
-                        <img src="../IMAGE/ag.png" class="card-img-top p-4  " alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_pedidos_clbr" type="btn"> GESTION DE  AGENCIAS </button>
+                            </div>
                         </div>
-                    </div>
-               
-             
-            </div>
 
- <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op">
-         
-            <H3 class="py-3">ACTIVIDADES</H3>
-            
-            <div class="card  shadow rounded" >
-                  <img src="../IMAGE/TASK.png" class="card-img-top p-4" alt="...">
-                  <div class="card-body text-center d-grid gap-2">
-                      <button class="btn btn-lg  btn-warning " type="btn">GESTION  ACTIVIDADES</button>
+                    </div>
+
+                            
+                        `;
+
+                     planes = `
                      
-                  </div>
-              </div>
-         
-        
- </div>
+                        <div class="col-lg-12 col-md-12 col-sm-12 mt-4 op" id="seccion_planes_pma">
+                                    <H3 class="py-3">PLANES DE MANEJO AMBIENTAL</H3>
+                                    
+                                    <div class="card    shadow-lg roundle"  >
+                                        <img src="../IMAGE/plan.png" class="card-img-top p-4" alt="...">
+                                        <div class="card-body text-center d-grid gap-2">
+                                            <button class="btn btn-lg  btn-warning " id="btn_registros_pma" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
+                                        </div>
+                                    </div>
+                                </div>
 
-     <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="seccion_despacho">
-            <H3 class="py-3">DOCUMENTOS</H3>
-            
-            <div class="card  shadow-lg roundle">
-                  <img src="../IMAGE/dc.png" class="card-img-top p-4"  alt="...">
-                  <div class="card-body text-center d-grid gap-2">
-                      <button class="btn btn-lg  btn-warning " id="despachar_p" type="btn">GESTION  DOCUMENTOS</button>
-                  </div>
-              </div>
-          </div>
-        
-        
-        
- <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op">
-            <H3 class="py-3">CALENDARIO</H3>
-            
-            <div class="card    shadow-lg roundle" >
-                  <img src="../IMAGE/cl.png" class="card-img-top p-4" alt="...">
-                  <div class="card-body text-center d-grid gap-2">
-                      <button class="btn btn-lg  btn-warning " type="btn"> GESTIONAR  CALENDARIO</button>
-                  </div>
-              </div>
-          </div>
-        
+                    `;    
 
-
- <div class="col-lg-6 col-md-12 col-sm-12 mt-4 op" id="sec_user">
-            <H3 class="py-3">USUARIOS</H3>
-            
-            <div class="card    shadow-lg roundle" >
-                  <img src="../IMAGE/user.png" class="card-img-top p-4" alt="...">
-                  <div class="card-body text-center d-grid gap-2">
-                      <button class="btn btn-lg  btn-warning " id="btn_users" type="btn"> Añadir  Usuario</button>
-                  </div>
-              </div>
-          </div>
-        
-          
- <div class="col-lg-6 col-md-12 col-sm-12 mt-4 op" id="seccion_pedido_online">
-            <H3 class="py-3">PERMISOS</H3>
-            
-             <div class="card    shadow-lg roundle" >
-                  <img src="../IMAGE/per.png" class="card-img-top p-4" alt="...">
-                  <div class="card-body text-center d-grid gap-2">
-                      <button class="btn btn-lg  btn-warning " id="btn_pedidos_online_clbr" type="btn" ></i>Conceder Permisos</button>
-                  </div>
-              </div>
-           </div>
-
-
- <div class="col-lg-12 col-md-12 col-sm-12 mt-4 op" id="seccion_planes_pma">
-            <H3 class="py-3">PLANES DE MANEJO AMBIENTAL</H3>
-            
-             <div class="card    shadow-lg roundle"  >
-                  <img src="../IMAGE/plan.png" class="card-img-top p-4" alt="...">
-                  <div class="card-body text-center d-grid gap-2">
-                      <button class="btn btn-lg  btn-warning " id="btn_registros_pma" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                  </div>
-              </div>
-           </div>
-
-
-
-
-            <div class="col-lg-6 col-md-12 col-sm-12 mt-4 op" id="seccion_res_n_p">
-            <H3 class="py-3"> RESIDUOS NO PELIGROSOS </H3>
-            
-             <div class="card    shadow-lg roundle"  >
-                  <img src="../IMAGE/rsnp.png" class="card-img-top p-4" alt="...">
-                  <div class="card-body text-center d-grid gap-2">
-                      <button class="btn btn-lg  btn-warning " id="btn_res_n_p" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                  </div>
-              </div>
-           
-           
-           
-              </div>
-
-
-
-            <div class="col-lg-6 col-md-12 col-sm-12 mt-4 op" id="seccion_res_p">
-            <H3 class="py-3">RESIDUOS PELIGROSOS Y/O ESPECIALES </H3>
-            
-             <div class="card    shadow-lg roundle"  >
-                  <img src="../IMAGE/rsp.png" class="card-img-top p-4" alt="...">
-                  <div class="card-body text-center d-grid gap-2">
-                      <button class="btn btn-lg  btn-warning " id="btn_rp_hse" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                  </div>
-              </div>
-           
-           
-           
-              </div>
-
-
-
-
-
-            <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_agua">
-            <H3 class="py-3"> CONSUMO AGUA </H3>
-            
-             <div class="card    shadow-lg roundle"  >
-                  <img src="../IMAGE/agua.png" class="card-img-top p-4" alt="...">
-                  <div class="card-body text-center d-grid gap-2">
-                      <button class="btn btn-lg  btn-warning " id="btn_res_n_p" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                  </div>
-              </div>
-           
-           
-           
-              </div>
-
-
-                <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_comb">
-                    <H3 class="py-3"> CONSUMO COMBUSTIBLE </H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/gas.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_res_n_p" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-
-
-
-
-                <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_adt">
-                    <H3 class="py-3"> CONSUMO ADITIVOS </H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/ad.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_adt" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-
-
-            <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_pz">
-                    <H3 class="py-3"> CONSUMO POZO </H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/pz.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_res_n_p" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-
-                     <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_eng">
-                    <H3 class="py-3"> CONSUMO ENERGIA </H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/eng.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_eng" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-
-              <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_proy">
-                    <H3 class="py-3">PROYECTOS </H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/ag.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_proy" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-             
-                 <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_mq">
-                    <H3 class="py-3">MAQUINAS </H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/mq.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_mq" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-
-                            <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_desh">
-                    <H3 class="py-3">DESECHOS </H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/des.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_dsh" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-             
-
-
-
-               <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_proveedor">
-                    <H3 class="py-3">GESTORES </H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/proveedor.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_gestor" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-             
-             
-     
-
- <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_ubi">
-                    <H3 class="py-3">UBICACIONES</H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/m.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_ubi" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-                    
-         <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_ad">
-                    <H3 class="py-3">ADITIVOS</H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/aditivos.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_ubi" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
+                    adminitrativo = `
                     
                     
+                 
 
-             
-         <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_close">
-                    <H3 class="py-3">SALIR </H3>
+
+                            
+                 
+
+
+                    <div class="col-lg-6 col-md-12 col-sm-12 mt-4 op" id="sec_user">
+                                <H3 class="py-3">USUARIOS</H3>
+                                
+                                <div class="card    shadow-lg roundle" >
+                                    <img src="../IMAGE/user.png" class="card-img-top p-4" alt="...">
+                                    <div class="card-body text-center d-grid gap-2">
+                                        <button class="btn btn-lg  btn-warning " id="btn_users" type="btn"> Añadir  Usuario</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            
+                    <div class="col-lg-6 col-md-12 col-sm-12 mt-4 op" id="seccion_pedido_online">
+                                <H3 class="py-3">PERMISOS</H3>
+                                
+                                <div class="card    shadow-lg roundle" >
+                                    <img src="../IMAGE/per.png" class="card-img-top p-4" alt="...">
+                                    <div class="card-body text-center d-grid gap-2">
+                                        <button class="btn btn-lg  btn-warning " id="btn_pedidos_online_clbr" type="btn" ></i>Conceder Permisos</button>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                   
                     
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/us.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-danger " id="btn_close" type="btn" ><i class="fas fa-power-off"></i> Cerrar Sesion </button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-             
-          
-          
-          `;
- 
- // COLABORADOR
-        }else if(item.FK_t_user == 2){
- 
-          opciones =`
-             
+
+
+                                        <div class="col-lg-6 col-md-12 col-sm-12 mt-4 op" id="sec_proy">
+                                        <H3 class="py-3">PROYECTOS </H3>
+                                        
+                                        <div class="card    shadow-lg roundle"  >
+                                            <img src="../IMAGE/ag.png" class="card-img-top p-4" alt="...">
+                                            <div class="card-body text-center d-grid gap-2">
+                                                <button class="btn btn-lg  btn-warning " id="btn_proy" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
+                                            </div>
+                                        </div>
+                                    
+                                    
+                                    
+                                        </div>
+                                
+                                    <div class="col-lg-6 col-md-12 col-sm-12 mt-4 op" id="sec_mq">
+                                        <H3 class="py-3">MAQUINAS </H3>
+                                        
+                                        <div class="card    shadow-lg roundle"  >
+                                            <img src="../IMAGE/mq.png" class="card-img-top p-4" alt="...">
+                                            <div class="card-body text-center d-grid gap-2">
+                                                <button class="btn btn-lg  btn-warning " id="btn_mq" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
+                                            </div>
+                                        </div>
+                                    
+                                    
+                                    
+                                        </div>
+
+                                                <div class="col-lg-6 col-md-12 col-sm-12 mt-4 op" id="sec_desh">
+                                        <H3 class="py-3">DESECHOS </H3>
+                                        
+                                        <div class="card    shadow-lg roundle"  >
+                                            <img src="../IMAGE/des.png" class="card-img-top p-4" alt="...">
+                                            <div class="card-body text-center d-grid gap-2">
+                                                <button class="btn btn-lg  btn-warning " id="btn_dsh" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
+                                            </div>
+                                        </div>
+                                    
+                                    
+                                    
+                                        </div>
+                                
+                                
+                                        <div class="col-lg-6 col-md-12 col-sm-12 mt-4 op" id="sec_ubi">
+                                        <H3 class="py-3">UBICACIONES</H3>
+                                        
+                                        <div class="card    shadow-lg roundle"  >
+                                            <img src="../IMAGE/m.png" class="card-img-top p-4" alt="...">
+                                            <div class="card-body text-center d-grid gap-2">
+                                                <button class="btn btn-lg  btn-warning " id="btn_ubi" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
+                                            </div>
+                                        </div>
+                                    
+                                    
+                                    
+                                        </div>
+                                        
+                                            <div class="col-lg-6 col-md-12 col-sm-12 mt-4 op" id="sec_proveedor">
+                                        <H3 class="py-3">GESTORES </H3>
+                                        
+                                        <div class="card    shadow-lg roundle"  >
+                                            <img src="../IMAGE/proveedor.png" class="card-img-top p-4" alt="...">
+                                            <div class="card-body text-center d-grid gap-2">
+                                                <button class="btn btn-lg  btn-warning " id="btn_gestor" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
+                                            </div>
+                                        </div>
+                                    
+                                    
+                                    
+                                        </div>
+                                        
+                                        
+                                <div class="col-lg-6 col-md-12 col-sm-12 mt-4 op" id="sec_ad">
+                                        <H3 class="py-3">ADITIVOS</H3>
+                                        
+                                        <div class="card    shadow-lg roundle"  >
+                                            <img src="../IMAGE/aditivos.png" class="card-img-top p-4" alt="...">
+                                            <div class="card-body text-center d-grid gap-2">
+                                                <button class="btn btn-lg  btn-warning " id="btn_adt" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
+                                            </div>
+                                        </div>
+                                    
+                                    
+                                    
+                                        </div>
+                                        
+                                        
+                                
+                          
+                    
+                    `;
+
+
+                    desechos =`
+
+
+                        <div class="col-lg-6 col-md-12 col-sm-12 mt-4 op" id="seccion_res_n_p">
+                                <H3 class="py-3"> RESIDUOS NO PELIGROSOS </H3>
+                                
+                                <div class="card    shadow-lg roundle"  >
+                                    <img src="../IMAGE/rsnp.png" class="card-img-top p-4" alt="...">
+                                    <div class="card-body text-center d-grid gap-2">
+                                        <button class="btn btn-lg  btn-warning " id="btn_res_n_p" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
+                                    </div>
+                                </div>
+                            
+                            
+                            
+                                </div>
 
 
 
-               
+                                <div class="col-lg-6 col-md-12 col-sm-12 mt-4 op" id="seccion_res_p">
+                                <H3 class="py-3">RESIDUOS PELIGROSOS Y/O ESPECIALES </H3>
+                                
+                                <div class="card    shadow-lg roundle"  >
+                                    <img src="../IMAGE/rsp.png" class="card-img-top p-4" alt="...">
+                                    <div class="card-body text-center d-grid gap-2">
+                                        <button class="btn btn-lg  btn-warning " id="btn_rp_hse" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
+                                    </div>
+                                </div>
+                            
+                            
+                            
+                                </div>
+
+
+
+
+
+                                <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_agua">
+                                <H3 class="py-3"> CONSUMO AGUA </H3>
+                                
+                                <div class="card    shadow-lg roundle"  >
+                                    <img src="../IMAGE/agua.png" class="card-img-top p-4" alt="...">
+                                    <div class="card-body text-center d-grid gap-2">
+                                        <button class="btn btn-lg  btn-warning " id="btn_res_n_p" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
+                                    </div>
+                                </div>
+                            
+                            
+                            
+                                </div>
+
+
+                                    <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_comb">
+                                        <H3 class="py-3"> CONSUMO COMBUSTIBLE </H3>
+                                        
+                                        <div class="card    shadow-lg roundle"  >
+                                            <img src="../IMAGE/gas.png" class="card-img-top p-4" alt="...">
+                                            <div class="card-body text-center d-grid gap-2">
+                                                <button class="btn btn-lg  btn-warning " id="btn_res_n_p" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
+                                            </div>
+                                        </div>
+                                    
+                                    
+                                    
+                                        </div>
+
+
+
+
+                                    <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_adt">
+                                        <H3 class="py-3"> CONSUMO ADITIVOS </H3>
+                                        
+                                        <div class="card    shadow-lg roundle"  >
+                                            <img src="../IMAGE/ad.png" class="card-img-top p-4" alt="...">
+                                            <div class="card-body text-center d-grid gap-2">
+                                                <button class="btn btn-lg  btn-warning " id="btn_adt" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
+                                            </div>
+                                        </div>
+                                    
+                                    
+                                    
+                                        </div>
+
+
+                                <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_pz">
+                                        <H3 class="py-3"> CONSUMO POZO </H3>
+                                        
+                                        <div class="card    shadow-lg roundle"  >
+                                            <img src="../IMAGE/pz.png" class="card-img-top p-4" alt="...">
+                                            <div class="card-body text-center d-grid gap-2">
+                                                <button class="btn btn-lg  btn-warning " id="btn_res_n_p" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
+                                            </div>
+                                        </div>
+                                    
+                                    
+                                    
+                                        </div>
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 mt-4 op" id="sec_eng">
+                                        <H3 class="py-3"> CONSUMO ENERGIA </H3>
+                                        
+                                        <div class="card    shadow-lg roundle"  >
+                                            <img src="../IMAGE/eng.png" class="card-img-top p-4" alt="...">
+                                            <div class="card-body text-center d-grid gap-2">
+                                                <button class="btn btn-lg  btn-warning " id="btn_eng" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
+                                            </div>
+                                        </div>
+                                    
+                                    
+                                    
+                                        </div>
+
+                        
+
+                    `;
+
+      salud = `    <div class="col-lg-12 col-md-12 col-sm-12 mt-4 op" id="sec_salud">
+                                        <H3 class="py-3"> SALUD </H3>
+                                        
+                                        <div class="card    shadow-lg roundle"  >
+                                            <img src="../IMAGE/eng.png" class="card-img-top p-4" alt="...">
+                                            <div class="card-body text-center d-grid gap-2">
+                                                <button class="btn btn-lg  btn-warning " id="btn_eng" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
+                                            </div>
+                                        </div>
+                                    
+                                    
+                                    
+                                        </div>
+ `;
   
-       
-       
-       
-          `;
- 
- //hse / desechos
- 
-        }else if(item.FK_t_user == 5){
- 
- 
-          opciones =`
-             
-     
-                    <div class="col-lg-12 col-md-12 col-sm-12 mt-4 op" id="seccion_user">
-
-                                <H3 class="py-3 ">PERFIL DE USUARIO</H3>
-                                
-                                    <div class="card shadow-lg   rounded">
-
-
-                                        <div class="row no-gutters">
-                                            <div class="col-md-4">
-                                            <img src="../IMAGE/u.png" class="card-img-top p-4  " alt="...">
-                                            </div>
-                                            <div class="col-md-8">
-                                            <div class="card-body  text-white">
-                                                <h5 class="card-title">`+item.nom_user+ ` `+item.ap_user+`</h5>
-                                                <h5 class="card-title">`+item.cargo_user+`</h5>
-                                                 <h5 class="card-title">`+item.agencia_reg_user+`</h5>
-                                                <p class="card-text">`+item.username_user+`</p>
-                                            </div>
+      close_sesion = `
+      
+        <div class="col-lg-12 col-md-12 col-sm-12 mt-4 op" id="sec_close">
+                                        <H3 class="py-3">SALIR </H3>
+                                        
+                                        <div class="card    shadow-lg roundle"  >
+                                            <img src="../IMAGE/us.png" class="card-img-top p-4" alt="...">
+                                            <div class="card-body text-center d-grid gap-2">
+                                                <button class="btn btn-lg  btn-danger " id="btn_close" type="btn" ><i class="fas fa-power-off"></i> Cerrar Sesion </button>
                                             </div>
                                         </div>
                                     
@@ -456,608 +387,102 @@ $.ajax({
                                     
                                         </div>
                                 
-                                
-                    </div>
-            
-        
-          
-       <div class="col-lg-6 col-md-12 col-sm-12 mt-4 op" id="seccion_res_n_p">
-            <H3 class="py-3"> RESIDUOS NO PELIGROSOS </H3>
-            
-             <div class="card    shadow-lg roundle"  >
-                  <img src="../IMAGE/rsnp.png" class="card-img-top p-4" alt="...">
-                  <div class="card-body text-center d-grid gap-2">
-                      <button class="btn btn-lg  btn-warning " id="btn_res_n_p" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                  </div>
-              </div>
-           
-           
-           
-              </div>
+      
+      
+      `;
 
 
 
-            <div class="col-lg-6 col-md-12 col-sm-12 mt-4 op" id="seccion_res_p">
-            <H3 class="py-3">RESIDUOS PELIGROSOS Y/O ESPECIALES </H3>
-            
-             <div class="card    shadow-lg roundle"  >
-                  <img src="../IMAGE/rsp.png" class="card-img-top p-4" alt="...">
-                  <div class="card-body text-center d-grid gap-2">
-                      <button class="btn btn-lg  btn-warning " id="btn_rp_hse" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                  </div>
-              </div>
-           
-           
-           
-              </div>
-
-
-
-
-
-            <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_agua">
-            <H3 class="py-3"> CONSUMO AGUA </H3>
-            
-             <div class="card    shadow-lg roundle"  >
-                  <img src="../IMAGE/agua.png" class="card-img-top p-4" alt="...">
-                  <div class="card-body text-center d-grid gap-2">
-                      <button class="btn btn-lg  btn-warning " id="btn_res_n_p" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                  </div>
-              </div>
-           
-           
-           
-              </div>
-
-
-                <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_comb">
-                    <H3 class="py-3"> CONSUMO COMBUSTIBLE </H3>
+                  
                     
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/gas.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_res_n_p" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
 
 
 
-
-                <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_adt">
-                    <H3 class="py-3"> CONSUMO ADITIVOS </H3>
                     
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/ad.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_adt" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
+                                        // dev 
+                                        if(item.FK_t_user == 1){
 
-
-            <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_pz">
-                    <H3 class="py-3"> CONSUMO POZO </H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/pz.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_res_n_p" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-
-                     <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_eng">
-                    <H3 class="py-3"> CONSUMO ENERGIA </H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/eng.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_eng" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-
-              <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_proy">
-                    <H3 class="py-3">PROYECTOS </H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/ag.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_proy" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-             
-                 <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_mq">
-                    <H3 class="py-3">MAQUINAS </H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/mq.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_mq" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-
-                            <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_desh">
-                    <H3 class="py-3">DESECHOS </H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/des.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_dsh" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-             
-             
-                    <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_ubi">
-                    <H3 class="py-3">UBICACIONES</H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/m.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_ubi" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-                    
-                           <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_proveedor">
-                    <H3 class="py-3">GESTORES </H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/proveedor.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_gestor" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-                    
-                    
-               <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_ad">
-                    <H3 class="py-3">ADITIVOS</H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/aditivos.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_adt" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-                    
-                    
-             
-        <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_close">
-                    <H3 class="py-3">SALIR </H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/us.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-danger " id="btn_close" type="btn" ><i class="fas fa-power-off"></i> Cerrar Sesion </button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-             
-
-
-
-        
-   
-       
-       `;
- //DEVELOP
-        }else if(item.FK_t_user == 6){
-
-
-
-
-
-          opciones =`
-             
-                 <div class="col-lg-12 col-md-12 col-sm-12 mt-4 op" id="seccion_user">
-
-                                <H3 class="py-3 ">PERFIL DE USUARIO</H3>
-                                
-                                    <div class="card shadow-lg   rounded">
-
-
-                                        <div class="row no-gutters">
-                                            <div class="col-md-4">
-                                            <img src="../IMAGE/u.png" class="card-img-top p-4  " alt="...">
-                                            </div>
-                                            <div class="col-md-8">
-                                            <div class="card-body  text-white">
-                                                <h5 class="card-title">`+item.nom_user+ ` `+item.ap_user+`</h5>
-                                                <h5 class="card-title">`+item.cargo_user+`</h5>
-                                                 <h5 class="card-title">`+item.agencia_reg_user+`</h5>
-                                                <p class="card-text">`+item.username_user+`</p>
-                                            </div>
-                                            </div>
-                                        </div>
+                                                $('#perfil_klussa').append(perfil);
+                                                $('#admin_klussa').append(adminitrativo);
+                                                $('#planes_klussa').append(planes);
+                                                $('#desechos_klussa').append(desechos);
+                                                $('#close_klussa').append(close_sesion);
+                                                
                                     
-                                    
-                                    
-                                        </div>
-                                
-                                
-                    </div>
-            
-            
-            <div class="col-lg-6 col-md-12 col-sm-12 mt-4 op" id="seccion_planes_pma">
-            <H3 class="py-3">PLANES DE MANEJO AMBIENTAL</H3>
-            
-             <div class="card    shadow-lg roundle"  >
-                  <img src="../IMAGE/plan.png" class="card-img-top p-4" alt="...">
-                  <div class="card-body text-center d-grid gap-2">
-                      <button class="btn btn-lg  btn-warning " id="btn_registros_pma" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                  </div>
-              </div>
-           </div>
-           
-        <div class="col-lg-6 col-md-12 col-sm-12 mt-4 op" id="seccion_salud">
-            <H3 class="py-3">SALUD</H3>
-            
-             <div class="card    shadow-lg roundle"  >
-                  <img src="../IMAGE/corazon.png" class="card-img-top p-4" alt="...">
-                  <div class="card-body text-center d-grid gap-2">
-                      <button class="btn btn-lg  btn-warning " id="btn_registros_pma" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                  </div>
-              </div>
-           </div>
+                                        }else if(item.FK_t_user == 2){
+                                         //administrador
+
+                                                $('#perfil_klussa').append(perfil);
+                                                $('#admin_klussa').append(adminitrativo);
+                                                $('#planes_klussa').append(planes);
+                                                $('#desechos_klussa').append(desechos);
+                                                $('#close_klussa').append(close_sesion);
+                                           
 
 
+                                        }else if(item.FK_t_user == 3){
 
-   <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_close">
-                    <H3 class="py-3">SALIR </H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/us.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-danger " id="btn_close" type="btn" ><i class="fas fa-power-off"></i> Cerrar Sesion </button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-           
-       
-       `;
+                                                  $('#perfil_klussa').append(perfil);
+                                                  $('#salud_klussa').append(salud);
+                                                  $('#close_klussa').append(close_sesion);
+
+                                         //salud
+                                        }else if(item.FK_t_user == 4){
+                                          //hse
+                                                
+                                           $('#perfil_klussa').append(perfil);
 
 
+                                        }else if(item.FK_t_user == 5){
 
+                                                $('#perfil_klussa').append(perfil);
+                                                $('#desechos_klussa').append(desechos);
+                                                 $('#close_klussa').append(close_sesion);
+                                            // desechos
+                                            
+                                        }else if(item.FK_t_user == 6){
+                                           //salud/plan de manejo ambiental
 
+                                            $('#perfil_klussa').append(perfil);
+                                            $('#salud_klussa').append(salud);
+                                            $('#planes_klussa').append(planes);
+                                            $('#close_klussa').append(close_sesion);
 
+                                        }else if(item.FK_t_user == 7){
+                                           // desechos/plan de manejo ambiental
 
+                                            $('#perfil_klussa').append(perfil);
+                                            $('#desechos_klussa').append(desechos);
+                                            $('#planes_klussa').append(planes);
+                                            $('#close_klussa').append(close_sesion);
 
-
-        }else if(item.FK_t_user ==7){
-             opciones =` 
-             
-              <div class="col-lg-12 col-md-12 col-sm-12 mt-4 op" id="seccion_user">
-
-                                <H3 class="py-3 ">PERFIL DE USUARIO</H3>
-                                
-                                    <div class="card shadow-lg   rounded">
-
-
-                                        <div class="row no-gutters">
-                                            <div class="col-md-4">
-                                            <img src="../IMAGE/u.png" class="card-img-top p-4  " alt="...">
-                                            </div>
-                                            <div class="col-md-8">
-                                            <div class="card-body  text-white">
-                                                <h5 class="card-title">`+item.nom_user+ ` `+item.ap_user+`</h5>
-                                                <h5 class="card-title">`+item.cargo_user+`</h5>
-                                                 <h5 class="card-title">`+item.agencia_reg_user+`</h5>
-                                                <p class="card-text">`+item.username_user+`</p>
-                                            </div>
-                                            </div>
-                                        </div>
-                                    
-                                    
-                                    
-                                        </div>
-                                
-                                
-                    </div>
-            
-             
-            <div class="col-lg-12 col-md-12 col-sm-12 mt-4 op" id="seccion_planes_pma">
-            <H3 class="py-3">PLANES DE MANEJO AMBIENTAL</H3>
-            
-             <div class="card    shadow-lg roundle"  >
-                  <img src="../IMAGE/plan.png" class="card-img-top p-4" alt="...">
-                  <div class="card-body text-center d-grid gap-2">
-                      <button class="btn btn-lg  btn-warning " id="btn_registros_pma" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                  </div>
-              </div>
-           </div>
-           
-           
-             <div class="col-lg-6 col-md-12 col-sm-12 mt-4 op" id="seccion_res_n_p">
-            <H3 class="py-3"> RESIDUOS NO PELIGROSOS </H3>
-            
-             <div class="card    shadow-lg roundle"  >
-                  <img src="../IMAGE/rsnp.png" class="card-img-top p-4" alt="...">
-                  <div class="card-body text-center d-grid gap-2">
-                      <button class="btn btn-lg  btn-warning " id="btn_res_n_p" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                  </div>
-              </div>
-           
-           
-           
-              </div>
-
-
-
-            <div class="col-lg-6 col-md-12 col-sm-12 mt-4 op" id="seccion_res_p">
-            <H3 class="py-3">RESIDUOS PELIGROSOS Y/O ESPECIALES </H3>
-            
-             <div class="card    shadow-lg roundle"  >
-                  <img src="../IMAGE/rsp.png" class="card-img-top p-4" alt="...">
-                  <div class="card-body text-center d-grid gap-2">
-                      <button class="btn btn-lg  btn-warning " id="btn_rp_hse" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                  </div>
-              </div>
-           
-           
-           
-              </div>
-
-
-
-
-
-            <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_agua">
-            <H3 class="py-3"> CONSUMO AGUA </H3>
-            
-             <div class="card    shadow-lg roundle"  >
-                  <img src="../IMAGE/agua.png" class="card-img-top p-4" alt="...">
-                  <div class="card-body text-center d-grid gap-2">
-                      <button class="btn btn-lg  btn-warning " id="btn_res_n_p" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                  </div>
-              </div>
-           
-           
-           
-              </div>
-
-
-                <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_comb">
-                    <H3 class="py-3"> CONSUMO COMBUSTIBLE </H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/gas.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_res_n_p" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-
-
-
-
-                <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_adt">
-                    <H3 class="py-3"> CONSUMO ADITIVOS </H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/ad.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_adt" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-
-
-            <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_pz">
-                    <H3 class="py-3"> CONSUMO POZO </H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/pz.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_res_n_p" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-
-                     <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_eng">
-                    <H3 class="py-3"> CONSUMO ENERGIA </H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/eng.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_eng" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-
-              <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_proy">
-                    <H3 class="py-3">PROYECTOS </H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/ag.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_proy" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-             
-                 <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_mq">
-                    <H3 class="py-3">MAQUINAS </H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/mq.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_mq" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-
-                            <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_desh">
-                    <H3 class="py-3">DESECHOS </H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/des.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_dsh" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-             
-             
-                    <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_ubi">
-                    <H3 class="py-3">UBICACIONES</H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/m.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_ubi" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-                    
-                           <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_proveedor">
-                    <H3 class="py-3">GESTORES </H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/proveedor.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_gestor" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
+                                        }
+                                        
                     
                     
-               <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_ad">
-                    <H3 class="py-3">ADITIVOS</H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/aditivos.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-warning " id="btn_adt" type="btn" ><i class="fas fa-th-list"></i> Ver Registros</button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-                    
-                    
-             
-        <div class="col-lg-3 col-md-12 col-sm-12 mt-4 op" id="sec_close">
-                    <H3 class="py-3">SALIR </H3>
-                    
-                    <div class="card    shadow-lg roundle"  >
-                        <img src="../IMAGE/us.png" class="card-img-top p-4" alt="...">
-                        <div class="card-body text-center d-grid gap-2">
-                            <button class="btn btn-lg  btn-danger " id="btn_close" type="btn" ><i class="fas fa-power-off"></i> Cerrar Sesion </button>
-                        </div>
-                    </div>
-                
-                
-                
-                    </div>
-             
+                            }
 
-               
-       `;
-            
-            
-        }
-     
-        $('#opciones_sistema').append(opciones);
- 
- 
- 
- 
- 
-       
- 
-        }
-      })
-    }
-    else{
- 
-         Swal.fire({
-              icon: 'info',
-              title: json.mensaje,
-              text:  'Sistema en fase de pruebas'
-              ,footer: '<a href>Ver manual</a>'
- 
-              })
-        }
-  }
- })
+                     
+                     
 
 
-          
-        
-        
-        
-        
-        }
+                        })
+                        }
+                        else{
+                    
+                            Swal.fire({
+                                icon: 'info',
+                                title: json.mensaje,
+                                text:  'Sistema en fase de pruebas'
+                                ,footer: '<a href>Ver manual</a>'
+                    
+                                })
+                            }
+                    }
+                    })
+
+
+ }
 
 
 

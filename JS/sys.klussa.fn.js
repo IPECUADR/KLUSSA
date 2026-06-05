@@ -166,22 +166,78 @@ $.ajax({
  // COLABORADOR
         }else if(item.FK_t_user == 2){
  
-          opciones =`
-             
+                                acciones_klussa_des =`
+                                    
 
+                            <a class="btn shadow col-12 p-2 dropdown-toggle d-flex align-items-center gap-2 ps-2"  href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    <i class="fa-solid fa-gear"></i> <span>CONFIGURACIÓN</span>
+                                                            </a>
 
+                                                            <ul class="dropdown-menu col-12 shadow" aria-labelledby="adminDropdown">
 
-               
-  
-       
-       
-       
-          `;
+                                                            <li>
+                                                                    <a class="dropdown-item" id="clas_des_btn">
+                                                                        <i class="fa-solid fa-tasks"></i> CLASIFICACION
+                                                                    </a>
+                                                                </li>
+                                                                
+                                                            <li>
+                                                                    <a class="dropdown-item" id="resnopel">
+                                                                    <i class="fa-solid fa-clipboard-list"></i> DESECHOS
+                                                                    </a>
+                                                                </li>
+
+                                                            
+
+                                                                <li>
+                                                                    <a class="dropdown-item" id="proyectos">
+                                                                    <i class="fa-solid fa-map-signs"></i> PROYECTOS
+                                                                    </a>
+                                                                </li>
+
+                                                                <li>
+                                                                    <a class="dropdown-item" id="ubicaciones">
+                                                                        <i class="fa-solid fa-location-dot"></i> UBICACIONES
+                                                                    </a>
+                                                                </li>
+
+                                                                    <li>
+                                                                    <a class="dropdown-item" id="gestores_r">
+                                                                    <i class="fa-solid fa-building"></i> GESTORES
+
+                                                                    </a>
+                                                                </li>
+
+                                                                    <li>
+                                                                    <a class="dropdown-item" id="maquinas">
+                                                                    <i class="fa-solid fa-hard-hat"></i> MAQUINAS
+                                                                    </a>
+                                                                </li>
+                                                                
+                                                                
+                                                                    <li>
+                                                                    <a class="dropdown-item" id="aditivos">
+                                                                    <i class="fa-solid fa-bong"></i> ADITIVOS
+                                                                    </a>
+                                                                </li>
+                                                                
+                                                                
+                                                            </ul>
+                                                    
+                                    
+                        
+                            
+                            
+                            
+                                `;
+
+         $('#klussa_ad_des').append(acciones_klussa_des);
+
  
  //PROVEEEDOR 
         }else if(item.FK_t_user == 7){
  
-   var codigo =  ` 
+                                var codigo =  ` 
                                                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"> <img src="../IMAGE/us.png" class="user-image rounded-circle shadow" alt="User Image"> <span class="d-none d-md-inline"> `+item.nom_user+ ` `+item.ap_user+`</span> </a>
                                                         <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end"> <!--begin::User Image-->
                                                             <li class="user-header text-bg-dark" > <img src="../IMAGE/us.png" class="rounded-circle shadow" alt="User Image">
@@ -398,8 +454,10 @@ $.ajax({
  
              //datos de inicio  de sesion
 
-             $('#datos_user').append(codigo);
-              $('#op_menu').append(menu);                                  
+               $('#datos_user').append(codigo);
+               $('#op_menu').append(menu);  
+               
+                
                 //// menu de opciones    
            
  

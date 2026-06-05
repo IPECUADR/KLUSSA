@@ -1,62 +1,75 @@
-<?php 
-
-
+<?php
 session_start();
-
 require('conexion.php');
+
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(403);
+    echo json_encode([
+        'err' => true,
+        'mensaje' => 'Acceso denegado'
+    ]);
+    exit;
+}
+
+
+if (!isset($_POST['username'], $_POST['password'])) {
+    echo json_encode([
+        'err' => true,
+        'mensaje' => 'Datos incompletos'
+    ]);
+    exit;
+}
 
 $username = $_POST['username'];
 $password = sha1($_POST['password']);
 
-$_SESSION['username']=$username;
 
+$stmt = $con->prepare("SELECT * FROM usuario WHERE username_user = ? AND password_user = ?");
+$stmt->bind_param("ss", $username, $password);
+$stmt->execute();
+$result = $stmt->get_result();
 
+$usuario = $result->fetch_assoc();
 
+if ($usuario) {
 
+    $rol = $usuario['FK_t_user'];
 
+    $roles_permitidos = [1,5,6,7];
 
-  $query="SELECT *FROM usuario where  username_user = '$username' and password_user ='$password'";
+    if (in_array($rol, $roles_permitidos)) {
 
-	$result = mysqli_query($con,$query); 
-	$filas = mysqli_fetch_array($result);
+        $_SESSION['user'] = [
+             'username' => $username,
+             'rol' => $rol,
+             'nombre' => $usuario['nom_user'],
+             'apellido' => $usuario['ap_user']
+        ];
 
+        echo json_encode([
+            'err' => false,
+			'icon' => 'success',
+            'mensaje' => 'Usuario válido',
+            'rol' => $rol
+        ]);
 
-if($filas){
-       
-		if($filas['FK_t_user']== 1){
-          
-			echo json_encode(array('err'=>false, 'mensaje'=>'Usuario con rol  de administrador', 'rol'=> $filas['FK_t_user'], 'nom_user' => $filas['nom_user'], 'ap'=>$filas['ap_user']));
+    } else {
+        echo json_encode([
+            'err' => true,
+            'icon' => 'error',
+            'mensaje' => 'Aún no tienes rol asignado'
+        ]);
+    }
 
-		
-        
-        
-        }else if($filas['FK_t_user']== 5){
-            
-    	echo json_encode(array('err'=>false, 'mensaje'=>'Usuario con rol  de administrador', 'rol'=> $filas['FK_t_user'], 'nom_user' => $filas['nom_user'], 'ap'=>$filas['ap_user']));
+} else {
+    echo json_encode([
+        'err' => true,
+        'icon' => 'error',
+        'mensaje' => 'Usuario o contraseña incorrectos'
+    ]);
+}
 
-            
-        }else if($filas['FK_t_user']== 6){
-            
-    	echo json_encode(array('err'=>false, 'mensaje'=>'Usuario con rol  de administrador', 'rol'=> $filas['FK_t_user'], 'nom_user' => $filas['nom_user'], 'ap'=>$filas['ap_user']));
-
-            
-        }else if($filas['FK_t_user']== 7){
-            
-    	echo json_encode(array('err'=>false, 'mensaje'=>'Usuario con rol  de administrador', 'rol'=> $filas['FK_t_user'], 'nom_user' => $filas['nom_user'], 'ap'=>$filas['ap_user']));
-
-            
-        }else{
-
-			echo json_encode(array('err'=>true, 'mensaje'=>'Aun  no se te asignado un rol'));
-			
-		}
-	
-	}else{
-
-		echo json_encode(array('err'=>true, 'mensaje'=>'¡Usuario o contraseña, incorrectos!! '));
-
-	}
-
-
-	mysqli_close($con);
+$stmt->close();
+$con->close();
 ?>

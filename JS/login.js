@@ -31,123 +31,70 @@
     username=$('#imp_user').val();
     password =$('#imp_pass').val();
      
+      if (username.length === 0 && password.length === 0) {
+          mensaje("error", "No has ingresado nada");
+          return;
+        }
 
+        if (username.length === 0) {
+          mensaje("error", "No ingreso su usuario");
+          return;
+        }
 
-    if( username.length !== 0  ||  password.length !== 0){
+        if (password.length === 0) {
+          mensaje("error", "No ingreso su contraseña");
+          return;
+        }
 
-     if(username.length !== 0 ){
+          
+        
+        
+          $.post(
+            'DATABASE/login.php',
+            { 
+              
+              username, 
+              password
 
-             if(password.length !== 0){
-               
-               
-                            
-                        $.ajax({
-                          url: 'DATABASE/login.php',
-                          type: 'POST',
-                          data:{username, password},
-                          success: function(response){
-                          console.log(response);
-                          var json = JSON.parse(response);
-                        
-                          console.log(json.rol);
-                          
-                          if(!json.err){
-                              
+            },
+            function (json) {
 
-                        
+                console.log(json);
 
+                if (!json.err) {
 
-                                  
+                 
 
-                                  const Toast = Swal.mixin({
-                                              toast: true,
-                                              position: "top-end",
-                                              showConfirmButton: false,
-                                              timer: 3000,
-                                              timerProgressBar: true,
-                                              didOpen: (toast) => {
-                                                toast.onmouseenter = Swal.stopTimer;
-                                                toast.onmouseleave = Swal.resumeTimer;
-                                              }
-                                            });
-                                            Toast.fire({
-                                              icon: "success",
-                                              title: "Bienvenido", 
-                                              text: json.nom_user+" "+ json.ap
-                                            });
+                          location.href = 'web/rutas.php?ruta=home';
 
+                 
 
-                                          
+                } else {
+                    mensaje( json.icon, json.mensaje);
+                }
 
+            },
+            'json'
+        ).fail(() => {
+            mensaje('error', 'Error de servidor');
+        });
+        
 
+                
+        
+  
 
+   
 
-                                location.href="CONTROLLERS/HOME.php";
-
-
-                                
-                              
-                          }else{
-                              Swal.fire({
-                              icon: 'error',
-                              title: json.mensaje,
-                              text:  'Error'
-                              // ,footer: '<a href>Como solucionarlo?</a>'
-                              })
-                              
-                          }
-                          }
-                      })
+    }
 
 
 
 
-             }else{
 
-                  const Toast = Swal.mixin({
-                    toast: true,
-                    position: "top-end",
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                      toast.onmouseenter = Swal.stopTimer;
-                      toast.onmouseleave = Swal.resumeTimer;
-                    }
-                  });
-                  Toast.fire({
-                    icon: "error",
-                    title: "No ingreso su contraseña"
-                  });
- 
-               
-             }
+function mensaje(icon, mensaje) {
 
-         }else{
-
-                const Toast = Swal.mixin({
-                  toast: true,
-                  position: "top-end",
-                  showConfirmButton: false,
-                  timer: 3000,
-                  timerProgressBar: true,
-                  didOpen: (toast) => {
-                    toast.onmouseenter = Swal.stopTimer;
-                    toast.onmouseleave = Swal.resumeTimer;
-                  }
-                });
-                Toast.fire({
-                  icon: "error",
-                  title: "No ingreso su usuario!!"
-                });
-
-
-         }
-
-        }else{
-
-
-      const Toast = Swal.mixin({
+    const Toast = Swal.mixin({
             toast: true,
             position: "top-end",
             showConfirmButton: false,
@@ -159,11 +106,8 @@
             }
           });
           Toast.fire({
-            icon: "error",
-            title: "No has ingresado nada"
+            icon: icon,
+            title: mensaje
           });
 
-
-        }
-
-  }
+}

@@ -1,23 +1,20 @@
 <?php
-   
-
-
 session_start();
 
-// Validar sesión de usuario
-if (!isset($_SESSION['username']) || empty($_SESSION['username'])) {
+// Validar sesión
+if (!isset($_SESSION['user']) || empty($_SESSION['user'])) {
     header("Location: ../");
-    exit(); // Importante para detener el script
+    exit();
 }
 
-$USUARIO = $_SESSION['username'];
+// Obtener datos
+$usuario  = $_SESSION['user']['username'];
+$nombre   = $_SESSION['user']['nombre'];
+$apellido = $_SESSION['user']['apellido'];
+$rol      = $_SESSION['user']['rol'];
+$USUARIO = $_SESSION['user']['username'];
 
-// Cargar plantillas de interfaz
 
+require_once '../HOME/head.home.temp.php';
 require_once '../INTERFACE/home.php';
-
-
-?>
-  
-
-   
+require_once '../HOME/footer.home.php';

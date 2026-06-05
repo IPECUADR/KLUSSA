@@ -1,15 +1,20 @@
 <?php
    
+session_start();
 
-   session_start();
-
-// Validar sesión de usuario
-if (!isset($_SESSION['username']) || empty($_SESSION['username'])) {
+// Validar sesión
+if (!isset($_SESSION['user']) || empty($_SESSION['user'])) {
     header("Location: ../");
-    exit(); // Importante para detener el script
+    exit();
 }
 
-$USUARIO = $_SESSION['username'];
+      // Obtener datos
+      $usuario  = $_SESSION['user']['username'];
+      $nombre   = $_SESSION['user']['nombre'];
+      $apellido = $_SESSION['user']['apellido'];
+      $rol      = $_SESSION['user']['rol'];
+      $USUARIO = $_SESSION['user']['username'];
+
 
    require_once('../TEMP-RES/header.php');
    require_once('../INTERFACE/ges_admin.php');

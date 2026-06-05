@@ -12,7 +12,7 @@ $user_log = $_POST['user_log'];
 
 
 
-  $query="SELECT *FROM usuario where  username_user = '$user_log' ";
+  $query="SELECT *FROM usuario, t_user  where    username_user = '$user_log' AND usuario.FK_t_user = t_user.PK_t_user";
 
 	$result = mysqli_query($con,$query); 
 	
@@ -28,7 +28,8 @@ if($result){
                         'cargo_user'=> $row['cargo_user'], 
                         'agencia_reg_user'=> $row['agencia_reg_user'],
                         'FK_t_user'=> $row['FK_t_user'],
-						'username_user'=> $row['username_user'],
+                        'des_t_user'=> $row['des_t_user'],
+						      'username_user'=> $row['username_user'],
                         'PK_user'=> $row['PK_user'],
                          
                      );

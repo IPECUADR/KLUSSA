@@ -22,6 +22,12 @@ document.addEventListener('DOMContentLoaded', function () {
             const idPaciente = event.target.getAttribute('data-id');
             abrirModalEditarPaciente(idPaciente);
         }
+
+        if (event.target.classList.contains('btnCambiarEstadoPaciente')) {
+            const idPaciente = event.target.getAttribute('data-id');
+            const nuevoEstado = event.target.getAttribute('data-estado');
+            cambiarEstadoPaciente(idPaciente, nuevoEstado);
+        }
     });
 });
 
@@ -87,12 +93,34 @@ async function cargarPacientesSalud() {
                         </span>
                     </td>
                     <td>
-                        <button type="button"
-                            class="btn btn-sm btn-outline-primary btnEditarPaciente"
+                        <div class="d-flex gap-1 flex-wrap">
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-primary btnEditarPaciente"
                                 data-id="${escaparHtml(item.PK_prs)}">
-                            Editar
-                        </button>
-                    </td>
+                                Editar
+                            </button>
+
+                            ${parseInt(item.FK_est_p) === 1
+                    ? `
+                                    <button type="button"
+                                        class="btn btn-sm btn-outline-danger btnCambiarEstadoPaciente"
+                                        data-id="${escaparHtml(item.PK_prs)}"
+                                        data-estado="2">
+                                        Desactivar
+                                    </button>
+                                `
+                    : `
+                                    <button type="button"
+                                        class="btn btn-sm btn-outline-success btnCambiarEstadoPaciente"
+                                        data-id="${escaparHtml(item.PK_prs)}"
+                                        data-estado="1">
+                                        Activar
+                                    </button>
+            `
+                }
+    </div>
+</td>
+
                 </tr>
             `;
 
@@ -428,5 +456,41 @@ async function abrirModalEditarPaciente(idPaciente) {
                 Error al cargar información del paciente.
             </div>
         `;
+    }
+}
+
+// Función para cambiar el estado de un paciente (activar/desactivar)
+async function cambiarEstadoPaciente(idPaciente, nuevoEstado) {
+    const accion = parseInt(nuevoEstado) === 1 ? 'activar' : 'desactivar';
+
+    const confirmar = confirm(`¿Deseas ${accion} este paciente?`);
+
+    if (!confirmar) {
+        return;
+    }
+
+    const datos = new FormData();
+    datos.append('PK_prs', idPaciente);
+    datos.append('estado', nuevoEstado);
+
+    try {
+        const respuesta = await fetch('../DATABASE/SALUD/paciente_estado.php', {
+            method: 'POST',
+            body: datos
+        });
+
+        const json = await respuesta.json();
+
+        if (json.err) {
+            alert(json.mensaje);
+            return;
+        }
+
+        alert(json.mensaje);
+        await cargarPacientesSalud();
+
+    } catch (error) {
+        console.error(error);
+        alert('Error al cambiar estado del paciente.');
     }
 }

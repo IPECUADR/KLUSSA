@@ -1,3 +1,4 @@
+// JS para gestión de pacientes en salud ocupacional
 document.addEventListener('DOMContentLoaded', function () {
     cargarPacientesSalud();
 
@@ -10,8 +11,14 @@ document.addEventListener('DOMContentLoaded', function () {
     if (btnNuevoPaciente) {
         btnNuevoPaciente.addEventListener('click', abrirModalNuevoPaciente);
     }
+
+    const btnGuardarPaciente = document.getElementById('btnGuardarPaciente');
+    if (btnGuardarPaciente) {
+        btnGuardarPaciente.addEventListener('click', guardarPaciente);
+    }
 });
 
+// Función para cargar pacientes desde el servidor y mostrarlos en la tabla
 async function cargarPacientesSalud() {
     const tbody = document.getElementById('contenidoPacientes');
     const alerta = document.getElementById('alertaPacientes');
@@ -90,7 +97,7 @@ async function cargarPacientesSalud() {
         `;
     }
 }
-
+// Función para filtrar pacientes en la tabla
 function filtrarPacientes() {
     const texto = document.getElementById('buscarPaciente').value.toLowerCase();
     const filas = document.querySelectorAll('#contenidoPacientes tr');
@@ -105,7 +112,7 @@ function filtrarPacientes() {
         }
     });
 }
-
+// Función para escapar caracteres HTML y prevenir XSS
 function escaparHtml(valor) {
     if (valor === null || valor === undefined) {
         return '';
@@ -129,7 +136,7 @@ async function abrirModalNuevoPaciente() {
     const modal = new bootstrap.Modal(modalElement);
     modal.show();
 }
-
+// Función para limpiar el formulario de paciente
 function limpiarFormularioPaciente() {
     const form = document.getElementById('formPaciente');
     const alerta = document.getElementById('alertaFormularioPaciente');
@@ -143,11 +150,11 @@ function limpiarFormularioPaciente() {
     }
 
     const btnGuardar = document.getElementById('btnGuardarPaciente');
-    if (btnGuardar) {
-        btnGuardar.disabled = true;
+        if (btnGuardar) {
+        btnGuardar.disabled = false;
     }
 }
-
+// Función para cargar los catálogos necesarios en el formulario de paciente
 async function cargarCatalogosPaciente() {
     const alerta = document.getElementById('alertaFormularioPaciente');
 
@@ -183,7 +190,7 @@ async function cargarCatalogosPaciente() {
         `;
     }
 }
-
+// Función para llenar un select con datos obtenidos del servidor
 function llenarSelect(idSelect, datos, campoValor, campoTexto) {
     const select = document.getElementById(idSelect);
 
@@ -203,4 +210,140 @@ function llenarSelect(idSelect, datos, campoValor, campoTexto) {
         option.textContent = item[campoTexto];
         select.appendChild(option);
     });
+}
+
+// Función para guardar un nuevo paciente
+async function guardarPaciente() {
+    const alerta = document.getElementById('alertaFormularioPaciente');
+    const btnGuardar = document.getElementById('btnGuardarPaciente');
+
+    const validacion = validarFormularioPaciente();
+
+    if (!validacion.ok) {
+        alerta.innerHTML = `
+            <div class="alert alert-warning">
+                ${validacion.mensaje}
+            </div>
+        `;
+        return;
+    }
+
+    const form = document.getElementById('formPaciente');
+    const datos = new FormData(form);
+
+    try {
+        btnGuardar.disabled = true;
+        btnGuardar.textContent = 'Guardando...';
+
+        const respuesta = await fetch('../DATABASE/SALUD/paciente_insertar.php', {
+            method: 'POST',
+            body: datos
+        });
+
+        const json = await respuesta.json();
+
+        if (json.err) {
+            alerta.innerHTML = `
+                <div class="alert alert-danger">
+                    ${json.mensaje}
+                </div>
+            `;
+            return;
+        }
+
+        alerta.innerHTML = `
+            <div class="alert alert-success">
+                ${json.mensaje}
+            </div>
+        `;
+
+        await cargarPacientesSalud();
+
+        setTimeout(function () {
+            const modalElement = document.getElementById('modalPaciente');
+            const modal = bootstrap.Modal.getInstance(modalElement);
+
+            if (modal) {
+                modal.hide();
+            }
+
+            limpiarFormularioPaciente();
+        }, 800);
+
+    } catch (error) {
+        console.error(error);
+
+        alerta.innerHTML = `
+            <div class="alert alert-danger">
+                Error al enviar el formulario.
+            </div>
+        `;
+    } finally {
+        btnGuardar.disabled = false;
+        btnGuardar.textContent = 'Guardar Paciente';
+    }
+}
+
+// Función para validar el formulario de paciente antes de enviarlo
+function validarFormularioPaciente() {
+    const campos = [
+        { id: 'hcl_num', nombre: 'N° HCL' },
+        { id: 'ci_prs', nombre: 'Cédula' },
+        { id: 'nombre_prs', nombre: 'Nombres' },
+        { id: 'apellido_ps', nombre: 'Apellidos' },
+        { id: 'fc_nan_prc', nombre: 'Fecha de nacimiento' },
+        { id: 'FK_sexo_p', nombre: 'Sexo' },
+        { id: 'FK_g_sg', nombre: 'Grupo sanguíneo' },
+        { id: 'FK_g_atn', nombre: 'Grupo de atención' },
+        { id: 'FK_cg', nombre: 'Cargo' },
+        { id: 'FK_ag', nombre: 'Agencia' }
+    ];
+
+    for (const campo of campos) {
+        const elemento = document.getElementById(campo.id);
+
+        if (!elemento || elemento.value.trim() === '') {
+            return {
+                ok: false,
+                mensaje: `Campo obligatorio vacío: ${campo.nombre}`
+            };
+        }
+    }
+
+    const hcl = document.getElementById('hcl_num').value.trim();
+    if (!/^[0-9]+$/.test(hcl)) {
+        return {
+            ok: false,
+            mensaje: 'El N° HCL debe ser numérico'
+        };
+    }
+
+    const ci = document.getElementById('ci_prs').value.trim();
+    if (!/^[0-9A-Za-z]{5,15}$/.test(ci)) {
+        return {
+            ok: false,
+            mensaje: 'La cédula o identificación no tiene un formato válido'
+        };
+    }
+
+    const email = document.getElementById('email_prs').value.trim();
+    if (email !== '' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return {
+            ok: false,
+            mensaje: 'El email no tiene un formato válido'
+        };
+    }
+
+    const celular = document.getElementById('num_cel_prs').value.trim();
+    if (celular !== '' && !/^[0-9]{7,10}$/.test(celular)) {
+        return {
+            ok: false,
+            mensaje: 'El celular debe contener entre 7 y 10 dígitos'
+        };
+    }
+
+    return {
+        ok: true,
+        mensaje: ''
+    };
 }

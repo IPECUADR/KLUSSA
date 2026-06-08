@@ -16,7 +16,15 @@ document.addEventListener('DOMContentLoaded', function () {
     if (btnGuardarPaciente) {
         btnGuardarPaciente.addEventListener('click', guardarPaciente);
     }
+
+    document.addEventListener('click', function (event) {
+        if (event.target.classList.contains('btnEditarPaciente')) {
+            const idPaciente = event.target.getAttribute('data-id');
+            abrirModalEditarPaciente(idPaciente);
+        }
+    });
 });
+
 
 // Función para cargar pacientes desde el servidor y mostrarlos en la tabla
 async function cargarPacientesSalud() {
@@ -44,7 +52,7 @@ async function cargarPacientesSalud() {
         if (!json.data || json.data.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="13" class="text-center text-muted">
+                    <td colspan="14" class="text-center text-muted">
                         No existen pacientes registrados.
                     </td>
                 </tr>
@@ -78,6 +86,13 @@ async function cargarPacientesSalud() {
                             ${escaparHtml(item.est_p)}
                         </span>
                     </td>
+                    <td>
+                        <button type="button"
+                            class="btn btn-sm btn-outline-primary btnEditarPaciente"
+                                data-id="${escaparHtml(item.PK_prs)}">
+                            Editar
+                        </button>
+                    </td>
                 </tr>
             `;
 
@@ -90,7 +105,7 @@ async function cargarPacientesSalud() {
 
         tbody.innerHTML = `
             <tr>
-                <td colspan="13" class="text-center text-danger">
+                <td colspan="14" class="text-center text-danger">
                     Error al cargar pacientes.
                 </td>
             </tr>
@@ -130,6 +145,10 @@ function escaparHtml(valor) {
 
 async function abrirModalNuevoPaciente() {
     limpiarFormularioPaciente();
+
+    document.getElementById('modalPacienteLabel').textContent = 'Registrar Paciente';
+    document.getElementById('btnGuardarPaciente').textContent = 'Guardar Paciente';
+
     await cargarCatalogosPaciente();
 
     const modalElement = document.getElementById('modalPaciente');
@@ -150,7 +169,7 @@ function limpiarFormularioPaciente() {
     }
 
     const btnGuardar = document.getElementById('btnGuardarPaciente');
-        if (btnGuardar) {
+    if (btnGuardar) {
         btnGuardar.disabled = false;
     }
 }
@@ -235,7 +254,13 @@ async function guardarPaciente() {
         btnGuardar.disabled = true;
         btnGuardar.textContent = 'Guardando...';
 
-        const respuesta = await fetch('../DATABASE/SALUD/paciente_insertar.php', {
+        const idPaciente = document.getElementById('PK_prs').value.trim();
+
+        const url = idPaciente === ''
+            ? '../DATABASE/SALUD/paciente_insertar.php'
+            : '../DATABASE/SALUD/paciente_actualizar.php';
+
+        const respuesta = await fetch(url, {
             method: 'POST',
             body: datos
         });
@@ -346,4 +371,62 @@ function validarFormularioPaciente() {
         ok: true,
         mensaje: ''
     };
+}
+
+// Función para abrir el modal de edición de paciente y cargar su información
+async function abrirModalEditarPaciente(idPaciente) {
+    const alerta = document.getElementById('alertaFormularioPaciente');
+
+    limpiarFormularioPaciente();
+
+    document.getElementById('modalPacienteLabel').textContent = 'Editar Paciente';
+    document.getElementById('btnGuardarPaciente').textContent = 'Actualizar Paciente';
+
+    await cargarCatalogosPaciente();
+
+    try {
+        const respuesta = await fetch(`../DATABASE/SALUD/paciente_obtener.php?PK_prs=${encodeURIComponent(idPaciente)}`, {
+            method: 'GET'
+        });
+
+        const json = await respuesta.json();
+
+        if (json.err) {
+            alerta.innerHTML = `
+                <div class="alert alert-danger">
+                    ${json.mensaje}
+                </div>
+            `;
+            return;
+        }
+
+        const paciente = json.data;
+
+        document.getElementById('PK_prs').value = paciente.PK_prs;
+        document.getElementById('hcl_num').value = paciente.hcl_num;
+        document.getElementById('ci_prs').value = paciente.ci_prs;
+        document.getElementById('nombre_prs').value = paciente.nombre_prs;
+        document.getElementById('apellido_ps').value = paciente.apellido_ps;
+        document.getElementById('fc_nan_prc').value = paciente.fc_nan_prc;
+        document.getElementById('FK_sexo_p').value = paciente.FK_sexo_p;
+        document.getElementById('FK_g_sg').value = paciente.FK_g_sg;
+        document.getElementById('FK_g_atn').value = paciente.FK_g_atn;
+        document.getElementById('FK_cg').value = paciente.FK_cg;
+        document.getElementById('FK_ag').value = paciente.FK_ag;
+        document.getElementById('email_prs').value = paciente.email_prs;
+        document.getElementById('num_cel_prs').value = paciente.num_cel_prs;
+
+        const modalElement = document.getElementById('modalPaciente');
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+
+    } catch (error) {
+        console.error(error);
+
+        alerta.innerHTML = `
+            <div class="alert alert-danger">
+                Error al cargar información del paciente.
+            </div>
+        `;
+    }
 }

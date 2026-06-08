@@ -56,11 +56,12 @@
                                     <th>Grupo Atención</th>
                                     <th>Grupo Sanguíneo</th>
                                     <th>Estado</th>
+                                    <th>Opciones</th>
                                 </tr>
                             </thead>
                             <tbody id="contenidoPacientes">
                                 <tr>
-                                    <td colspan="13" class="text-center text-muted">
+                                    <td colspan="14" class="text-center text-muted">
                                         Cargando pacientes...
                                     </td>
                                 </tr>
@@ -75,7 +76,7 @@
     </div>
 
 </section>
-// Modal para registro y edición de pacientes
+
 <div class="modal fade" id="modalPaciente" tabindex="-1" aria-labelledby="modalPacienteLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content rounded-4 border-0 shadow">
@@ -86,6 +87,7 @@
 
             <div class="modal-body">
                 <form id="formPaciente">
+                    <input type="hidden" id="PK_prs" name="PK_prs">
                     <div class="row">
 
                         <div class="col-md-3 mb-3">

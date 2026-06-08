@@ -5,6 +5,11 @@ document.addEventListener('DOMContentLoaded', function () {
     if (inputBuscar) {
         inputBuscar.addEventListener('keyup', filtrarPacientes);
     }
+
+    const btnNuevoPaciente = document.getElementById('btnNuevoPaciente');
+    if (btnNuevoPaciente) {
+        btnNuevoPaciente.addEventListener('click', abrirModalNuevoPaciente);
+    }
 });
 
 async function cargarPacientesSalud() {
@@ -112,4 +117,90 @@ function escaparHtml(valor) {
         .replaceAll('>', '&gt;')
         .replaceAll('"', '&quot;')
         .replaceAll("'", '&#039;');
+}
+
+// Función para abrir el modal de nuevo paciente
+
+async function abrirModalNuevoPaciente() {
+    limpiarFormularioPaciente();
+    await cargarCatalogosPaciente();
+
+    const modalElement = document.getElementById('modalPaciente');
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+}
+
+function limpiarFormularioPaciente() {
+    const form = document.getElementById('formPaciente');
+    const alerta = document.getElementById('alertaFormularioPaciente');
+
+    if (form) {
+        form.reset();
+    }
+
+    if (alerta) {
+        alerta.innerHTML = '';
+    }
+
+    const btnGuardar = document.getElementById('btnGuardarPaciente');
+    if (btnGuardar) {
+        btnGuardar.disabled = true;
+    }
+}
+
+async function cargarCatalogosPaciente() {
+    const alerta = document.getElementById('alertaFormularioPaciente');
+
+    try {
+        const respuesta = await fetch('../DATABASE/SALUD/catalogos_paciente.php', {
+            method: 'GET'
+        });
+
+        const json = await respuesta.json();
+
+        if (json.err) {
+            alerta.innerHTML = `
+                <div class="alert alert-warning">
+                    ${json.mensaje}
+                </div>
+            `;
+            return;
+        }
+
+        llenarSelect('FK_sexo_p', json.data.sexo, 'PK_sexo_p', 'sexo_p');
+        llenarSelect('FK_g_sg', json.data.grupo_sanguineo, 'PK_g_sg', 'g_sanginio');
+        llenarSelect('FK_g_atn', json.data.grupo_atencion, 'PK_g_atn', 'g_atencion');
+        llenarSelect('FK_cg', json.data.cargo, 'PK_cg', 'cargo');
+        llenarSelect('FK_ag', json.data.agencia, 'PK_ag', 'agencia_ag');
+
+    } catch (error) {
+        console.error(error);
+
+        alerta.innerHTML = `
+            <div class="alert alert-danger">
+                Error al cargar catálogos del formulario.
+            </div>
+        `;
+    }
+}
+
+function llenarSelect(idSelect, datos, campoValor, campoTexto) {
+    const select = document.getElementById(idSelect);
+
+    if (!select) {
+        return;
+    }
+
+    select.innerHTML = '<option value="">Seleccione una opción</option>';
+
+    if (!datos || datos.length === 0) {
+        return;
+    }
+
+    datos.forEach(function (item) {
+        const option = document.createElement('option');
+        option.value = item[campoValor];
+        option.textContent = item[campoTexto];
+        select.appendChild(option);
+    });
 }

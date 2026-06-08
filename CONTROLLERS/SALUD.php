@@ -29,7 +29,7 @@ if ((int)$rol !== 6) {
     exit();
 }
 
-// Cargar plantilla principal de KLUSSA
-require_once '../HOME/head.home.temp.php';
+// Cargar template SALUD indicado por jefatura
+require_once '../TEM-SL/temp_salud_header.php';
 require_once '../INTERFACE/SALUD/salud_home.php';
-require_once '../HOME/footer.home.php';
+require_once '../TEM-SL/temp_salud_footer.php';

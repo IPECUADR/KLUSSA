@@ -74,8 +74,8 @@ if ($usuarioSistema === '') {
                         </a>
 
                         <ul class="dropdown-menu">
-                            <li>
-                                <a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">
+                           <li>
+                                <a class="dropdown-item" href="SALUD-EXAMENES.php">
                                     <i class="fa fa-notes-medical me-2"></i> Exámenes
                                 </a>
                             </li>

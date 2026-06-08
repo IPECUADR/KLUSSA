@@ -36,8 +36,8 @@
                     <p class="text-muted">
                         Agendamiento, ejecución y carga de resultados médicos.
                     </p>
-                    <a href="#" class="btn btn-primary btn-sm disabled">
-                        Próximamente
+                    <a href="SALUD-EXAMENES.php" class="btn btn-primary btn-sm">
+                        Ingresar
                     </a>
                 </div>
             </div>

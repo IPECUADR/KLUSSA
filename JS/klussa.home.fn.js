@@ -358,21 +358,29 @@ function cargar_menu(user_log) {
 
                         salud = `
                             <div class="col-lg-12 col-md-12 col-sm-12 mt-4 op" id="sec_salud">
-                                <h3 class="py-3">SALUD OCUPACIONAL</h3>
+                                <h3 class="py-3 text-white">SALUD OCUPACIONAL</h3>
 
-                                <div class="card shadow-lg roundle">
-                                    <img src="../IMAGE/corazon.png" class="card-img-top p-4" alt="Salud Ocupacional">
+                                <div class="card shadow-lg roundle border-0 salud-home-card" style="background: rgba(255,255,255,0.08);">
+                                    <div class="card-body text-center text-white p-4">
 
-                                    <div class="card-body text-center d-grid gap-2">
-                                        <h5 class="card-title">Módulo de Salud</h5>
+                                        
+                                    <div class="mb-3">
+                                        <img src="../IMAGE/corazon.png" alt="Corazón" class="img-fluid">
+                                    </div>
 
-                                        <p class="card-text">
+
+                                        <h4 class="card-title text-white mb-2">
+                                            MÓDULO DE SALUD
+                                        </h4>
+
+                                        <p class="card-text text-white-50 mb-4" style="max-width: 650px; margin: 0 auto;">
                                             Gestión de pacientes, exámenes ocupacionales, vacunas y morbilidad.
                                         </p>
 
-                                        <button class="btn btn-lg btn-success" id="btn_salud" type="button">
+                                        <button class="btn btn-success px-5 py-2" id="btn_salud" type="button">
                                             <i class="fas fa-heartbeat"></i> Ingresar
                                         </button>
+
                                     </div>
                                 </div>
                             </div>

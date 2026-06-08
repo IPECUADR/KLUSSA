@@ -1,3 +1,4 @@
+CONFIG/env.php
 CONFIG/env.local.php
 CONFIG/env.production.php
 *.sql

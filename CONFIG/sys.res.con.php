@@ -5,26 +5,27 @@ if (basename(__FILE__) == basename($_SERVER['SCRIPT_FILENAME'])) {
     exit('Acceso denegado');
 }
 
+$configPath = __DIR__ . '/env.php';
 
-$servidor = 'localhost';
-$usuario  = 'kluaneitdospunto_klussa_Des';
-$password = 'D!]1%W0bz,im';
-$database = 'kluaneitdospunto_klussa_desechos';
+if (!file_exists($configPath)) {
+    die('No existe archivo de configuración del sistema.');
+}
 
-// Crear conexión
+$config = require $configPath;
+
+if (!isset($config['desechos'])) {
+    die('No existe configuración para la base de desechos.');
+}
+
+$servidor = $config['desechos']['host'];
+$usuario  = $config['desechos']['user'];
+$password = $config['desechos']['pass'];
+$database = $config['desechos']['db'];
+
 $con = mysqli_connect($servidor, $usuario, $password, $database);
 
-// Verificar conexión
 if (!$con) {
     die("❌ Error de conexión: " . mysqli_connect_error());
 }
 
-// Configurar charset UTF-8 para evitar problemas con acentos
 mysqli_set_charset($con, "utf8mb4");
-
-// ✅ Conexión correcta
-// echo "✅ Conexión exitosa";
-
-
-
-?>

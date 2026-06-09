@@ -22,7 +22,7 @@
                     <p class="text-muted">
                         Gestión de personas y pacientes registrados en salud ocupacional.
                     </p>
-                    <a href="../CONTROLLERS/SALUDS.php" class="btn btn-primary btn-sm disabled">
+                    <a href="SALUD-PACIENTES.php" class="btn btn-primary btn-sm">
                         Ingresar
                     </a>
                 </div>

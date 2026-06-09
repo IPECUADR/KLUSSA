@@ -15,15 +15,27 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const btnGuardarExamen = document.getElementById('btnGuardarExamen');
+    
 
     if (btnGuardarExamen) {
         btnGuardarExamen.addEventListener('click', guardarExamen);
     }
 
+    const btnGuardarResultadoExamen = document.getElementById('btnGuardarResultadoExamen');
+
+    if (btnGuardarResultadoExamen) {
+        btnGuardarResultadoExamen.addEventListener('click', guardarResultadoExamen);
+    }
+
     document.addEventListener('click', function (event) {
         if (event.target.classList.contains('btnEditarExamen')) {
-        const idExamen = event.target.getAttribute('data-id');
-        abrirModalEditarExamen(idExamen);
+            const idExamen = event.target.getAttribute('data-id');
+            abrirModalEditarExamen(idExamen);
+        }
+
+        if (event.target.classList.contains('btnResultadoExamen')) {
+            const idExamen = event.target.getAttribute('data-id');
+            abrirModalResultadoExamen(idExamen);
         }
     });
 });
@@ -101,12 +113,21 @@ async function cargarExamenesSalud() {
                     <td>${escaparHtml(valoracion)}</td>
                     
                     <td>${escaparHtml(certificado)}</td>
+
                     <td>
-                        <button type="button"
-                                class="btn btn-sm btn-outline-primary btnEditarExamen"
-                                data-id="${escaparHtml(item.PK_examen)}">
-                            Editar
-                        </button>
+                        <div class="d-flex gap-1 flex-wrap">
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-primary btnEditarExamen"
+                                    data-id="${escaparHtml(item.PK_examen)}">
+                                Editar
+                            </button>
+
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-success btnResultadoExamen"
+                                    data-id="${escaparHtml(item.PK_examen)}">
+                                Resultado
+                            </button>
+                        </div>
                     </td>
 
                 </tr>
@@ -472,4 +493,198 @@ function escaparHtml(valor) {
         .replaceAll('>', '&gt;')
         .replaceAll('"', '&quot;')
         .replaceAll("'", '&#039;');
+}
+
+async function abrirModalResultadoExamen(idExamen) {
+    limpiarFormularioResultadoExamen();
+    await cargarCatalogosResultadoExamen();
+
+    try {
+        const respuesta = await fetch(`../DATABASE/SALUD/examen_obtener.php?PK_examen=${encodeURIComponent(idExamen)}`, {
+            method: 'GET'
+        });
+
+        const json = await respuesta.json();
+
+        const alerta = document.getElementById('alertaFormularioResultadoExamen');
+
+        if (json.err) {
+            alerta.innerHTML = `
+                <div class="alert alert-danger">
+                    ${json.mensaje}
+                </div>
+            `;
+            return;
+        }
+
+        const examen = json.data;
+
+        document.getElementById('PK_examen_resultado').value = examen.PK_examen;
+        document.getElementById('FK_est_exam_resultado').value = examen.FK_est_exam;
+        document.getElementById('FK_v_vrd_ex_resultado').value = examen.FK_v_vrd_ex;
+        document.getElementById('resultado_exam').value = examen.resultado_exam ?? '';
+        document.getElementById('v_medica').value = examen.v_medica ?? '';
+        document.getElementById('cal_cert_exam').value = examen.cal_cert_exam ?? '';
+
+        const modalElement = document.getElementById('modalResultadoExamen');
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+
+    } catch (error) {
+        console.error(error);
+
+        const alerta = document.getElementById('alertaFormularioResultadoExamen');
+        alerta.innerHTML = `
+            <div class="alert alert-danger">
+                Error al cargar información del resultado.
+            </div>
+        `;
+    }
+}
+
+function limpiarFormularioResultadoExamen() {
+    const form = document.getElementById('formResultadoExamen');
+    const alerta = document.getElementById('alertaFormularioResultadoExamen');
+
+    if (form) {
+        form.reset();
+    }
+
+    if (alerta) {
+        alerta.innerHTML = '';
+    }
+
+    const btnGuardar = document.getElementById('btnGuardarResultadoExamen');
+
+    if (btnGuardar) {
+        btnGuardar.disabled = false;
+        btnGuardar.textContent = 'Guardar Resultado';
+    }
+}
+
+async function cargarCatalogosResultadoExamen() {
+    const alerta = document.getElementById('alertaFormularioResultadoExamen');
+
+    try {
+        const respuesta = await fetch('../DATABASE/SALUD/catalogos_resultado_examen.php', {
+            method: 'GET'
+        });
+
+        const json = await respuesta.json();
+
+        if (json.err) {
+            alerta.innerHTML = `
+                <div class="alert alert-warning">
+                    ${json.mensaje}
+                </div>
+            `;
+            return;
+        }
+
+        llenarSelect('FK_est_exam_resultado', json.data.estados_examen, 'PK_est_exam', 'estado_exam');
+        llenarSelect('FK_v_vrd_ex_resultado', json.data.validado, 'PK_v_vrd_ex', 'valor_vrd_ex');
+
+    } catch (error) {
+        console.error(error);
+
+        alerta.innerHTML = `
+            <div class="alert alert-danger">
+                Error al cargar catálogos del resultado.
+            </div>
+        `;
+    }
+}
+
+async function guardarResultadoExamen() {
+    const alerta = document.getElementById('alertaFormularioResultadoExamen');
+    const btnGuardar = document.getElementById('btnGuardarResultadoExamen');
+
+    const validacion = validarFormularioResultadoExamen();
+
+    if (!validacion.ok) {
+        alerta.innerHTML = `
+            <div class="alert alert-warning">
+                ${validacion.mensaje}
+            </div>
+        `;
+        return;
+    }
+
+    const form = document.getElementById('formResultadoExamen');
+    const datos = new FormData(form);
+
+    try {
+        btnGuardar.disabled = true;
+        btnGuardar.textContent = 'Guardando...';
+
+        const respuesta = await fetch('../DATABASE/SALUD/examen_resultado_actualizar.php', {
+            method: 'POST',
+            body: datos
+        });
+
+        const json = await respuesta.json();
+
+        if (json.err) {
+            alerta.innerHTML = `
+                <div class="alert alert-danger">
+                    ${json.mensaje}
+                </div>
+            `;
+            return;
+        }
+
+        alerta.innerHTML = `
+            <div class="alert alert-success">
+                ${json.mensaje}
+            </div>
+        `;
+
+        await cargarExamenesSalud();
+
+        setTimeout(function () {
+            const modalElement = document.getElementById('modalResultadoExamen');
+            const modal = bootstrap.Modal.getInstance(modalElement);
+
+            if (modal) {
+                modal.hide();
+            }
+
+            limpiarFormularioResultadoExamen();
+        }, 800);
+
+    } catch (error) {
+        console.error(error);
+
+        alerta.innerHTML = `
+            <div class="alert alert-danger">
+                Error al enviar el resultado del examen.
+            </div>
+        `;
+    } finally {
+        btnGuardar.disabled = false;
+        btnGuardar.textContent = 'Guardar Resultado';
+    }
+}
+
+function validarFormularioResultadoExamen() {
+    const campos = [
+        { id: 'FK_est_exam_resultado', nombre: 'Estado del examen' },
+        { id: 'FK_v_vrd_ex_resultado', nombre: 'Validado' }
+    ];
+
+    for (const campo of campos) {
+        const elemento = document.getElementById(campo.id);
+
+        if (!elemento || elemento.value.trim() === '') {
+            return {
+                ok: false,
+                mensaje: `Campo obligatorio vacío: ${campo.nombre}`
+            };
+        }
+    }
+
+    return {
+        ok: true,
+        mensaje: ''
+    };
 }

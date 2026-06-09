@@ -103,7 +103,7 @@
 
                 <form id="formExamen">
                     <input type="hidden" id="PK_examen" name="PK_examen">
-                    
+
                     <div class="row">
 
                         <div class="col-md-12 mb-3">
@@ -146,6 +146,72 @@
 
                 <button type="button" class="btn btn-primary" id="btnGuardarExamen">
                     Guardar Examen
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalResultadoExamen" tabindex="-1" aria-labelledby="modalResultadoExamenLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content rounded-4 border-0 shadow">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalResultadoExamenLabel">Resultado del Examen</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <form id="formResultadoExamen">
+                    <input type="hidden" id="PK_examen_resultado" name="PK_examen_resultado">
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Estado del examen</label>
+                            <select class="form-select" id="FK_est_exam_resultado" name="FK_est_exam_resultado">
+                                <option value="">Seleccione una opción</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Validado</label>
+                            <select class="form-select" id="FK_v_vrd_ex_resultado" name="FK_v_vrd_ex_resultado">
+                                <option value="">Seleccione una opción</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Resultado del examen</label>
+                            <textarea class="form-control" id="resultado_exam" name="resultado_exam" rows="3" placeholder="Ingrese resultado del examen"></textarea>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Valoración médica</label>
+                            <textarea class="form-control" id="v_medica" name="v_medica" rows="3" placeholder="Ingrese valoración médica"></textarea>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Certificado / referencia documental</label>
+                            <input type="text" class="form-control" id="cal_cert_exam" name="cal_cert_exam" placeholder="Ejemplo: certificado_2026.pdf o descripción del certificado">
+                        </div>
+
+                    </div>
+                </form>
+
+                <div id="alertaFormularioResultadoExamen"></div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+
+                <button type="button" class="btn btn-primary" id="btnGuardarResultadoExamen">
+                    Guardar Resultado
                 </button>
             </div>
 

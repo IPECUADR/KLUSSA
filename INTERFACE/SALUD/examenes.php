@@ -4,7 +4,7 @@
         <div class="col-12">
             <div class="card shadow-sm border-0 rounded-4">
                 <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-2">
-                    
+
                     <div>
                         <h3 class="mb-1">Exámenes Ocupacionales</h3>
                         <p class="text-muted mb-0">
@@ -13,7 +13,7 @@
                     </div>
 
                     <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-primary" id="btnNuevoExamen" disabled>
+                        <button type="button" class="btn btn-primary" id="btnNuevoExamen">
                             Nuevo Examen
                         </button>
 
@@ -29,10 +29,10 @@
 
     <div class="row mb-3">
         <div class="col-md-6">
-            <input 
-                type="text" 
-                id="buscarExamen" 
-                class="form-control" 
+            <input
+                type="text"
+                id="buscarExamen"
+                class="form-control"
                 placeholder="Buscar por HCL, paciente, cédula, tipo, estado, agencia o cargo"
             >
         </div>
@@ -78,7 +78,7 @@
                     </div>
 
                     <small class="text-muted">
-                        Nota: por ahora este módulo solo lista exámenes. El registro y carga de resultados se migrará en la siguiente fase.
+                        Nota: el registro inicial deja el examen en estado AGENDADO y validado NO.
                     </small>
 
                 </div>
@@ -88,5 +88,66 @@
     </div>
 
 </section>
+
+<div class="modal fade" id="modalExamen" tabindex="-1" aria-labelledby="modalExamenLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content rounded-4 border-0 shadow">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalExamenLabel">Registrar Examen</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <form id="formExamen">
+                    <div class="row">
+
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Paciente</label>
+                            <select class="form-select" id="FK_prs" name="FK_prs">
+                                <option value="">Seleccione un paciente</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Tipo de examen</label>
+                            <select class="form-select" id="FK_t_ex" name="FK_t_ex">
+                                <option value="">Seleccione una opción</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Fecha programada</label>
+                            <input type="date" class="form-control" id="fc_prog_exam" name="fc_prog_exam">
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Año</label>
+                            <select class="form-select" id="FK_prog_a" name="FK_prog_a">
+                                <option value="">Seleccione una opción</option>
+                            </select>
+                        </div>
+
+                    </div>
+                </form>
+
+                <div id="alertaFormularioExamen"></div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+
+                <button type="button" class="btn btn-primary" id="btnGuardarExamen">
+                    Guardar Examen
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 <script src="../JS/SALUD/salud.examenes.fn.js"></script>

@@ -64,12 +64,13 @@
                                     <th>Resultado</th>
                                     <th>Valoración Médica</th>
                                     <th>Certificado</th>
+                                    <th>Opciones</th>
                                 </tr>
                             </thead>
 
                             <tbody id="contenidoExamenes">
                                 <tr>
-                                    <td colspan="14" class="text-center text-muted">
+                                    <td colspan="15" class="text-center text-muted">
                                         Cargando exámenes...
                                     </td>
                                 </tr>
@@ -101,6 +102,8 @@
             <div class="modal-body">
 
                 <form id="formExamen">
+                    <input type="hidden" id="PK_examen" name="PK_examen">
+                    
                     <div class="row">
 
                         <div class="col-md-12 mb-3">

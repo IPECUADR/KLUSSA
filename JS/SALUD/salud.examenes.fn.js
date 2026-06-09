@@ -1,3 +1,4 @@
+// JS para gestión de exámenes de salud
 document.addEventListener('DOMContentLoaded', function () {
     cargarExamenesSalud();
 
@@ -18,8 +19,16 @@ document.addEventListener('DOMContentLoaded', function () {
     if (btnGuardarExamen) {
         btnGuardarExamen.addEventListener('click', guardarExamen);
     }
+
+    document.addEventListener('click', function (event) {
+        if (event.target.classList.contains('btnEditarExamen')) {
+        const idExamen = event.target.getAttribute('data-id');
+        abrirModalEditarExamen(idExamen);
+        }
+    });
 });
 
+// Función para cargar exámenes de salud
 async function cargarExamenesSalud() {
     const tbody = document.getElementById('contenidoExamenes');
     const alerta = document.getElementById('alertaExamenes');
@@ -45,7 +54,7 @@ async function cargarExamenesSalud() {
         if (!json.data || json.data.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="14" class="text-center text-muted">
+                    <td colspan="15" class="text-center text-muted">
                         No existen exámenes registrados.
                     </td>
                 </tr>
@@ -90,7 +99,16 @@ async function cargarExamenesSalud() {
                     <td>${escaparHtml(item.valor_vrd_ex)}</td>
                     <td>${escaparHtml(resultado)}</td>
                     <td>${escaparHtml(valoracion)}</td>
+                    
                     <td>${escaparHtml(certificado)}</td>
+                    <td>
+                        <button type="button"
+                                class="btn btn-sm btn-outline-primary btnEditarExamen"
+                                data-id="${escaparHtml(item.PK_examen)}">
+                            Editar
+                        </button>
+                    </td>
+
                 </tr>
             `;
 
@@ -103,7 +121,7 @@ async function cargarExamenesSalud() {
 
         tbody.innerHTML = `
             <tr>
-                <td colspan="14" class="text-center text-danger">
+                <td colspan="15" class="text-center text-danger">
                     Error al cargar exámenes.
                 </td>
             </tr>
@@ -111,8 +129,14 @@ async function cargarExamenesSalud() {
     }
 }
 
+// Función para abrir modal de nuevo examen
+
 async function abrirModalNuevoExamen() {
     limpiarFormularioExamen();
+
+    document.getElementById('modalExamenLabel').textContent = 'Registrar Examen';
+    document.getElementById('btnGuardarExamen').textContent = 'Guardar Examen';
+
     await cargarCatalogosExamen();
 
     const modalElement = document.getElementById('modalExamen');
@@ -120,12 +144,19 @@ async function abrirModalNuevoExamen() {
     modal.show();
 }
 
+// Función para abrir modal de edición de examen
 function limpiarFormularioExamen() {
     const form = document.getElementById('formExamen');
     const alerta = document.getElementById('alertaFormularioExamen');
 
     if (form) {
         form.reset();
+    }
+
+    const inputId = document.getElementById('PK_examen');
+
+    if (inputId) {
+    inputId.value = '';
     }
 
     if (alerta) {
@@ -140,6 +171,7 @@ function limpiarFormularioExamen() {
     }
 }
 
+// Función para cargar catálogos necesarios para el formulario de examen
 async function cargarCatalogosExamen() {
     const alerta = document.getElementById('alertaFormularioExamen');
 
@@ -174,6 +206,7 @@ async function cargarCatalogosExamen() {
     }
 }
 
+// Función para llenar select de pacientes con formato personalizado
 function llenarSelectPacientes(idSelect, datos) {
     const select = document.getElementById(idSelect);
 
@@ -198,6 +231,7 @@ function llenarSelectPacientes(idSelect, datos) {
     });
 }
 
+// Función genérica para llenar selects
 function llenarSelect(idSelect, datos, campoValor, campoTexto) {
     const select = document.getElementById(idSelect);
 
@@ -219,6 +253,7 @@ function llenarSelect(idSelect, datos, campoValor, campoTexto) {
     });
 }
 
+// Función para guardar examen (crear o actualizar)
 async function guardarExamen() {
     const alerta = document.getElementById('alertaFormularioExamen');
     const btnGuardar = document.getElementById('btnGuardarExamen');
@@ -241,7 +276,13 @@ async function guardarExamen() {
         btnGuardar.disabled = true;
         btnGuardar.textContent = 'Guardando...';
 
-        const respuesta = await fetch('../DATABASE/SALUD/examen_insertar.php', {
+        const idExamen = document.getElementById('PK_examen').value.trim();
+
+        const url = idExamen === ''
+            ? '../DATABASE/SALUD/examen_insertar.php'
+            : '../DATABASE/SALUD/examen_actualizar.php';
+
+        const respuesta = await fetch(url, {
             method: 'POST',
             body: datos
         });
@@ -290,6 +331,57 @@ async function guardarExamen() {
     }
 }
 
+// Función para abrir modal de edición de examen
+async function abrirModalEditarExamen(idExamen) {
+    const alerta = document.getElementById('alertaFormularioExamen');
+
+    limpiarFormularioExamen();
+
+    document.getElementById('modalExamenLabel').textContent = 'Editar Examen';
+    document.getElementById('btnGuardarExamen').textContent = 'Actualizar Examen';
+
+    await cargarCatalogosExamen();
+
+    try {
+        const respuesta = await fetch(`../DATABASE/SALUD/examen_obtener.php?PK_examen=${encodeURIComponent(idExamen)}`, {
+            method: 'GET'
+        });
+
+        const json = await respuesta.json();
+
+        if (json.err) {
+            alerta.innerHTML = `
+                <div class="alert alert-danger">
+                    ${json.mensaje}
+                </div>
+            `;
+            return;
+        }
+
+        const examen = json.data;
+
+        document.getElementById('PK_examen').value = examen.PK_examen;
+        document.getElementById('FK_prs').value = examen.FK_prs;
+        document.getElementById('FK_t_ex').value = examen.FK_t_ex;
+        document.getElementById('fc_prog_exam').value = examen.fc_prog_exam;
+        document.getElementById('FK_prog_a').value = examen.FK_prog_a;
+
+        const modalElement = document.getElementById('modalExamen');
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+
+    } catch (error) {
+        console.error(error);
+
+        alerta.innerHTML = `
+            <div class="alert alert-danger">
+                Error al cargar información del examen.
+            </div>
+        `;
+    }
+}
+
+// Función para validar formulario de examen
 function validarFormularioExamen() {
     const campos = [
         { id: 'FK_prs', nombre: 'Paciente' },
@@ -315,6 +407,7 @@ function validarFormularioExamen() {
     };
 }
 
+// Función para filtrar exámenes en la tabla
 function filtrarExamenes() {
     const input = document.getElementById('buscarExamen');
 
@@ -336,6 +429,7 @@ function filtrarExamenes() {
     });
 }
 
+// Función para obtener clase CSS según estado del examen
 function obtenerClaseEstadoExamen(estado) {
     const estadoNormalizado = String(estado || '').trim().toUpperCase();
 
@@ -366,6 +460,7 @@ function obtenerClaseEstadoExamen(estado) {
     return 'badge bg-secondary';
 }
 
+// Función para escapar caracteres HTML y prevenir XSS
 function escaparHtml(valor) {
     if (valor === null || valor === undefined) {
         return '';

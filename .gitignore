@@ -3,3 +3,6 @@ CONFIG/env.local.php
 CONFIG/env.production.php
 *.sql
 /backups/
+# Archivos subidos de resultados de salud
+RESULTADOS/SALUD/EXAMENES/*
+!RESULTADOS/SALUD/EXAMENES/.gitkeep

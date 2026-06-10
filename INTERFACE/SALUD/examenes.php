@@ -33,8 +33,7 @@
                 type="text"
                 id="buscarExamen"
                 class="form-control"
-                placeholder="Buscar por HCL, paciente, cédula, tipo, estado, agencia o cargo"
-            >
+                placeholder="Buscar por HCL, paciente, cédula, tipo, estado, agencia o cargo">
         </div>
     </div>
 
@@ -194,8 +193,36 @@
                         </div>
 
                         <div class="col-md-12 mb-3">
-                            <label class="form-label">Certificado / referencia documental</label>
-                            <input type="text" class="form-control" id="cal_cert_exam" name="cal_cert_exam" placeholder="Ejemplo: certificado_2026.pdf o descripción del certificado">
+                            <label class="form-label">Certificado / resultado actual</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="cal_cert_exam"
+                                name="cal_cert_exam"
+                                placeholder="Archivo actual o referencia documental"
+                                readonly>
+                            <small class="text-muted">
+                                Este campo muestra el archivo actualmente asociado al examen.
+                            </small>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Subir nuevo certificado / resultado</label>
+                            <input
+                                type="file"
+                                class="form-control"
+                                id="archivo_certificado_exam"
+                                name="archivo_certificado_exam"
+                                accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                            <small class="text-muted">
+                                Formatos permitidos: PDF, JPG, PNG, DOC, DOCX. Tamaño máximo recomendado: 5 MB.
+                            </small>
+                        </div>
+
+                        <div class="col-md-12 mb-3" id="contenedorArchivoActual" style="display:none;">
+                            <a href="#" id="enlaceArchivoActual" target="_blank" class="btn btn-sm btn-outline-success">
+                                <i class="fa fa-file-medical"></i> Ver archivo actual
+                            </a>
                         </div>
 
                     </div>

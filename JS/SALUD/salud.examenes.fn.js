@@ -88,8 +88,13 @@ async function cargarExamenesSalud() {
                 ? item.v_medica
                 : 'Pendiente';
 
-            const certificado = item.cal_cert_exam && item.cal_cert_exam.trim() !== ''
-                ? item.cal_cert_exam
+            const rutaCertificado = item.cal_cert_exam ? String(item.cal_cert_exam).trim() : '';
+
+            const certificadoHtml = rutaCertificado !== ''
+                ?  `<a href="../${rutaCertificado.replace(/^\/+/, '')}" target="_blank" class="btn btn-sm btn-outline-success">
+                        <i class="fa fa-file-medical"></i>
+                        Ver archivo
+                    </a>`
                 : 'Pendiente';
 
             const fila = `
@@ -112,7 +117,7 @@ async function cargarExamenesSalud() {
                     <td>${escaparHtml(resultado)}</td>
                     <td>${escaparHtml(valoracion)}</td>
                     
-                    <td>${escaparHtml(certificado)}</td>
+                    <td>${certificadoHtml}</td>
 
                     <td>
                         <div class="d-flex gap-1 flex-wrap">
@@ -526,6 +531,21 @@ async function abrirModalResultadoExamen(idExamen) {
         document.getElementById('v_medica').value = examen.v_medica ?? '';
         document.getElementById('cal_cert_exam').value = examen.cal_cert_exam ?? '';
 
+        const contenedorArchivo = document.getElementById('contenedorArchivoActual');
+        const enlaceArchivo = document.getElementById('enlaceArchivoActual');
+
+        const rutaArchivo = examen.cal_cert_exam ? String(examen.cal_cert_exam).trim() : '';
+
+        if (contenedorArchivo && enlaceArchivo) {
+            if (rutaArchivo !== '') {
+                contenedorArchivo.style.display = 'block';
+                enlaceArchivo.href = '../' + rutaArchivo.replace(/^\/+/, '');
+            } else {
+                contenedorArchivo.style.display = 'none';
+                enlaceArchivo.href = '#';
+            }
+        }
+
         const modalElement = document.getElementById('modalResultadoExamen');
         const modal = new bootstrap.Modal(modalElement);
         modal.show();
@@ -559,6 +579,17 @@ function limpiarFormularioResultadoExamen() {
     if (btnGuardar) {
         btnGuardar.disabled = false;
         btnGuardar.textContent = 'Guardar Resultado';
+    }
+
+    const contenedorArchivo = document.getElementById('contenedorArchivoActual');
+    const enlaceArchivo = document.getElementById('enlaceArchivoActual');
+
+    if (contenedorArchivo) {
+        contenedorArchivo.style.display = 'none';
+    }
+
+    if (enlaceArchivo) {
+        enlaceArchivo.href = '#';
     }
 }
 

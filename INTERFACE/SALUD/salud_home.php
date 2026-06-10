@@ -50,8 +50,8 @@
                     <p class="text-muted">
                         Registro de vacunas, dosis, marcas y certificados.
                     </p>
-                    <a href="#" class="btn btn-primary btn-sm disabled">
-                        Próximamente
+                    <a href="SALUD-VACUNAS.php" class="btn btn-primary btn-sm">
+                        Ingresar
                     </a>
                 </div>
             </div>
@@ -64,8 +64,8 @@
                     <p class="text-muted">
                         Registro y seguimiento de casos de morbilidad.
                     </p>
-                    <a href="#" class="btn btn-primary btn-sm disabled">
-                        Próximamente
+                    <a href="SALUD-MORBILIDAD.php" class="btn btn-primary btn-sm">
+                        Ingresar
                     </a>
                 </div>
             </div>

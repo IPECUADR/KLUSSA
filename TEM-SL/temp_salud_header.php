@@ -81,13 +81,13 @@ if ($usuarioSistema === '') {
                             </li>
 
                             <li>
-                                <a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">
+                                <a class="dropdown-item" href="SALUD-VACUNAS.php">
                                     <i class="fa fa-syringe me-2"></i> Vacunas
                                 </a>
                             </li>
 
                             <li>
-                                <a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">
+                                <a class="dropdown-item" href="SALUD-MORBILIDAD.php">
                                     <i class="fa fa-file-medical-alt me-2"></i> Morbilidad
                                 </a>
                             </li>

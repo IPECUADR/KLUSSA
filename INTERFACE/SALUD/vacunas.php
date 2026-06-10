@@ -13,7 +13,7 @@
                     </div>
 
                     <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-primary" id="btnNuevaVacuna" disabled>
+                        <button type="button" class="btn btn-primary" id="btnNuevaVacuna">
                             Nueva Vacuna
                         </button>
 
@@ -76,7 +76,7 @@
                     </div>
 
                     <small class="text-muted">
-                        Nota: por ahora este módulo solo lista vacunas. El registro y carga de evidencias se migrará en la siguiente fase.
+                        Nota: las evidencias subidas se almacenan localmente y no se versionan en Git.
                     </small>
 
                 </div>
@@ -86,5 +86,94 @@
     </div>
 
 </section>
+
+<div class="modal fade" id="modalVacuna" tabindex="-1" aria-labelledby="modalVacunaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content rounded-4 border-0 shadow">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalVacunaLabel">Registrar Vacuna</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <form id="formVacuna">
+                    <div class="row">
+
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Paciente</label>
+                            <select class="form-select" id="FK_prs" name="FK_prs">
+                                <option value="">Seleccione un paciente</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Tipo de vacuna</label>
+                            <select class="form-select" id="FK_t_vc" name="FK_t_vc">
+                                <option value="">Seleccione una opción</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Dosis</label>
+                            <select class="form-select" id="FK_ds" name="FK_ds">
+                                <option value="">Seleccione una opción</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Marca</label>
+                            <select class="form-select" id="FK_mc" name="FK_mc">
+                                <option value="">Seleccione una opción</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Fecha vacuna</label>
+                            <input type="date" class="form-control" id="fc_vc" name="fc_vc">
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Estado</label>
+                            <select class="form-select" id="FK_est_vc" name="FK_est_vc">
+                                <option value="">Seleccione una opción</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Evidencia</label>
+                            <input
+                                type="file"
+                                class="form-control"
+                                id="archivo_evidencia_vc"
+                                name="archivo_evidencia_vc"
+                                accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                            >
+                            <small class="text-muted">
+                                Formatos permitidos: PDF, JPG, PNG, DOC, DOCX. Tamaño máximo recomendado: 5 MB.
+                            </small>
+                        </div>
+
+                    </div>
+                </form>
+
+                <div id="alertaFormularioVacuna"></div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+
+                <button type="button" class="btn btn-primary" id="btnGuardarVacuna">
+                    Guardar Vacuna
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 <script src="../JS/SALUD/salud.vacunas.fn.js"></script>

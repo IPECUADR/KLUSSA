@@ -1,4 +1,3 @@
-// JS/SALUD/salud.vacunas.fn.js
 document.addEventListener('DOMContentLoaded', function () {
     cargarVacunasSalud();
 
@@ -7,9 +6,20 @@ document.addEventListener('DOMContentLoaded', function () {
     if (inputBuscar) {
         inputBuscar.addEventListener('keyup', filtrarVacunas);
     }
+
+    const btnNuevaVacuna = document.getElementById('btnNuevaVacuna');
+
+    if (btnNuevaVacuna) {
+        btnNuevaVacuna.addEventListener('click', abrirModalNuevaVacuna);
+    }
+
+    const btnGuardarVacuna = document.getElementById('btnGuardarVacuna');
+
+    if (btnGuardarVacuna) {
+        btnGuardarVacuna.addEventListener('click', guardarVacuna);
+    }
 });
 
-// Función para cargar las vacunas desde el servidor
 async function cargarVacunasSalud() {
     const tbody = document.getElementById('contenidoVacunas');
     const alerta = document.getElementById('alertaVacunas');
@@ -84,7 +94,214 @@ async function cargarVacunasSalud() {
     }
 }
 
-// Función para filtrar las vacunas en la tabla
+async function abrirModalNuevaVacuna() {
+    limpiarFormularioVacuna();
+    await cargarCatalogosVacuna();
+
+    const modalElement = document.getElementById('modalVacuna');
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+}
+
+function limpiarFormularioVacuna() {
+    const form = document.getElementById('formVacuna');
+    const alerta = document.getElementById('alertaFormularioVacuna');
+
+    if (form) {
+        form.reset();
+    }
+
+    if (alerta) {
+        alerta.innerHTML = '';
+    }
+
+    const btnGuardar = document.getElementById('btnGuardarVacuna');
+
+    if (btnGuardar) {
+        btnGuardar.disabled = false;
+        btnGuardar.textContent = 'Guardar Vacuna';
+    }
+}
+
+async function cargarCatalogosVacuna() {
+    const alerta = document.getElementById('alertaFormularioVacuna');
+
+    try {
+        const respuesta = await fetch('../DATABASE/SALUD/catalogos_vacuna.php', {
+            method: 'GET'
+        });
+
+        const json = await respuesta.json();
+
+        if (json.err) {
+            alerta.innerHTML = `
+                <div class="alert alert-warning">
+                    ${json.mensaje}
+                </div>
+            `;
+            return;
+        }
+
+        llenarSelectPacientesVacuna('FK_prs', json.data.pacientes);
+        llenarSelect('FK_t_vc', json.data.tipos_vacuna, 'PK_t_vc', 't_vacuna');
+        llenarSelect('FK_ds', json.data.dosis, 'PK_ds', 'Dosis');
+        llenarSelect('FK_mc', json.data.marcas, 'PK_m_vc', 'Marca');
+        llenarSelect('FK_est_vc', json.data.estados, 'PK_est_vc', 'estado_vacuna');
+
+    } catch (error) {
+        console.error(error);
+
+        alerta.innerHTML = `
+            <div class="alert alert-danger">
+                Error al cargar catálogos de vacunas.
+            </div>
+        `;
+    }
+}
+
+function llenarSelectPacientesVacuna(idSelect, datos) {
+    const select = document.getElementById(idSelect);
+
+    if (!select) {
+        return;
+    }
+
+    select.innerHTML = '<option value="">Seleccione un paciente</option>';
+
+    if (!datos || datos.length === 0) {
+        return;
+    }
+
+    datos.forEach(function (item) {
+        const option = document.createElement('option');
+        const paciente = `${item.hcl_num} - ${item.apellido_ps} ${item.nombre_prs} - ${item.ci_prs}`;
+
+        option.value = item.PK_prs;
+        option.textContent = paciente;
+
+        select.appendChild(option);
+    });
+}
+
+function llenarSelect(idSelect, datos, campoValor, campoTexto) {
+    const select = document.getElementById(idSelect);
+
+    if (!select) {
+        return;
+    }
+
+    select.innerHTML = '<option value="">Seleccione una opción</option>';
+
+    if (!datos || datos.length === 0) {
+        return;
+    }
+
+    datos.forEach(function (item) {
+        const option = document.createElement('option');
+        option.value = item[campoValor];
+        option.textContent = item[campoTexto];
+        select.appendChild(option);
+    });
+}
+
+async function guardarVacuna() {
+    const alerta = document.getElementById('alertaFormularioVacuna');
+    const btnGuardar = document.getElementById('btnGuardarVacuna');
+
+    const validacion = validarFormularioVacuna();
+
+    if (!validacion.ok) {
+        alerta.innerHTML = `
+            <div class="alert alert-warning">
+                ${validacion.mensaje}
+            </div>
+        `;
+        return;
+    }
+
+    const form = document.getElementById('formVacuna');
+    const datos = new FormData(form);
+
+    try {
+        btnGuardar.disabled = true;
+        btnGuardar.textContent = 'Guardando...';
+
+        const respuesta = await fetch('../DATABASE/SALUD/vacuna_insertar.php', {
+            method: 'POST',
+            body: datos
+        });
+
+        const json = await respuesta.json();
+
+        if (json.err) {
+            alerta.innerHTML = `
+                <div class="alert alert-danger">
+                    ${json.mensaje}
+                </div>
+            `;
+            return;
+        }
+
+        alerta.innerHTML = `
+            <div class="alert alert-success">
+                ${json.mensaje}
+            </div>
+        `;
+
+        await cargarVacunasSalud();
+
+        setTimeout(function () {
+            const modalElement = document.getElementById('modalVacuna');
+            const modal = bootstrap.Modal.getInstance(modalElement);
+
+            if (modal) {
+                modal.hide();
+            }
+
+            limpiarFormularioVacuna();
+        }, 800);
+
+    } catch (error) {
+        console.error(error);
+
+        alerta.innerHTML = `
+            <div class="alert alert-danger">
+                Error al enviar el formulario.
+            </div>
+        `;
+    } finally {
+        btnGuardar.disabled = false;
+        btnGuardar.textContent = 'Guardar Vacuna';
+    }
+}
+
+function validarFormularioVacuna() {
+    const campos = [
+        { id: 'FK_prs', nombre: 'Paciente' },
+        { id: 'FK_t_vc', nombre: 'Tipo de vacuna' },
+        { id: 'FK_ds', nombre: 'Dosis' },
+        { id: 'FK_mc', nombre: 'Marca' },
+        { id: 'fc_vc', nombre: 'Fecha de vacuna' },
+        { id: 'FK_est_vc', nombre: 'Estado' }
+    ];
+
+    for (const campo of campos) {
+        const elemento = document.getElementById(campo.id);
+
+        if (!elemento || elemento.value.trim() === '') {
+            return {
+                ok: false,
+                mensaje: `Campo obligatorio vacío: ${campo.nombre}`
+            };
+        }
+    }
+
+    return {
+        ok: true,
+        mensaje: ''
+    };
+}
+
 function filtrarVacunas() {
     const input = document.getElementById('buscarVacuna');
 
@@ -106,7 +323,6 @@ function filtrarVacunas() {
     });
 }
 
-// Función para obtener el HTML del estado de la vacuna
 function obtenerEstadoVacunaHtml(estado) {
     const estadoNormalizado = String(estado || '').trim().toUpperCase();
 
@@ -125,22 +341,22 @@ function obtenerEstadoVacunaHtml(estado) {
     return `<span class="badge bg-secondary">${escaparHtml(estado)}</span>`;
 }
 
-// Función para obtener el HTML del enlace de evidencia de la vacuna
+// Función para obtener el HTML del enlace de evidencia de vacuna
 function obtenerEvidenciaVacunaHtml(evidencia) {
     const ruta = evidencia ? String(evidencia).trim() : '';
 
     if (ruta === '') {
         return 'Pendiente';
     }
-
+    // Normalizar la ruta para evitar problemas con barras invertidas o espacios
+    const rutaLimpia = ruta.replace(/\\/g, '/').replace(/^\/+/, '');
     return `
-        " target="_blank" rel="noopener" class="btn btn-sm btn-outline-success">
-            Ver evidencia
+        <a href="../${rutaLimpia}" target="_blank" class="btn btn-sm btn-outline-success">
+            <i class="fa fa-file-medical"></i> Ver evidencia
         </a>
     `;
 }
 
-// Función para escapar caracteres HTML y evitar vulnerabilidades XSS
 function escaparHtml(valor) {
     if (valor === null || valor === undefined) {
         return '';
@@ -154,7 +370,6 @@ function escaparHtml(valor) {
         .replaceAll("'", '&#039;');
 }
 
-// Función para escapar caracteres en atributos HTML
 function escaparAtributo(valor) {
     if (valor === null || valor === undefined) {
         return '';

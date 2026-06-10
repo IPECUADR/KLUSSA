@@ -6,3 +6,6 @@ CONFIG/env.production.php
 # Archivos subidos de resultados de salud
 RESULTADOS/SALUD/EXAMENES/*
 !RESULTADOS/SALUD/EXAMENES/.gitkeep
+# Archivos subidos de evidencias de vacunas
+RESULTADOS/SALUD/VACUNAS/*
+!RESULTADOS/SALUD/VACUNAS/.gitkeep

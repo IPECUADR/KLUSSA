@@ -33,8 +33,7 @@
                 type="text"
                 id="buscarVacuna"
                 class="form-control"
-                placeholder="Buscar por HCL, paciente, cédula, vacuna, dosis, marca, estado, agencia o cargo"
-            >
+                placeholder="Buscar por HCL, paciente, cédula, vacuna, dosis, marca, estado, agencia o cargo">
         </div>
     </div>
 
@@ -62,12 +61,13 @@
                                     <th>Fecha Vacuna</th>
                                     <th>Evidencia</th>
                                     <th>Estado</th>
+                                    <th>Opciones</th>
                                 </tr>
                             </thead>
 
                             <tbody id="contenidoVacunas">
                                 <tr>
-                                    <td colspan="12" class="text-center text-muted">
+                                    <td colspan="13" class="text-center text-muted">
                                         Cargando vacunas...
                                     </td>
                                 </tr>
@@ -99,6 +99,8 @@
             <div class="modal-body">
 
                 <form id="formVacuna">
+                    <input type="hidden" id="PK_vc" name="PK_vc">
+
                     <div class="row">
 
                         <div class="col-md-12 mb-3">
@@ -142,17 +144,33 @@
                         </div>
 
                         <div class="col-md-12 mb-3">
-                            <label class="form-label">Evidencia</label>
+                            <label class="form-label">Evidencia actual</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="evidencia_vc_actual"
+                                name="evidencia_vc_actual"
+                                placeholder="Archivo actual"
+                                readonly>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Subir nueva evidencia</label>
                             <input
                                 type="file"
                                 class="form-control"
                                 id="archivo_evidencia_vc"
                                 name="archivo_evidencia_vc"
-                                accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                            >
+                                accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
                             <small class="text-muted">
                                 Formatos permitidos: PDF, JPG, PNG, DOC, DOCX. Tamaño máximo recomendado: 5 MB.
                             </small>
+                        </div>
+
+                        <div class="col-md-12 mb-3" id="contenedorEvidenciaActual" style="display:none;">
+                            <a href="#" id="enlaceEvidenciaActual" target="_blank" class="btn btn-outline-primary">
+                                <i class="fa fa-file-medical"></i> Ver evidencia actual
+                            </a>
                         </div>
 
                     </div>

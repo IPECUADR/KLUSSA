@@ -18,6 +18,13 @@ document.addEventListener('DOMContentLoaded', function () {
     if (btnGuardarVacuna) {
         btnGuardarVacuna.addEventListener('click', guardarVacuna);
     }
+
+    document.addEventListener('click', function (event) {
+        if (event.target.classList.contains('btnEditarVacuna')) {
+            const idVacuna = event.target.getAttribute('data-id');
+            abrirModalEditarVacuna(idVacuna);
+        }
+    });
 });
 
 async function cargarVacunasSalud() {
@@ -45,7 +52,7 @@ async function cargarVacunasSalud() {
         if (!json.data || json.data.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="12" class="text-center text-muted">
+                    <td colspan="13" class="text-center text-muted">
                         No existen vacunas registradas.
                     </td>
                 </tr>
@@ -74,6 +81,13 @@ async function cargarVacunasSalud() {
                     <td>${escaparHtml(item.fc_vc)}</td>
                     <td>${evidenciaHtml}</td>
                     <td>${estadoHtml}</td>
+                    <td>
+                        <button type="button"
+                            class="btn btn-sm btn-outline-primary btnEditarVacuna"
+                            data-id="${escaparHtml(item.PK_vc)}"
+                        >   Editar
+                        </button>
+                    </td>
                 </tr>
             `;
 
@@ -86,7 +100,7 @@ async function cargarVacunasSalud() {
 
         tbody.innerHTML = `
             <tr>
-                <td colspan="12" class="text-center text-danger">
+                <td colspan="13" class="text-center text-danger">
                     Error al cargar vacunas.
                 </td>
             </tr>
@@ -94,8 +108,13 @@ async function cargarVacunasSalud() {
     }
 }
 
+// Función para abrir el modal de registro de nueva vacuna
 async function abrirModalNuevaVacuna() {
     limpiarFormularioVacuna();
+
+    document.getElementById('modalVacunaLabel').textContent = 'Registrar Vacuna';
+    document.getElementById('btnGuardarVacuna').textContent = 'Guardar Vacuna';
+
     await cargarCatalogosVacuna();
 
     const modalElement = document.getElementById('modalVacuna');
@@ -103,12 +122,37 @@ async function abrirModalNuevaVacuna() {
     modal.show();
 }
 
+
+// Función para limpiar el formulario de registro de vacuna
 function limpiarFormularioVacuna() {
     const form = document.getElementById('formVacuna');
     const alerta = document.getElementById('alertaFormularioVacuna');
 
     if (form) {
         form.reset();
+    }
+
+    const inputId = document.getElementById('PK_vc');
+
+    if (inputId) {
+        inputId.value = '';
+    }
+
+    const inputEvidenciaActual = document.getElementById('evidencia_vc_actual');
+
+    if (inputEvidenciaActual) {
+        inputEvidenciaActual.value = '';
+    }
+
+    const contenedorEvidencia = document.getElementById('contenedorEvidenciaActual');
+    const enlaceEvidencia = document.getElementById('enlaceEvidenciaActual');
+
+    if (contenedorEvidencia) {
+        contenedorEvidencia.style.display = 'none';
+    }
+
+    if (enlaceEvidencia) {
+        enlaceEvidencia.href = '#';
     }
 
     if (alerta) {
@@ -123,6 +167,7 @@ function limpiarFormularioVacuna() {
     }
 }
 
+// Función para cargar los catálogos de vacunas
 async function cargarCatalogosVacuna() {
     const alerta = document.getElementById('alertaFormularioVacuna');
 
@@ -159,6 +204,7 @@ async function cargarCatalogosVacuna() {
     }
 }
 
+// Función para llenar un select con los pacientes
 function llenarSelectPacientesVacuna(idSelect, datos) {
     const select = document.getElementById(idSelect);
 
@@ -183,6 +229,7 @@ function llenarSelectPacientesVacuna(idSelect, datos) {
     });
 }
 
+// Función para llenar un select con datos genéricos
 function llenarSelect(idSelect, datos, campoValor, campoTexto) {
     const select = document.getElementById(idSelect);
 
@@ -204,6 +251,7 @@ function llenarSelect(idSelect, datos, campoValor, campoTexto) {
     });
 }
 
+// Función para guardar una nueva vacuna
 async function guardarVacuna() {
     const alerta = document.getElementById('alertaFormularioVacuna');
     const btnGuardar = document.getElementById('btnGuardarVacuna');
@@ -226,7 +274,13 @@ async function guardarVacuna() {
         btnGuardar.disabled = true;
         btnGuardar.textContent = 'Guardando...';
 
-        const respuesta = await fetch('../DATABASE/SALUD/vacuna_insertar.php', {
+        const idVacuna = document.getElementById('PK_vc').value.trim();
+
+        const url = idVacuna === ''
+            ? '../DATABASE/SALUD/vacuna_insertar.php'
+            : '../DATABASE/SALUD/vacuna_actualizar.php';
+
+        const respuesta = await fetch(url, {
             method: 'POST',
             body: datos
         });
@@ -275,6 +329,79 @@ async function guardarVacuna() {
     }
 }
 
+// Función para abrir el modal de edición de vacuna
+async function abrirModalEditarVacuna(idVacuna) {
+    const alerta = document.getElementById('alertaFormularioVacuna');
+
+    limpiarFormularioVacuna();
+
+    document.getElementById('modalVacunaLabel').textContent = 'Editar Vacuna';
+    document.getElementById('btnGuardarVacuna').textContent = 'Actualizar Vacuna';
+
+    await cargarCatalogosVacuna();
+
+    try {
+        const respuesta = await fetch(`../DATABASE/SALUD/vacuna_obtener.php?PK_vc=${encodeURIComponent(idVacuna)}`, {
+            method: 'GET'
+        });
+
+        const json = await respuesta.json();
+
+        if (json.err) {
+            alerta.innerHTML = `
+                <div class="alert alert-danger">
+                    ${json.mensaje}
+                </div>
+            `;
+            return;
+        }
+
+        const vacuna = json.data;
+
+        document.getElementById('PK_vc').value = vacuna.PK_vc;
+        document.getElementById('FK_prs').value = vacuna.FK_prs;
+        document.getElementById('FK_t_vc').value = vacuna.FK_t_vc;
+        document.getElementById('FK_ds').value = vacuna.FK_ds;
+        document.getElementById('FK_mc').value = vacuna.FK_mc;
+        document.getElementById('fc_vc').value = vacuna.fc_vc;
+        document.getElementById('FK_est_vc').value = vacuna.FK_est_vc;
+
+        const evidenciaActual = vacuna.evidencia_vc ? String(vacuna.evidencia_vc).trim() : '';
+        const inputEvidenciaActual = document.getElementById('evidencia_vc_actual');
+        const contenedorEvidencia = document.getElementById('contenedorEvidenciaActual');
+        const enlaceEvidencia = document.getElementById('enlaceEvidenciaActual');
+
+        if (inputEvidenciaActual) {
+            inputEvidenciaActual.value = evidenciaActual;
+        }
+
+        if (contenedorEvidencia && enlaceEvidencia) {
+            if (evidenciaActual !== '') {
+                contenedorEvidencia.style.display = 'block';
+                enlaceEvidencia.href = '../' + evidenciaActual.replace(/^\/+/, '');
+            } else {
+                contenedorEvidencia.style.display = 'none';
+                enlaceEvidencia.href = '#';
+            }
+        }
+
+        const modalElement = document.getElementById('modalVacuna');
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+
+    } catch (error) {
+        console.error(error);
+
+        alerta.innerHTML = `
+            <div class="alert alert-danger">
+                Error al cargar información de la vacuna.
+            </div>
+        `;
+    }
+}
+
+
+// Función para validar el formulario de vacuna
 function validarFormularioVacuna() {
     const campos = [
         { id: 'FK_prs', nombre: 'Paciente' },
@@ -302,6 +429,7 @@ function validarFormularioVacuna() {
     };
 }
 
+// Función para filtrar las vacunas en la tabla
 function filtrarVacunas() {
     const input = document.getElementById('buscarVacuna');
 
@@ -323,6 +451,7 @@ function filtrarVacunas() {
     });
 }
 
+// Función para obtener el HTML del estado de la vacuna
 function obtenerEstadoVacunaHtml(estado) {
     const estadoNormalizado = String(estado || '').trim().toUpperCase();
 

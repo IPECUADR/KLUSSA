@@ -24,6 +24,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const idVacuna = event.target.getAttribute('data-id');
             abrirModalEditarVacuna(idVacuna);
         }
+
+        if (event.target.classList.contains('btnEliminarVacuna')) {
+            const idVacuna = event.target.getAttribute('data-id');
+            eliminarVacunaLogicamente(idVacuna);
+        }
     });
 });
 
@@ -81,13 +86,32 @@ async function cargarVacunasSalud() {
                     <td>${escaparHtml(item.fc_vc)}</td>
                     <td>${evidenciaHtml}</td>
                     <td>${estadoHtml}</td>
+                   
                     <td>
-                        <button type="button"
-                            class="btn btn-sm btn-outline-primary btnEditarVacuna"
-                            data-id="${escaparHtml(item.PK_vc)}"
-                        >   Editar
-                        </button>
+                        ${parseInt(item.FK_est_vc) !== 3
+                            ? `
+                                <div class="d-flex gap-1 flex-wrap">
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-primary btnEditarVacuna"
+                                            data-id="${escaparHtml(item.PK_vc)}">
+                                        Editar
+                                    </button>
+
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-danger btnEliminarVacuna"
+                                            data-id="${escaparHtml(item.PK_vc)}">
+                                        Eliminar
+                                    </button>
+                                </div>
+                            `
+                            : `
+                                <span class="badge bg-secondary">
+                                    Sin acciones
+                                </span>
+                            `
+                        }
                     </td>
+
                 </tr>
             `;
 
@@ -486,6 +510,7 @@ function obtenerEvidenciaVacunaHtml(evidencia) {
     `;
 }
 
+// Función para escapar valores para HTML
 function escaparHtml(valor) {
     if (valor === null || valor === undefined) {
         return '';
@@ -499,6 +524,7 @@ function escaparHtml(valor) {
         .replaceAll("'", '&#039;');
 }
 
+// Función para escapar valores para atributos HTML
 function escaparAtributo(valor) {
     if (valor === null || valor === undefined) {
         return '';
@@ -510,4 +536,38 @@ function escaparAtributo(valor) {
         .replaceAll("'", '&#039;')
         .replaceAll('<', '&lt;')
         .replaceAll('>', '&gt;');
+}
+
+// Función para eliminar una vacuna lógicamente
+async function eliminarVacunaLogicamente(idVacuna) {
+    const confirmar = confirm('¿Deseas eliminar esta vacuna? El registro no se borrará, solo cambiará a estado Eliminado.');
+
+    if (!confirmar) {
+        return;
+    }
+
+    const datos = new FormData();
+    datos.append('PK_vc', idVacuna);
+    datos.append('FK_est_vc', '3');
+
+    try {
+        const respuesta = await fetch('../DATABASE/SALUD/vacuna_estado.php', {
+            method: 'POST',
+            body: datos
+        });
+
+        const json = await respuesta.json();
+
+        if (json.err) {
+            alert(json.mensaje);
+            return;
+        }
+
+        alert(json.mensaje);
+        await cargarVacunasSalud();
+
+    } catch (error) {
+        console.error(error);
+        alert('Error al eliminar la vacuna.');
+    }
 }

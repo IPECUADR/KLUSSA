@@ -1,0 +1,11 @@
+CONFIG/env.php
+CONFIG/env.local.php
+CONFIG/env.production.php
+*.sql
+/backups/
+# Archivos subidos de resultados de salud
+RESULTADOS/SALUD/EXAMENES/*
+!RESULTADOS/SALUD/EXAMENES/.gitkeep
+# Archivos subidos de evidencias de vacunas
+RESULTADOS/SALUD/VACUNAS/*
+!RESULTADOS/SALUD/VACUNAS/.gitkeep

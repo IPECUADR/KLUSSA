@@ -30,6 +30,7 @@ $entradas = [
     ['campo' => $campo3, 'valor' => $codigo],
     ['campo' => $campo4, 'valor' => $agencia],
     ['campo' => $campo5, 'valor' => $rhomb], // Entrada para clasificación RHOMB
+    
 ];
 
 // Recorrer cada entrada y armar filtros

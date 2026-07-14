@@ -1466,7 +1466,7 @@ function verificacar_filtro() {
     params.agencia = agencia;
     params.campo4 = campo4;
   }
-// Agregar filtro de clasificación RHOMB solo si tiene valor victor Alvarez
+  // Agregar filtro de clasificación RHOMB solo si tiene valor victor Alvarez
   if (rhomb) {
     params.rhomb = rhomb;
     params.campo5 = campo5;
@@ -1496,50 +1496,128 @@ function total(t_url, params) {
 
   $.post(t_url, params, function (r) {
 
-    $('#totales').empty();
+    $('#resumen_totales').empty();
 
-    console.log('Respuesta total:', r); // Verificar la respuesta del servidor
+    console.log('Respuesta total:', r);
+
+    if (r.err) {
+      $('#resumen_totales').html(`
+        <div class="col-12">
+          <div class="alert alert-info mb-0">
+            No existen valores para los filtros seleccionados.
+          </div>
+        </div>
+      `);
+
+      return;
+    }
 
     $.each(r, function (i, item) {
+
       if (i !== 'err') {
 
+        const litros = Number(item.t_lit ?? 0).toLocaleString('es-EC', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
 
-        var totales = ` 
-           
-<td colspan="10" class="tfoot-minimal">
+        const kilos = Number(item.t_kg ?? 0).toLocaleString('es-EC', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
 
-  <div class="tfoot-row">
+        const toneladas = Number(item.t_tn ?? 0).toLocaleString('es-EC', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 3
+        });
 
-    <span>Litros: <strong>${(item.t_lit ?? 0).toLocaleString()}</strong> L</span>
-    <span>Kg: <strong>${(item.t_kg ?? 0).toLocaleString()}</strong></span>
-    <span>Tn: <strong>${(item.t_tn ?? 0).toLocaleString()}</strong></span>
-    <span>Gal: <strong>${(item.t_gl ?? 0).toLocaleString()}</strong></span>
-    <span>Gestor: $ <strong>${item.t_ges ?? '—'}</strong></span>
-    <span>Transp: $ <strong>${(item.t_trs ?? 0).toLocaleString()}</strong></span>
+        const galones = Number(item.t_gl ?? 0).toLocaleString('es-EC', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
 
-    <span class="total">
-      Total: $ <strong> ${(item.gasto ?? 0).toLocaleString()}</strong>
-    </span>
+        const gestor = Number(item.t_ges ?? 0).toLocaleString('es-EC', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
 
-  </div>
+        const transporte = Number(item.t_trs ?? 0).toLocaleString('es-EC', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
 
-</td>
-           
-           `;
+        const gasto = Number(item.gasto ?? 0).toLocaleString('es-EC', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
 
+        const totales = `
+          <div class="col-6 col-md-4 col-xl">
+            <div class="border rounded-3 p-3 h-100 bg-light">
+              <small class="text-muted d-block mb-1">Kilogramos</small>
+              <span class="fw-bold text-dark">${kilos} Kg</span>
+            </div>
+          </div>
 
+          <div class="col-6 col-md-4 col-xl">
+            <div class="border rounded-3 p-3 h-100 bg-light">
+              <small class="text-muted d-block mb-1">Toneladas</small>
+              <span class="fw-bold text-dark">${toneladas} Tn</span>
+            </div>
+          </div>
 
+          <div class="col-6 col-md-4 col-xl">
+            <div class="border rounded-3 p-3 h-100 bg-light">
+              <small class="text-muted d-block mb-1">Litros</small>
+              <span class="fw-bold text-info">${litros} L</span>
+            </div>
+          </div>
 
+          <div class="col-6 col-md-4 col-xl">
+            <div class="border rounded-3 p-3 h-100 bg-light">
+              <small class="text-muted d-block mb-1">Galones</small>
+              <span class="fw-bold text-primary">${galones} Gl</span>
+            </div>
+          </div>
 
-        $('#totales').append(totales);
+          <div class="col-6 col-md-4 col-xl">
+            <div class="border rounded-3 p-3 h-100 bg-light">
+              <small class="text-muted d-block mb-1">Costo gestor</small>
+              <span class="fw-bold text-dark">$ ${gestor}</span>
+            </div>
+          </div>
 
+          <div class="col-6 col-md-4 col-xl">
+            <div class="border rounded-3 p-3 h-100 bg-light">
+              <small class="text-muted d-block mb-1">Transporte</small>
+              <span class="fw-bold text-dark">$ ${transporte}</span>
+            </div>
+          </div>
 
+          <div class="col-12 col-md-6 col-xl">
+            <div class="border border-danger rounded-3 p-3 h-100 bg-light">
+              <small class="text-muted d-block mb-1">Costo total</small>
+              <span class="fw-bold text-danger">$ ${gasto}</span>
+            </div>
+          </div>
+        `;
+
+        $('#resumen_totales').append(totales);
       }
     });
-    console.log(r);
 
-  }, 'json');
+  }, 'json')
+    .fail(function () {
 
+      $('#resumen_totales').html(`
+      <div class="col-12">
+        <div class="alert alert-danger mb-0">
+          No fue posible calcular las sumatorias.
+        </div>
+      </div>
+    `);
+
+    });
 
 }
 
@@ -1567,7 +1645,7 @@ function fil_cbx_agencia() {
 
 function fil_cbx_rhomb() {
   $.ajax({
-    url: '../DATABASE/cbx_rhom.php',
+    url: '../DATABASE/cbx_rhomb_np.php',
     type: 'POST',
 
     success: function (response) {

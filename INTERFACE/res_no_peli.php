@@ -41,8 +41,12 @@
               </div>
 
               <div class="col-12 col-sm-6 col-lg-auto">
-                <select name="FK_res" id="cbx_fil_res" class="form-select form-select-sm rounded-pill">
-                  <option value="">Código</option>
+                <select
+                  name="FK_res"
+                  id="cbx_fil_res"
+                  class="form-select form-select-sm rounded-pill"
+                  style="width: 140px;">
+                  <option value="">RESIDUO</option>
                 </select>
               </div>
 
@@ -121,7 +125,33 @@
             </div>
 
           </div>
+          <!-- RESUMEN DE TOTALES  PARTE SUPERIOR VICTOR ALVAREZ -->
+          <div class="card border-0 shadow-sm rounded-4 mb-3">
+            <div class="card-body py-3">
 
+              <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+                <div>
+                  <h6 class="fw-bold mb-1">
+                    <i class="fas fa-calculator me-2 text-primary"></i>
+                    Resumen de registros
+                  </h6>
+
+                  <small class="text-muted">
+                    Los valores se actualizan según los filtros seleccionados.
+                  </small>
+                </div>
+              </div>
+
+              <div
+                id="resumen_totales"
+                class="row g-2">
+                <div class="col-12 text-center text-muted">
+                  Cargando totales...
+                </div>
+              </div>
+
+            </div>
+          </div>
 
 
 
@@ -148,10 +178,9 @@
                   <th scope="col">OPCIONES</th>
                 </tr>
               </thead>
+
               <tbody id="content_table" class="small"></tbody>
-              <tfoot>
-                <tr class="" id="totales"></tr>
-              </tfoot>
+
             </table>
 
 

@@ -13,6 +13,8 @@ $(document).ready(function () {
     fil_residuos();
     fil_res();
     cbx_clasificacion();
+    //creacion de  los  filtros de  busqueda Victor Alvarez
+    fil_cbx_rhomb();
     fil_cbx_agencia();
 
   } else {
@@ -22,52 +24,52 @@ $(document).ready(function () {
 
 });
 
- /// variables de entorno
-    let url = '../DATABASE/cg_res_hse_no_p.php'; // URL estándar
-    let params = {};
-    let llenar_tabla = []; 
+/// variables de entorno
+let url = '../DATABASE/cg_res_hse_no_p.php'; // URL estándar
+let params = {};
+let llenar_tabla = [];
 
 
 
-function residuos_no_peligrosos (url,params){
+function residuos_no_peligrosos(url, params) {
 
-  
 
-   
+
+
   $.ajax({
-      url:url ,
-      data:params, 
-      type: 'POST',
-  
-  
-      success: function(response){
+    url: url,
+    data: params,
+    type: 'POST',
+
+
+    success: function (response) {
       console.log(response);
       $('#content_table').empty();
       llenar_tabla = Object.values(JSON.parse(response)).filter(item => typeof item === 'object');
-      
+
 
       var json = JSON.parse(response);
 
-      
-      if(!json.err){
-          var contador=1;
 
-        $.each(json, function(i,item){
+      if (!json.err) {
+        var contador = 1;
 
-
-   
-          
-         
-        if(i!="err"){
-
-        
-          
-          
-         
-      
+        $.each(json, function (i, item) {
 
 
-          var codigo =`
+
+
+
+          if (i != "err") {
+
+
+
+
+
+
+
+
+            var codigo = `
           
                       
        <tr>
@@ -108,25 +110,25 @@ function residuos_no_peligrosos (url,params){
           `;
 
 
-        
-       }
+
+          }
 
 
 
           //asignacion de informacion
 
-         $('#content_table').append(codigo);
-        
-         contador ++
+          $('#content_table').append(codigo);
+
+          contador++
 
 
         })
       }
-      else{
+      else {
 
-            mensaje(json.mensaje,'info')
-            
-          }
+        mensaje(json.mensaje, 'info')
+
+      }
     }
   })
 
@@ -140,19 +142,19 @@ function residuos_no_peligrosos (url,params){
 
 
 
-$(document).on('click', '#bnt_reg_res_p', function() {
-
- 
-$('#modal').modal('show');
+$(document).on('click', '#bnt_reg_res_p', function () {
 
 
-    cbx_mes_res();
-    cbx_res();
-    cbx_maquina();
-    cbx_agencia();
-    modal_insert();
-   cbx_gestora();
-   cbx_ubicacion();
+  $('#modal').modal('show');
+
+
+  cbx_mes_res();
+  cbx_res();
+  cbx_maquina();
+  cbx_agencia();
+  modal_insert();
+  cbx_gestora();
+  cbx_ubicacion();
 })
 
 
@@ -160,16 +162,16 @@ $('#modal').modal('show');
 
 
 
-function modal_insert(){
+function modal_insert() {
 
-$('#modal').modal('show');
-$('#titulo_modal').empty('');
-$('#form_modal').empty('');
-$('#form_modal_footer').empty('');
+  $('#modal').modal('show');
+  $('#titulo_modal').empty('');
+  $('#form_modal').empty('');
+  $('#form_modal_footer').empty('');
 
 
 
-   var title = `
+  var title = `
 <div class="container-fluid py-2 border-bottom" >
   <div class="row align-items-center">
     <div class="col-3 d-flex align-items-center">
@@ -189,7 +191,7 @@ $('#form_modal_footer').empty('');
 </button>
 `;
 
-   var form =`
+  var form = `
 
 <form id="detalle_residuo" class="container-fluid p-4 shadow-sm rounded-3 bg-white border">
 
@@ -318,7 +320,7 @@ $('#form_modal_footer').empty('');
    
    `;
 
-var footer = `
+  var footer = `
 <div class="container-fluid border-top pt-3" >
   <div class="row g-2">
 
@@ -342,12 +344,12 @@ var footer = `
 </div>
 `;
 
-   
 
-$('#modal').modal('show');
-$('#titulo_modal').append(title);
-$('#form_modal').append(form);
-$('#form_modal_footer').append(footer);
+
+  $('#modal').modal('show');
+  $('#titulo_modal').append(title);
+  $('#form_modal').append(form);
+  $('#form_modal_footer').append(footer);
 
 
 }
@@ -356,21 +358,22 @@ $('#form_modal_footer').append(footer);
 
 /// cabio dinamico de  select 
 
-$(document).on('change', '#cbx_mes_res', function() {
- 
-   mes =  this.value; 
+$(document).on('change', '#cbx_mes_res', function () {
 
-   let an = new Date().getFullYear(); // año actual
+  mes = this.value;
 
-    mes = mes.padStart(2, '0'); // 01,02,03...
+  let an = new Date().getFullYear(); // año actual
 
-    console.log('Mes seleccionado:', mes); // Verificar el valor del mes seleccionado 
-    
-    if(mes !== ''){ im_fc = an + '-' + mes + '-01';  
-        
-        $('#fecha_entrega').val(im_fc);
+  mes = mes.padStart(2, '0'); // 01,02,03...
 
-     } else { mensaje('Selecciona un mes', 'warning'); }
+  console.log('Mes seleccionado:', mes); // Verificar el valor del mes seleccionado 
+
+  if (mes !== '') {
+    im_fc = an + '-' + mes + '-01';
+
+    $('#fecha_entrega').val(im_fc);
+
+  } else { mensaje('Selecciona un mes', 'warning'); }
 
 });
 
@@ -378,23 +381,23 @@ $(document).on('change', '#cbx_mes_res', function() {
 
 
 
-function cbx_res(){
+function cbx_res() {
   $.ajax({
     url: '../DATABASE/cg_res_hse_no_p_lst.php',
     type: 'POST',
-    success: function(response){
+    success: function (response) {
       var json = JSON.parse(response);
-      if(!json.err){
+      if (!json.err) {
         $('#cbx_res').empty();
         $('#cbx_res').append('<option value="">SELECCIONE UNA OPCIÓN</option>');
-        $.each(json, function(i,item){
-          if(i!="err"){
-           var option = `<option value="${item.id_res}">${item.descrip_residuo}</option>`;
-           desc = item.descrip_residuo;
-           option = $(option).data('desc', desc);
-      
+        $.each(json, function (i, item) {
+          if (i != "err") {
+            var option = `<option value="${item.id_res}">${item.descrip_residuo}</option>`;
+            desc = item.descrip_residuo;
+            option = $(option).data('desc', desc);
+
             $('#cbx_res').append(option);
-          
+
 
           }
         });
@@ -406,18 +409,18 @@ function cbx_res(){
 
 
 
-function cbx_mes_res(){
+function cbx_mes_res() {
   $.ajax({
     url: '../DATABASE/cbx_mes_res_p.php',
     type: 'POST',
-    success: function(response){
+    success: function (response) {
       var json = JSON.parse(response);
-      if(!json.err){
+      if (!json.err) {
         $('#cbx_mes_res').empty();
         $('#cbx_mes_res').append('<option value="">SELECCIONE UNA OPCIÓN</option>');
-        $.each(json, function(i,item){
-          if(i!="err"){
-            var option = '<option value="'+item.PK_mes+'">'+item.mes_res+'</option>';
+        $.each(json, function (i, item) {
+          if (i != "err") {
+            var option = '<option value="' + item.PK_mes + '">' + item.mes_res + '</option>';
             $('#cbx_mes_res').append(option);
           }
         });
@@ -429,18 +432,18 @@ function cbx_mes_res(){
 
 
 
-function cbx_maquina(){
+function cbx_maquina() {
   $.ajax({
     url: '../DATABASE/cbx_ma_res.php',
     type: 'POST',
-    success: function(response){
+    success: function (response) {
       var json = JSON.parse(response);
-      if(!json.err){
+      if (!json.err) {
         $('#cbx_maquina').empty();
         $('#cbx_maquina').append('<option value="">SELECCIONE UNA OPCIÓN</option>');
-        $.each(json, function(i,item){
-          if(i!="err"){
-            var option = '<option value="'+item.PK_maquina+'">'+item.serie_maquina+'</option>';
+        $.each(json, function (i, item) {
+          if (i != "err") {
+            var option = '<option value="' + item.PK_maquina + '">' + item.serie_maquina + '</option>';
             $('#cbx_maquina').append(option);
           }
         });
@@ -449,18 +452,18 @@ function cbx_maquina(){
   });
 }
 
-function cbx_agencia(){
+function cbx_agencia() {
   $.ajax({
     url: '../DATABASE/cg_agencia_cbx.php',
     type: 'POST',
-    success: function(response){
+    success: function (response) {
       var json = JSON.parse(response);
-      if(!json.err){
+      if (!json.err) {
         $('#cbx_agencia').empty();
         $('#cbx_agencia').append('<option value="">SELECCIONE UNA OPCIÓN</option>');
-        $.each(json, function(i,item){
-          if(i!="err"){
-            var option = '<option value="'+item.PK_pro+'">'+item.proyecto+'</option>';
+        $.each(json, function (i, item) {
+          if (i != "err") {
+            var option = '<option value="' + item.PK_pro + '">' + item.proyecto + '</option>';
             $('#cbx_agencia').append(option);
           }
         });
@@ -469,18 +472,18 @@ function cbx_agencia(){
   });
 }
 
-function cbx_gestora(){
+function cbx_gestora() {
   $.ajax({
     url: '../DATABASE/cbx_gestora_des_p.php',
     type: 'POST',
-    success: function(response){
+    success: function (response) {
       var json = JSON.parse(response);
-      if(!json.err){
+      if (!json.err) {
         $('#cbx_gestora').empty();
         $('#cbx_gestora').append('<option value="">SELECCIONE UNA OPCIÓN</option>');
-        $.each(json, function(i,item){
-          if(i!="err"){
-            var option = '<option value="'+item.PK_gestor+'">'+item.gestor_res+'</option>';
+        $.each(json, function (i, item) {
+          if (i != "err") {
+            var option = '<option value="' + item.PK_gestor + '">' + item.gestor_res + '</option>';
             $('#cbx_gestora').append(option);
           }
         });
@@ -490,18 +493,18 @@ function cbx_gestora(){
 }
 
 
-function cbx_ubicacion(){
+function cbx_ubicacion() {
   $.ajax({
     url: '../DATABASE/cbx_ubicacion.php', // PHP que devuelve los manifiestos
     type: 'POST',
-    success: function(response){
+    success: function (response) {
       var json = JSON.parse(response);
-      if(!json.err){
+      if (!json.err) {
         $('#cbx_ubicacion').empty();
         $('#cbx_ubicacion').append('<option value="">SELECCIONE UNA OPCIÓN</option>');
-        $.each(json, function(i,item){
-          if(i!="err"){
-            var option = '<option value="'+item.PK_ub+'">'+item.ubicacion+'</option>';
+        $.each(json, function (i, item) {
+          if (i != "err") {
+            var option = '<option value="' + item.PK_ub + '">' + item.ubicacion + '</option>';
             $('#cbx_ubicacion').append(option);
           }
         });
@@ -523,167 +526,167 @@ let bloqueandoVolumen = false;
    FUNCIONES UTILITARIAS
    =============================== */
 function bloquearVolumen() {
-    $('#ct_lt, #ct_gl').prop('disabled', true).val('0');
+  $('#ct_lt, #ct_gl').prop('disabled', true).val('0');
 }
 
 function desbloquearVolumen() {
-    $('#ct_lt, #ct_gl').prop('disabled', false);
+  $('#ct_lt, #ct_gl').prop('disabled', false);
 }
 
 function bloquearPeso() {
-    $('#ct_kg, #ct_ton').prop('disabled', true).val('0');
+  $('#ct_kg, #ct_ton').prop('disabled', true).val('0');
 }
 
 function desbloquearPeso() {
-    $('#ct_kg, #ct_ton').prop('disabled', false);
+  $('#ct_kg, #ct_ton').prop('disabled', false);
 }
 
 /* ===============================
    KILOS → TONELADAS
    =============================== */
 $(document).on('input', '#ct_kg', function () {
-    if (bloqueandoPeso) return;
-    bloqueandoPeso = true;
+  if (bloqueandoPeso) return;
+  bloqueandoPeso = true;
 
-    const kg = parseFloat(this.value) || 0;
-    const ton = kg / 1000;
+  const kg = parseFloat(this.value) || 0;
+  const ton = kg / 1000;
 
-    $('#ct_ton').val(ton.toFixed(3));
+  $('#ct_ton').val(ton.toFixed(3));
 
-    if (kg > 0) {
-        bloquearVolumen();
-        desbloquearPeso();
-    } else {
-        desbloquearVolumen();
-    }
+  if (kg > 0) {
+    bloquearVolumen();
+    desbloquearPeso();
+  } else {
+    desbloquearVolumen();
+  }
 
-    bloqueandoPeso = false;
+  bloqueandoPeso = false;
 });
 
 $(document).on('input', '#ct_ton', function () {
-    if (bloqueandoPeso) return;
-    bloqueandoPeso = true;
+  if (bloqueandoPeso) return;
+  bloqueandoPeso = true;
 
-    const ton = parseFloat(this.value) || 0;
-    const kg = ton * 1000;
+  const ton = parseFloat(this.value) || 0;
+  const kg = ton * 1000;
 
-    $('#ct_kg').val(kg.toFixed(3));
+  $('#ct_kg').val(kg.toFixed(3));
 
-    if (ton > 0) {
-        bloquearVolumen();
-        desbloquearPeso();
-    } else {
-        desbloquearVolumen();
-    }
+  if (ton > 0) {
+    bloquearVolumen();
+    desbloquearPeso();
+  } else {
+    desbloquearVolumen();
+  }
 
-    bloqueandoPeso = false;
+  bloqueandoPeso = false;
 });
 
 /* ===============================
    LITROS → GALONES
    =============================== */
 $(document).on('input', '#ct_lt', function () {
-    if (bloqueandoVolumen) return;
-    bloqueandoVolumen = true;
+  if (bloqueandoVolumen) return;
+  bloqueandoVolumen = true;
 
-    const litros = parseFloat(this.value) || 0;
-    const galones = litros / 3.785;
+  const litros = parseFloat(this.value) || 0;
+  const galones = litros / 3.785;
 
-    $('#ct_gl').val(galones.toFixed(3));
+  $('#ct_gl').val(galones.toFixed(3));
 
-    if (litros > 0) {
-        bloquearPeso();
-        desbloquearVolumen();
-    } else {
-        desbloquearPeso();
-    }
+  if (litros > 0) {
+    bloquearPeso();
+    desbloquearVolumen();
+  } else {
+    desbloquearPeso();
+  }
 
-    bloqueandoVolumen = false;
+  bloqueandoVolumen = false;
 });
 
 $(document).on('input', '#ct_gl', function () {
-    if (bloqueandoVolumen) return;
-    bloqueandoVolumen = true;
+  if (bloqueandoVolumen) return;
+  bloqueandoVolumen = true;
 
-    const galones = parseFloat(this.value) || 0;
-    const litros = galones * 3.785;
+  const galones = parseFloat(this.value) || 0;
+  const litros = galones * 3.785;
 
-    $('#ct_lt').val(litros.toFixed(3));
+  $('#ct_lt').val(litros.toFixed(3));
 
-    if (galones > 0) {
-        bloquearPeso();
-        desbloquearVolumen();
-    } else {
-        desbloquearPeso();
-    }
+  if (galones > 0) {
+    bloquearPeso();
+    desbloquearVolumen();
+  } else {
+    desbloquearPeso();
+  }
 
-    bloqueandoVolumen = false;
+  bloqueandoVolumen = false;
 });
 
 /* ===============================
    RESET GENERAL (OPCIONAL)
    =============================== */
 function resetUnidades() {
-    $('#ct_kg, #ct_ton, #ct_lt, #ct_gl')
-        .prop('disabled', false)
-        .val('');
+  $('#ct_kg, #ct_ton, #ct_lt, #ct_gl')
+    .prop('disabled', false)
+    .val('');
 }
 
 
 
 /// eliminacion de registros//
-$(document).on('click','#btn_delete',function(event){
+$(document).on('click', '#btn_delete', function (event) {
 
-// MOSTRAMOS LOS RECURSOS PARA CARGAR DATOS
+  // MOSTRAMOS LOS RECURSOS PARA CARGAR DATOS
 
- var delete_info = $(this)[0].parentElement;
- id = $(delete_info).attr("id");
-  
-console.log(id);
+  var delete_info = $(this)[0].parentElement;
+  id = $(delete_info).attr("id");
 
-Swal.fire({
-        title: "¿Deseas eliminar el registro?",
-        text: "Esta acción no se puede deshacer.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Sí, eliminar",
-        cancelButtonText: "No, cancelar"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.post('../DATABASE/del_reg_resp.php', { 
-              
-              
-              id_delete: id  
+  console.log(id);
+
+  Swal.fire({
+    title: "¿Deseas eliminar el registro?",
+    text: "Esta acción no se puede deshacer.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "No, cancelar"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.post('../DATABASE/del_reg_resp.php', {
 
 
-            })
-                .done(function(response) {
-                   
-                        const res = JSON.parse(response);
-                        console.log(response);
+        id_delete: id
 
-                              mensaje(res.mensaje, res.status);
 
-                        if (res.status === 'success') {
-                     
-                             residuos_no_peligrosos(url, params);
+      })
+        .done(function (response) {
 
-                        }
-               
-                })
-                
-        }
-    });
+          const res = JSON.parse(response);
+          console.log(response);
+
+          mensaje(res.mensaje, res.status);
+
+          if (res.status === 'success') {
+
+            residuos_no_peligrosos(url, params);
+
+          }
+
+        })
+
+    }
+  });
 });
 
 
 /// registro de residuos
 
 $(document).on('click', '#btn_registro', function () {
-  
-// capturo datos del formulario
+
+  // capturo datos del formulario
   const fechaEntrega = $('#fecha_entrega').val().trim();
   const mes = $('#cbx_mes_res').val().trim();
   const codigo = $('#cbx_res').val().trim();
@@ -699,14 +702,14 @@ $(document).on('click', '#btn_registro', function () {
   const responsable = $('#responsable').val().trim();
   const cargo = $('#cargo').val().trim();
   const ct_trans = $('#ct_trans').val().trim(); // costo transporte
-  const ct_gest = $('#ct_gest').val().trim(); 
-  
+  const ct_gest = $('#ct_gest').val().trim();
+
   const descrip = $('#desc_dispo').val().trim(); //  valor de  la  descripcion  del  residuo
-  
+
   /// validdacion, si los campos estan vacios
 
 
- if (fechaEntrega === '') return mensaje('Selecciona una fecha de entrega', 'warning');
+  if (fechaEntrega === '') return mensaje('Selecciona una fecha de entrega', 'warning');
   if (mes === '') return mensaje('Selecciona el mes correspondiente', 'warning');
   if (codigo === '') return mensaje('Selecciona un  residuo', 'warning');
   if (agencia === '') return mensaje('Selecciona una agencia', 'warning');
@@ -719,26 +722,26 @@ $(document).on('click', '#btn_registro', function () {
   if (manifesto === '') return mensaje('Ingresa un N° comprobante', 'warning');
   if (responsable === '') return mensaje('Ingresa el nombre del responsable', 'warning');
   if (cargo === '') return mensaje('Ingrese su cargo', 'warning');
-  
-  if (ct_trans === '' ) return mensaje('Ingresa el costo del transporte,  si no aplica ingresa 0', 'info');
-  if (ct_gest === '' ) return mensaje('Ingresa el costo del gestor,  si no aplica ingresa 0', 'info');
-  if (descrip === '') return mensaje('Ingrese una descripcion', 'warning');
-///  ingreso del  registro, 
 
- $.ajax({
+  if (ct_trans === '') return mensaje('Ingresa el costo del transporte,  si no aplica ingresa 0', 'info');
+  if (ct_gest === '') return mensaje('Ingresa el costo del gestor,  si no aplica ingresa 0', 'info');
+  if (descrip === '') return mensaje('Ingrese una descripcion', 'warning');
+  ///  ingreso del  registro, 
+
+  $.ajax({
     url: '../DATABASE/insert_reg_p.php',
     type: 'POST',
-    data: { fechaEntrega, mes, codigo, agencia, ub, mq, kg, ton, lt, gl, gestora, responsable,manifesto, cargo, descrip, ct_trans, ct_gest },
-    
+    data: { fechaEntrega, mes, codigo, agencia, ub, mq, kg, ton, lt, gl, gestora, responsable, manifesto, cargo, descrip, ct_trans, ct_gest },
+
     beforeSend: function () {
       mensaje('Enviando datos...', 'info');
       $('#btn_registro').prop('disabled', true);
     },
     success: function (response) {
-     
-       var json = JSON.parse(response);
-    
-        if(!json.err){  mensaje(json.mensaje,'success');      residuos_no_peligrosos(url, params);  $('#modal').modal('hide'); }else{ mensaje( json.mensaje,'error')}
+
+      var json = JSON.parse(response);
+
+      if (!json.err) { mensaje(json.mensaje, 'success'); residuos_no_peligrosos(url, params); $('#modal').modal('hide'); } else { mensaje(json.mensaje, 'error') }
 
 
 
@@ -747,7 +750,7 @@ $(document).on('click', '#btn_registro', function () {
       console.error(error);
       mensaje('Ocurrió un error en la solicitud', 'error');
     },
-     complete: function () {
+    complete: function () {
       $('#btn_registro').prop('disabled', false);
     }
   });
@@ -758,26 +761,26 @@ $(document).on('click', '#btn_registro', function () {
 
 function mensaje(mensaje, icono) {
 
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: icono,
-        title: mensaje,
-        showConfirmButton: false,
-        timer: 2500,
-        timerProgressBar: true
-      });
+  Swal.fire({
+    toast: true,
+    position: 'top-end',
+    icon: icono,
+    title: mensaje,
+    showConfirmButton: false,
+    timer: 2500,
+    timerProgressBar: true
+  });
 
 
-  }
+}
 
 
-  /// editar registros 
+/// editar registros 
 
 
-  let pk_registro = 0;
+let pk_registro = 0;
 
-$(document).on('click', '#btn_edit', function() {
+$(document).on('click', '#btn_edit', function () {
 
   // capturo el id del registro
   let view_info = $(this).closest('td');
@@ -788,7 +791,7 @@ $(document).on('click', '#btn_edit', function() {
 
   // buscar el objeto correspondiente en el JSON global
   let cp = llenar_tabla.find(item => item.PK_disp == parseInt(id));
-  
+
 
   pk_registro = cp.PK_disp; // asignar a variable global si es necesario
 
@@ -800,12 +803,12 @@ $(document).on('click', '#btn_edit', function() {
 
 
 
-$('#titulo_modal').empty('');
-$('#form_modal').empty('');
-$('#form_modal_footer').empty('');
+  $('#titulo_modal').empty('');
+  $('#form_modal').empty('');
+  $('#form_modal_footer').empty('');
 
 
-var title = `
+  var title = `
 <div class="container-fluid py-2 border-bottom" >
   <div class="row align-items-center">
     <div class="col-3 d-flex align-items-center">
@@ -827,7 +830,7 @@ var title = `
 
 
 
-   var ficha =`
+  var ficha = `
 
    
    <form id="detalle_residuo" class="container-fluid p-4 shadow-sm rounded-3 bg-white border">
@@ -1022,7 +1025,7 @@ var title = `
    
    `;
 
-var footer = `
+  var footer = `
 <div class="container-fluid border-top pt-3" >
   <div class="row g-2">
 
@@ -1048,12 +1051,12 @@ var footer = `
 
 
 
-/// asignacion de valores  al modal
+  /// asignacion de valores  al modal
 
-$('#form_modal').append(ficha);
-$('#titulo_modal').append(title);
+  $('#form_modal').append(ficha);
+  $('#titulo_modal').append(title);
 
-$('#form_modal_footer').append(footer);
+  $('#form_modal_footer').append(footer);
 });
 
 
@@ -1061,13 +1064,13 @@ $('#form_modal_footer').append(footer);
 
 /// editar imputs 
 
-$(document).on('click', '#edit', function() {
+$(document).on('click', '#edit', function () {
 
   var input = $(this).siblings('input'); // busca el input hermano
- 
+
 
   if (input.prop('readonly')) {
-      
+
     input.prop('readonly', false);
 
     $(this).attr('title', 'Guardar fecha');
@@ -1078,40 +1081,40 @@ $(document).on('click', '#edit', function() {
 
     input.prop('readonly', true);
     $(this).attr('title', 'Editar fecha');
-    $(this).find('i').removeClass('fa-floppy-disk').addClass('fa-pencil');  
-  
+    $(this).find('i').removeClass('fa-floppy-disk').addClass('fa-pencil');
+
 
     // Aquí puedes agregar la lógica para guardar la nueva fecha en la base de datos si es necesario
 
-    var campo  = input.attr('id');
+    var campo = input.attr('id');
     update_dato = input.val();
 
     console.log('PK registro:', pk_registro);
 
     console.log('Nueva dato:', update_dato);
 
-        if(update_dato.length === 0){
-            mensaje('El campo no puede estar vacío', 'warning');
-            return;
+    if (update_dato.length === 0) {
+      mensaje('El campo no puede estar vacío', 'warning');
+      return;
 
 
-         }
+    }
 
-          $.post(
-                  '../DATABASE/up_dis_r_p.php',
-                  { campo: campo, update_dato: update_dato, id: pk_registro },
-                  function(response) {
-                  
-     
-                    var json = JSON.parse(response);
+    $.post(
+      '../DATABASE/up_dis_r_p.php',
+      { campo: campo, update_dato: update_dato, id: pk_registro },
+      function (response) {
 
-                    console.log('Respuesta del servidor:', response);
-                    mensaje(json.mensaje, json.status);
-                     residuos_no_peligrosos(url, params); // refrescar la tabla después de la actualización
-                  }
-                );
 
-    
+        var json = JSON.parse(response);
+
+        console.log('Respuesta del servidor:', response);
+        mensaje(json.mensaje, json.status);
+        residuos_no_peligrosos(url, params); // refrescar la tabla después de la actualización
+      }
+    );
+
+
   }
 
 
@@ -1122,99 +1125,99 @@ $(document).on('click', '#edit', function() {
 //// editar selects 
 
 
- id_elemento = '';
+id_elemento = '';
 // editar  select
-$(document).on('click', '#edit_select', function() {
+$(document).on('click', '#edit_select', function () {
 
 
 
-    var input = $(this).siblings('input'); 
-     id_elemento  = input.attr('id');
-    var name = input.attr('name');
-    console.log('Campo a editar:', name);
+  var input = $(this).siblings('input');
+  id_elemento = input.attr('id');
+  var name = input.attr('name');
+  console.log('Campo a editar:', name);
 
-    // Ejecutar función cbx_<campo>
-    var cargar_cbx = `cbx_${id_elemento}`;
+  // Ejecutar función cbx_<campo>
+  var cargar_cbx = `cbx_${id_elemento}`;
 
-    if (typeof window[cargar_cbx] === "function") {
-        window[cargar_cbx]();
-    } else {
-        console.log("Función no encontrada:", cargar_cbx);
-        return;
-    }
+  if (typeof window[cargar_cbx] === "function") {
+    window[cargar_cbx]();
+  } else {
+    console.log("Función no encontrada:", cargar_cbx);
+    return;
+  }
 
-    // Crear select
-    var select = `
+  // Crear select
+  var select = `
         <select class="form-control-plaintext form-control-sm" id="cbx_${id_elemento}" name="${name}"></select>
     `;
 
-    // Botón que aparecerá junto al select
-    var botonGuardar = `
+  // Botón que aparecerá junto al select
+  var botonGuardar = `
         <button type="button" class="btn btn-success btn-sm ml-2" id="btn_guardar">
             <i class="fa-solid fa-check"></i>
         </button>
     `;
 
-  
-    // Reemplazar input → select
-    input.replaceWith(select);
 
-    // Insertar botón después del select
-    $(this).after(botonGuardar);
+  // Reemplazar input → select
+  input.replaceWith(select);
+
+  // Insertar botón después del select
+  $(this).after(botonGuardar);
 
 });
 
 
 // Guardar selección del select editado
-$(document).on('click', '#btn_guardar', function() {
-    var select = $(this).siblings('select');
-    var name = select.attr('name');
-    let newText = select.find("option:selected").text();
-    
-    id_reg = select.val();
+$(document).on('click', '#btn_guardar', function () {
+  var select = $(this).siblings('select');
+  var name = select.attr('name');
+  let newText = select.find("option:selected").text();
 
-    if(id_reg.length === 0){
-        mensaje('Debes seleccionar una opción', 'warning');
-        
-    }else{
+  id_reg = select.val();
 
+  if (id_reg.length === 0) {
+    mensaje('Debes seleccionar una opción', 'warning');
 
-      $.post(
-                  '../DATABASE/up_dis_r_p.php',
-                  { campo: name, update_dato: id_reg, id: pk_registro },
-                  function(response) {
-                  
-     
-                    var json = JSON.parse(response);
-
-                    console.log('Respuesta del servidor:', response);
-                    mensaje(json.mensaje, json.status);
-                     residuos_no_peligrosos(url, params); // refrescar la tabla después de la actualización
-                  }
-                );
+  } else {
 
 
-    }
- 
-
-   
-     imput_replace = `<input type="text" class="form-control-plaintext" name="${name}" id="${id_elemento}" value="${newText}" readonly>`;
-     console.log(imput_replace);
-
-    select.replaceWith(imput_replace);
-    $(this).remove();
+    $.post(
+      '../DATABASE/up_dis_r_p.php',
+      { campo: name, update_dato: id_reg, id: pk_registro },
+      function (response) {
 
 
-  });
+        var json = JSON.parse(response);
 
-    //editar textarea
-$(document).on('click', '#edit_textarea', function() {
+        console.log('Respuesta del servidor:', response);
+        mensaje(json.mensaje, json.status);
+        residuos_no_peligrosos(url, params); // refrescar la tabla después de la actualización
+      }
+    );
+
+
+  }
+
+
+
+  imput_replace = `<input type="text" class="form-control-plaintext" name="${name}" id="${id_elemento}" value="${newText}" readonly>`;
+  console.log(imput_replace);
+
+  select.replaceWith(imput_replace);
+  $(this).remove();
+
+
+});
+
+//editar textarea
+$(document).on('click', '#edit_textarea', function () {
 
 
   var textarea = $(this).siblings('textarea'); // busca el textarea hermano
- 
 
-  if (textarea.prop('readonly')) {    
+
+  if (textarea.prop('readonly')) {
     textarea.prop('readonly', false);
 
     $(this).attr('title', 'Guardar descripción');
@@ -1223,9 +1226,9 @@ $(document).on('click', '#edit_textarea', function() {
     textarea.prop('readonly', true);
 
     $(this).attr('title', 'Editar descripción');
-    $(this).find('i').removeClass('fa-floppy-disk').addClass('fa-pencil');  
+    $(this).find('i').removeClass('fa-floppy-disk').addClass('fa-pencil');
     // Aquí puedes agregar la lógica para guardar la nueva descripción en la base de datos si es necesario
-    var campo  = textarea.attr('id');
+    var campo = textarea.attr('id');
     update_dato = textarea.val();
 
     console.log('PK registro:', pk_registro);
@@ -1233,47 +1236,47 @@ $(document).on('click', '#edit_textarea', function() {
     console.log('Nueva dato:', update_dato);
 
 
-        if(update_dato.length === 0){
-            mensaje('El campo no puede estar vacío', 'warning');
-            return;     
+    if (update_dato.length === 0) {
+      mensaje('El campo no puede estar vacío', 'warning');
+      return;
 
 
 
-          }          $.post(
-                  '../DATABASE/up_dis_r_p.php',
-                  { campo: campo, update_dato: update_dato, id: pk_registro },
-                  function(response) {  
-                    var json = JSON.parse(response);
+    } $.post(
+      '../DATABASE/up_dis_r_p.php',
+      { campo: campo, update_dato: update_dato, id: pk_registro },
+      function (response) {
+        var json = JSON.parse(response);
 
-                    console.log('Respuesta del servidor:', response);
-                    mensaje(json.mensaje, json.status);
-                     residuos_no_peligrosos(url, params); // refrescar la tabla después de la actualización
-                  }
-                );
+        console.log('Respuesta del servidor:', response);
+        mensaje(json.mensaje, json.status);
+        residuos_no_peligrosos(url, params); // refrescar la tabla después de la actualización
+      }
+    );
   }
-  
+
 })
 // BTNG REPORTE 
 
 // generacion de pdf
-$(document).on('click', '#btn_pdf__rp', function() {
+$(document).on('click', '#btn_pdf__rp', function () {
 
 
 
 
 
-  if(!  llenar_tabla){
-   console.error('No se encontró el registro c');
+  if (!llenar_tabla) {
+    console.error('No se encontró el registro c');
     return;
   }
 
   $.ajax({
     url: '../PDF/rp_des_p.php',
     type: 'POST',
-    data: { cp: JSON.stringify(  llenar_tabla) },
+    data: { cp: JSON.stringify(llenar_tabla) },
     xhrFields: { responseType: 'blob' },
-    success: function(blob) {
-      if(blob.size === 0){
+    success: function (blob) {
+      if (blob.size === 0) {
         alert('Error: PDF vacío o contenido inválido');
         return;
       }
@@ -1287,7 +1290,7 @@ $(document).on('click', '#btn_pdf__rp', function() {
       a.remove();
       window.URL.revokeObjectURL(url);
     },
-    error: function(xhr, status, error){
+    error: function (xhr, status, error) {
       console.error('Error AJAX:', error);
     }
   });
@@ -1296,14 +1299,14 @@ $(document).on('click', '#btn_pdf__rp', function() {
 
 
 // generacion de pdf
-$(document).on('click', '#btn_pdf', function() {
+$(document).on('click', '#btn_pdf', function () {
 
 
 
   let cp = llenar_tabla.find(item => item.PK_disp == parseInt(pk_registro));
 
-  if(!cp){
-   console.error('No se encontró el registro c');
+  if (!cp) {
+    console.error('No se encontró el registro c');
     return;
   }
 
@@ -1312,8 +1315,8 @@ $(document).on('click', '#btn_pdf', function() {
     type: 'POST',
     data: { cp: JSON.stringify(cp) },
     xhrFields: { responseType: 'blob' },
-    success: function(blob) {
-      if(blob.size === 0){
+    success: function (blob) {
+      if (blob.size === 0) {
         alert('Error: PDF vacío o contenido inválido');
         return;
       }
@@ -1327,7 +1330,7 @@ $(document).on('click', '#btn_pdf', function() {
       a.remove();
       window.URL.revokeObjectURL(url);
     },
-    error: function(xhr, status, error){
+    error: function (xhr, status, error) {
       console.error('Error AJAX:', error);
     }
   });
@@ -1336,36 +1339,36 @@ $(document).on('click', '#btn_pdf', function() {
 /// reporte en excel 
 $("#btn_export_excel").on("click", function () {
 
-    $.ajax({
-        url: "../EXCEL/RP_RES_P.php",
-        type: "POST",
-        data: { data: JSON.stringify(llenar_tabla) },
-        xhrFields: { responseType: "blob" },
+  $.ajax({
+    url: "../EXCEL/RP_RES_P.php",
+    type: "POST",
+    data: { data: JSON.stringify(llenar_tabla) },
+    xhrFields: { responseType: "blob" },
 
-        success: function (blob) {
-            const link = document.createElement("a");
-            link.href = window.URL.createObjectURL(blob);
-            link.download = "EC-HSE-F-53-NO_RESIDUOS_PELIGROSOS.xls";
-            link.click();
-        }
-    });
+    success: function (blob) {
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "EC-HSE-F-53-NO_RESIDUOS_PELIGROSOS.xls";
+      link.click();
+    }
+  });
 
 });
 
 /// filtros 
 
-function fil_res(){
+function fil_res() {
   $.ajax({
     url: '../DATABASE/cbx_mes_res_p.php',
     type: 'POST',
-    success: function(response){
+    success: function (response) {
       var json = JSON.parse(response);
-      if(!json.err){
+      if (!json.err) {
         $('#cbx_fil_mes').empty();
         $('#cbx_fil_mes').append('<option value="">MES</option>');
-        $.each(json, function(i,item){
-          if(i!="err"){
-            var option = '<option value="'+item.PK_mes+'">'+item.mes_res+'</option>';
+        $.each(json, function (i, item) {
+          if (i != "err") {
+            var option = '<option value="' + item.PK_mes + '">' + item.mes_res + '</option>';
             $('#cbx_fil_mes').append(option);
           }
         });
@@ -1375,23 +1378,23 @@ function fil_res(){
 }
 
 
-function fil_residuos(){
+function fil_residuos() {
   $.ajax({
     url: '../DATABASE/cg_res_hse_no_p_lst.php',
     type: 'POST',
-    success: function(response){
+    success: function (response) {
       var json = JSON.parse(response);
-      if(!json.err){
+      if (!json.err) {
         $('#cbx_fil_res').empty();
         $('#cbx_fil_res').append('<option value="">RESIDUO</option>');
-        $.each(json, function(i,item){
-          if(i!="err"){
-           var option = `<option value="${item.id_res}">${item.descrip_residuo}</option>`;
-           desc = item.descrip_residuo;
-           option = $(option).data('desc', desc);
-      
+        $.each(json, function (i, item) {
+          if (i != "err") {
+            var option = `<option value="${item.id_res}">${item.descrip_residuo}</option>`;
+            desc = item.descrip_residuo;
+            option = $(option).data('desc', desc);
+
             $('#cbx_fil_res').append(option);
-          
+
 
           }
         });
@@ -1401,18 +1404,18 @@ function fil_residuos(){
 }
 
 
-function cbx_clasificacion(){
+function cbx_clasificacion() {
   $.ajax({
     url: '../DATABASE/cbx_t_residuo_f_np.php', // PHP que devuelve los manifiestos
     type: 'POST',
-    success: function(response){
+    success: function (response) {
       var json = JSON.parse(response);
-      if(!json.err){
+      if (!json.err) {
         $('#cbx_tipo').empty();
         $('#cbx_tipo').append('<option value="">TIPO </option>');
-        $.each(json, function(i,item){
-          if(i!="err"){
-            var option = '<option value="'+item.PK_t_res+'">'+item.t_residuo+'</option>';
+        $.each(json, function (i, item) {
+          if (i != "err") {
+            var option = '<option value="' + item.PK_t_res + '">' + item.t_residuo + '</option>';
             $('#cbx_tipo').append(option);
           }
         });
@@ -1429,15 +1432,20 @@ function verificacar_filtro() {
   const t_url = '../DATABASE/t_res_n_p.php';
   let params = {};
 
-  const mes    = $('#cbx_fil_mes').val();
-  const tipo   = $('#cbx_tipo').val();
+  const mes = $('#cbx_fil_mes').val();
+  const tipo = $('#cbx_tipo').val();
   const codigo = $('#cbx_fil_res').val();
   const agencia = $('#fil_cbx_agencia').val();
-  
+  // se agrega el filtro de clasificacion rhomb Victor Alvarez
+  const rhomb = $('#cbx_fil_rhomb').val();
+
+  // Obtener los nombres de los campos de los filtros victor Alvarez
   const campo1 = $('#cbx_fil_mes').attr('name');
   const campo2 = $('#cbx_tipo').attr('name');
   const campo3 = $('#cbx_fil_res').attr('name');
   const campo4 = $('#fil_cbx_agencia').attr('name');
+  // Obtener el nombre del campo de clasificación RHOMB victor Alvarez
+  const campo5 = $('#cbx_fil_rhomb').attr('name');
 
   // Agregar filtros solo si tienen valor
   if (mes) {
@@ -1454,16 +1462,21 @@ function verificacar_filtro() {
     params.codigo = codigo;
     params.campo3 = campo3;
   }
- if (agencia) {
+  if (agencia) {
     params.agencia = agencia;
     params.campo4 = campo4;
+  }
+// Agregar filtro de clasificación RHOMB solo si tiene valor victor Alvarez
+  if (rhomb) {
+    params.rhomb = rhomb;
+    params.campo5 = campo5;
   }
   // Validar que al menos un filtro esté seleccionado
   if (Object.keys(params).length === 0) {
     mensaje('Debes seleccionar al menos un filtro', 'warning');
     return;
   }
-  
+
   console.log('Filtros enviados:', params);
   residuos_no_peligrosos(url, params);
   total(t_url, params); // actualizar total con filtros aplicados
@@ -1472,7 +1485,7 @@ function verificacar_filtro() {
 // ejecucion de la funcion filtar
 $('#btn_flt').click(function () {
 
-  verificacar_filtro(); 
+  verificacar_filtro();
 
 
 });
@@ -1481,17 +1494,17 @@ $('#btn_flt').click(function () {
 
 function total(t_url, params) {
 
-    $.post(t_url, params, function (r) {
+  $.post(t_url, params, function (r) {
 
-     $('#totales').empty();
+    $('#totales').empty();
 
-     console.log('Respuesta total:', r); // Verificar la respuesta del servidor
-        
+    console.log('Respuesta total:', r); // Verificar la respuesta del servidor
+
     $.each(r, function (i, item) {
-        if (i !== 'err') {
+      if (i !== 'err') {
 
 
-           var totales = ` 
+        var totales = ` 
            
 <td colspan="10" class="tfoot-minimal">
 
@@ -1513,40 +1526,79 @@ function total(t_url, params) {
 </td>
            
            `;
-            
 
 
 
 
-          $('#totales').append(totales);
-       
-            
-        }});
-        console.log(r);
-          
-    }, 'json');
+
+        $('#totales').append(totales);
 
 
-  }
-  
-  
-  //fill mes 
-  function fil_cbx_agencia(){
+      }
+    });
+    console.log(r);
+
+  }, 'json');
+
+
+}
+
+
+//fill mes 
+function fil_cbx_agencia() {
   $.ajax({
     url: '../DATABASE/cg_agencia_cbx.php',
     type: 'POST',
-    success: function(response){
+    success: function (response) {
       var json = JSON.parse(response);
-      if(!json.err){
+      if (!json.err) {
         $('#fil_cbx_agencia').empty();
         $('#fil_cbx_agencia').append('<option value="">AGENCIA</option>');
-        $.each(json, function(i,item){
-          if(i!="err"){
-            var option = '<option value="'+item.PK_pro+'">'+item.proyecto+'</option>';
+        $.each(json, function (i, item) {
+          if (i != "err") {
+            var option = '<option value="' + item.PK_pro + '">' + item.proyecto + '</option>';
             $('#fil_cbx_agencia').append(option);
           }
         });
       }
+    }
+  });
+}
+
+function fil_cbx_rhomb() {
+  $.ajax({
+    url: '../DATABASE/cbx_rhom.php',
+    type: 'POST',
+
+    success: function (response) {
+      var json = JSON.parse(response);
+
+      if (!json.err) {
+        $('#cbx_fil_rhomb').empty();
+
+        $('#cbx_fil_rhomb').append(
+          '<option value="">CLASIFICACIÓN RHOMB</option>'
+        );
+
+        $.each(json, function (i, item) {
+          if (i != 'err') {
+            var option =
+              '<option value="' +
+              item.PK_clf_sis_r +
+              '">' +
+              item.clf_sis_r +
+              '</option>';
+
+            $('#cbx_fil_rhomb').append(option);
+          }
+        });
+      } else {
+        console.warn(json.mensaje);
+      }
+    },
+
+    error: function (xhr, status, error) {
+      console.error('Error al cargar clasificación RHOMB:', error);
     }
   });
 }

@@ -1,0 +1,8 @@
+# ===========================
+# Archivos de configuración
+# ===========================
+
+/CONFIG/sys.res.con.php
+/CONFIG/sys.salud.php
+/DATABASE/conexion.php
+/DATABASE/data.php

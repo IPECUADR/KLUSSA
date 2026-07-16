@@ -4,23 +4,24 @@ $(document).ready(function () {
   const user_log = $('#usuario_sistema').val();
 
   if (user_log && user_log.length !== 0) {
-   /// url de acceso al servicio
+    /// url de acceso al servicio
 
     let url = '../DATABASE/cg_c_combustible.php';
     let t_url = '../DATABASE/fil_com_totales.php';
     let params = {};
 
-    
+
     /// actvacion de servicios 
-   
-     c_com_aut(url, params);
-     total(t_url, params);
-    
+
+    c_com_aut(url, params);
+    total(t_url, params);
+
     /// DEPENDENCIAS DE FILTROS
     cbx_fil_ag();
     fil_mes();
     cbx_fil_mq();
     cbx_fil_comb();
+    cbx_fil_rhomb(); // Filtro de clasificación RHOMB agregado por Victor Alvarez
 
   } else {
     console.warn('No se encontró el usuario del sistema.');
@@ -33,66 +34,56 @@ $(document).ready(function () {
 
 /// bariables de entorno
 
-    let url = '../DATABASE/cg_c_combustible.php';
-    let params = {};
-    let llenar_tabla = []; 
+let url = '../DATABASE/cg_c_combustible.php';
+let params = {};
+let llenar_tabla = [];
 
 
 /// c_com_aut
 
-function c_com_aut (url, params){
+function c_com_aut(url, params) {
 
-  
 
-   
+
+
   $.ajax({
-    
+
     type: 'POST',
-    url:url ,
-    data:params, 
-  
-    success: function(response){
+    url: url,
+    data: params,
+
+    success: function (response) {
       console.log(response);
       $('#content_table').empty();
-     llenar_tabla = Object.values(JSON.parse(response)).filter(item => typeof item === 'object');
-      
-     var json = JSON.parse(response);
- 
-      
-      if(!json.err){
-         
-        var contador=1;
+      llenar_tabla = Object.values(JSON.parse(response)).filter(item => typeof item === 'object');
 
-        $.each(json, function(i,item){
+      var json = JSON.parse(response);
 
 
-   
-          
-         
-        if(i!="err"){
+      if (!json.err) {
 
-                let fuente = '';
+        var contador = 1;
 
-        // Construcción de la fuente
-        if (item.com) {
-            
-            fuente = `Consumo de (${item.com}) ${item.vehiculo || ''}`;
-        }
+        $.each(json, function (i, item) {
 
 
-          
-         console.log(fuente);
-      
 
 
-          var codigo = `
+
+          if (i != "err") {
+
+
+
+
+
+            var codigo = `
               <tr>
                 <td>${contador}</td>
                 <td>${item.fc}</td>
                 <td>${item.mes}</td>
                 <td>${item.vehiculo}</td>
                 <td>${item.vh}</td>
-                <td>${fuente}</td>
+                <td>${item.clf}</td>
                 <td>${item.serie}</td>
                 <td>${item.com}</td>
                 <td>${item.gl}</td>
@@ -113,41 +104,41 @@ function c_com_aut (url, params){
 `;
 
 
-         
 
 
 
 
 
-         
-         
-         
-         
 
-          
 
-         
-     
-          
-      
-        
-       }
+
+
+
+
+
+
+
+
+
+
+
+          }
 
 
 
           //asignacion de informacion
 
-         $('#content_table').append(codigo);
-        
-         contador ++
+          $('#content_table').append(codigo);
+
+          contador++
 
 
         })
       }
-      else{
+      else {
 
-             mensaje(json.mensaje,'info')
-          }
+        mensaje(json.mensaje, 'info')
+      }
     }
   })
 
@@ -162,17 +153,17 @@ function c_com_aut (url, params){
 
 
 
-$(document).on('click', '#bnt_reg_res_p', function() {
-
- 
-$('#modal').modal('show');
+$(document).on('click', '#bnt_reg_res_p', function () {
 
 
-    cbx_mes_res();
-    cbx_agencia();
-    cbx_maquina();
-    modal_insert();
-    cbx_t_comb();
+  $('#modal').modal('show');
+
+
+  cbx_mes_res();
+  cbx_agencia();
+  cbx_maquina();
+  modal_insert();
+  cbx_t_comb();
 
 })
 
@@ -181,16 +172,16 @@ $('#modal').modal('show');
 
 
 
-function modal_insert(){
+function modal_insert() {
 
-$('#modal').modal('show');
-$('#titulo_modal').empty('');
-$('#form_modal').empty('');
-$('#form_modal_footer').empty('');
+  $('#modal').modal('show');
+  $('#titulo_modal').empty('');
+  $('#form_modal').empty('');
+  $('#form_modal_footer').empty('');
 
 
 
-   var title = `
+  var title = `
 <div class="container-fluid py-2 border-bottom" >
   <div class="row align-items-center">
     <div class="col-3 d-flex align-items-center">
@@ -210,7 +201,7 @@ $('#form_modal_footer').empty('');
 </button>
 `;
 
-   var form =`
+  var form = `
    
 
    
@@ -307,7 +298,7 @@ $('#form_modal_footer').empty('');
    
    
    `;
-   var footer =`
+  var footer = `
 
    <div class="container-fluid border-top pt-3" >
   <div class="row g-2">
@@ -336,72 +327,73 @@ $('#form_modal_footer').empty('');
 
 </div>
    `;
-   
 
-$('#modal').modal('show');
-$('#titulo_modal').append(title);
-$('#form_modal').append(form);
-$('#form_modal_footer').append(footer);
+
+  $('#modal').modal('show');
+  $('#titulo_modal').append(title);
+  $('#form_modal').append(form);
+  $('#form_modal_footer').append(footer);
 
 
 }
 
 // cambio dinamico de date 
-$(document).on('change', '#cbx_mes_res', function() {
- 
-   mes =  this.value; 
+$(document).on('change', '#cbx_mes_res', function () {
 
-   let an = new Date().getFullYear(); // año actual
+  mes = this.value;
 
-    mes = mes.padStart(2, '0'); // 01,02,03...
+  let an = new Date().getFullYear(); // año actual
 
-    console.log('Mes seleccionado:', mes); // Verificar el valor del mes seleccionado 
-    
-    if(mes !== ''){ im_fc = an + '-' + mes + '-01';  
-        
-        $('#fecha_registro').val(im_fc);
+  mes = mes.padStart(2, '0'); // 01,02,03...
 
-     } else { mensaje('Selecciona un mes', 'warning'); }
+  console.log('Mes seleccionado:', mes); // Verificar el valor del mes seleccionado 
+
+  if (mes !== '') {
+    im_fc = an + '-' + mes + '-01';
+
+    $('#fecha_registro').val(im_fc);
+
+  } else { mensaje('Selecciona un mes', 'warning'); }
 
 });
 
 
 
 
-function cbx_mes_res(){
-    $.ajax({
-      url: '../DATABASE/cbx_mes_res_p.php',
-      type: 'POST',
-      success: function(response){
-        var json = JSON.parse(response);
-        if(!json.err){
-          $('#cbx_mes_res').empty();
-          $('#cbx_mes_res').append('<option value="">SELECCIONE UNA OPCIÓN</option>');
-          $.each(json, function(i,item){
-            if(i!="err"){
-              var option = '<option value="'+item.PK_mes+'">'+item.mes_res+'</option>';
-              $('#cbx_mes_res').append(option);
-            }
-          });
-        }
+function cbx_mes_res() {
+  $.ajax({
+    url: '../DATABASE/cbx_mes_res_p.php',
+    type: 'POST',
+    success: function (response) {
+      var json = JSON.parse(response);
+      if (!json.err) {
+        $('#cbx_mes_res').empty();
+        $('#cbx_mes_res').append('<option value="">SELECCIONE UNA OPCIÓN</option>');
+        $.each(json, function (i, item) {
+          if (i != "err") {
+            var option = '<option value="' + item.PK_mes + '">' + item.mes_res + '</option>';
+            $('#cbx_mes_res').append(option);
+          }
+        });
       }
-    });
-  }
+    }
+  });
+}
 
 
 
-function cbx_t_comb(){
+function cbx_t_comb() {
   $.ajax({
     url: '../DATABASE/cbx_t_comb.php',
     type: 'POST',
-    success: function(response){
+    success: function (response) {
       var json = JSON.parse(response);
-      if(!json.err){
+      if (!json.err) {
         $('#cbx_t_comb').empty();
         $('#cbx_t_comb').append('<option value="">SELECCIONE UNA OPCIÓN</option>');
-        $.each(json, function(i,item){
-          if(i!="err"){
-       var option = '<option value="'+item.PK_t_com+'">'+item.t_com+'</option>';
+        $.each(json, function (i, item) {
+          if (i != "err") {
+            var option = '<option value="' + item.PK_t_com + '">' + item.t_com + '</option>';
             $('#cbx_t_comb').append(option);
           }
         });
@@ -416,18 +408,18 @@ function cbx_t_comb(){
 
 /// cargar cbx maquina
 
-function cbx_maquina(){
+function cbx_maquina() {
   $.ajax({
     url: '../DATABASE/cbx_ma_res.php',
     type: 'POST',
-    success: function(response){
+    success: function (response) {
       var json = JSON.parse(response);
-      if(!json.err){
+      if (!json.err) {
         $('#cbx_maquina').empty();
         $('#cbx_maquina').append('<option value="">SELECCIONE UNA OPCIÓN</option>');
-        $.each(json, function(i,item){
-          if(i!="err"){
-            var option = '<option value="'+item.PK_maquina+'">'+item.serie_maquina+'</option>';
+        $.each(json, function (i, item) {
+          if (i != "err") {
+            var option = '<option value="' + item.PK_maquina + '">' + item.serie_maquina + '</option>';
             $('#cbx_maquina').append(option);
           }
         });
@@ -443,18 +435,18 @@ function cbx_maquina(){
 
 
 
-function cbx_agencia(){
+function cbx_agencia() {
   $.ajax({
     url: '../DATABASE/cg_agencia_cbx.php',
     type: 'POST',
-    success: function(response){
+    success: function (response) {
       var json = JSON.parse(response);
-      if(!json.err){
+      if (!json.err) {
         $('#cbx_agencia').empty();
         $('#cbx_agencia').append('<option value="">SELECCIONE UNA OPCIÓN</option>');
-        $.each(json, function(i,item){
-          if(i!="err"){
-            var option = '<option value="'+item.PK_pro+'">'+item.proyecto+'</option>';
+        $.each(json, function (i, item) {
+          if (i != "err") {
+            var option = '<option value="' + item.PK_pro + '">' + item.proyecto + '</option>';
             $('#cbx_agencia').append(option);
           }
         });
@@ -486,8 +478,8 @@ $(document).on('input', '#ct_gal', function () {
 
 
 $(document).on('click', '#btn_registro', function () {
-  
-// capturo datos del formulario
+
+  // capturo datos del formulario
   const fecha_registro = $('#fecha_registro').val().trim();
   const maquina = $('#cbx_maquina').val().trim();
   const agencia = $('#cbx_agencia').val().trim();
@@ -499,18 +491,18 @@ $(document).on('click', '#btn_registro', function () {
 
 
   console.log(t_comb)
- //  valor de  la  descripcion  del  residuo
-  
- 
-    if(fecha_registro.length === 0 ) return mensaje('La fecha de registro es obligatoria','warning');
-   
-    if(mes.length === 0 ) return mensaje('El mes es obligatorio','warning');
-    if(maquina.length === 0 ) return mensaje('La maquina es obligatoria','warning');
-    if(agencia.length === 0 ) return mensaje('La agencia es obligatoria','warning');
-    if(galones.length === 0 ) return mensaje('La cantidad en galones es obligatoria','warning');
-    if(litros.length === 0 ) return mensaje('La cantidad en litros es obligatoria','warning');
-    if(t_comb.length === 0 ) return mensaje('El tipo de combustible es obligatorio','warning');
-    if(responsable.length === 0 ) return mensaje('El responsable es obligatorio','warning');
+  //  valor de  la  descripcion  del  residuo
+
+
+  if (fecha_registro.length === 0) return mensaje('La fecha de registro es obligatoria', 'warning');
+
+  if (mes.length === 0) return mensaje('El mes es obligatorio', 'warning');
+  if (maquina.length === 0) return mensaje('La maquina es obligatoria', 'warning');
+  if (agencia.length === 0) return mensaje('La agencia es obligatoria', 'warning');
+  if (galones.length === 0) return mensaje('La cantidad en galones es obligatoria', 'warning');
+  if (litros.length === 0) return mensaje('La cantidad en litros es obligatoria', 'warning');
+  if (t_comb.length === 0) return mensaje('El tipo de combustible es obligatorio', 'warning');
+  if (responsable.length === 0) return mensaje('El responsable es obligatorio', 'warning');
 
 
 
@@ -518,22 +510,22 @@ $(document).on('click', '#btn_registro', function () {
   /// validdacion, si los campos estan vacios
 
 
-// envio de datos al  servidor
+  // envio de datos al  servidor
 
- $.ajax({
+  $.ajax({
     url: '../DATABASE/in_c_combustible.php',
     type: 'POST',
     data: { fecha_registro, maquina, agencia, mes, galones, litros, t_comb, responsable },
-    
+
     beforeSend: function () {
       mensaje('Enviando datos...', 'info');
       $('#btn_registro').prop('disabled', true);
     },
     success: function (response) {
-     
-       var json = JSON.parse(response);
-    
-        if(!json.err){  mensaje(json.mensaje,'success');      c_com_aut(url, params);  $('#modal').modal('hide'); }else{ mensaje( json.mensaje,'error')}
+
+      var json = JSON.parse(response);
+
+      if (!json.err) { mensaje(json.mensaje, 'success'); c_com_aut(url, params); $('#modal').modal('hide'); } else { mensaje(json.mensaje, 'error') }
 
 
 
@@ -542,7 +534,7 @@ $(document).on('click', '#btn_registro', function () {
       console.error(error);
       mensaje('Ocurrió un error en la solicitud', 'error');
     },
-     complete: function () {
+    complete: function () {
       $('#btn_registro').prop('disabled', false);
     }
   });
@@ -553,18 +545,18 @@ $(document).on('click', '#btn_registro', function () {
 
 function mensaje(mensaje, icono) {
 
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: icono,
-        title: mensaje,
-        showConfirmButton: false,
-        timer: 2500,
-        timerProgressBar: true
-      });
+  Swal.fire({
+    toast: true,
+    position: 'top-end',
+    icon: icono,
+    title: mensaje,
+    showConfirmButton: false,
+    timer: 2500,
+    timerProgressBar: true
+  });
 
 
-  }
+}
 
 
 
@@ -579,50 +571,50 @@ function mensaje(mensaje, icono) {
 
 
 /// eliminacion de registros//
-$(document).on('click','#btn_delete',function(event){
+$(document).on('click', '#btn_delete', function (event) {
 
-// MOSTRAMOS LOS RECURSOS PARA CARGAR DATOS
+  // MOSTRAMOS LOS RECURSOS PARA CARGAR DATOS
 
- var delete_info = $(this)[0].parentElement;
- id = $(delete_info).attr("id");
-  
-console.log(id);
+  var delete_info = $(this)[0].parentElement;
+  id = $(delete_info).attr("id");
 
-Swal.fire({
-        title: "¿Deseas eliminar el registro?",
-        text: "Esta acción no se puede deshacer.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Sí, eliminar",
-        cancelButtonText: "No, cancelar"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.post('../DATABASE/del_c_combustible.php', { 
-              
-              
-              id_delete: id  
+  console.log(id);
+
+  Swal.fire({
+    title: "¿Deseas eliminar el registro?",
+    text: "Esta acción no se puede deshacer.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "No, cancelar"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.post('../DATABASE/del_c_combustible.php', {
 
 
-            })
-                .done(function(response) {
-                   
-                        const res = JSON.parse(response);
-                        console.log(response);
+        id_delete: id
 
-                              mensaje(res.mensaje, res.status);
 
-                        if (res.status === 'success') {
-                     
-                             c_com_aut(url, params);
+      })
+        .done(function (response) {
 
-                        }
-               
-                })
-                
-        }
-    });
+          const res = JSON.parse(response);
+          console.log(response);
+
+          mensaje(res.mensaje, res.status);
+
+          if (res.status === 'success') {
+
+            c_com_aut(url, params);
+
+          }
+
+        })
+
+    }
+  });
 });
 
 
@@ -636,7 +628,7 @@ Swal.fire({
 
 let pk_registro = 0;
 
-$(document).on('click', '#btn_edit', function() {
+$(document).on('click', '#btn_edit', function () {
 
   // capturo el id del registro
   let view_info = $(this).closest('td');
@@ -647,7 +639,7 @@ $(document).on('click', '#btn_edit', function() {
 
   // buscar el objeto correspondiente en el JSON global
   let cp = llenar_tabla.find(item => item.id == parseInt(id));
-  
+
 
   pk_registro = cp.id; // asignar a variable global si es necesario
 
@@ -659,12 +651,12 @@ $(document).on('click', '#btn_edit', function() {
 
 
 
-$('#titulo_modal').empty('');
-$('#form_modal').empty('');
-$('#form_modal_footer').empty('');
+  $('#titulo_modal').empty('');
+  $('#form_modal').empty('');
+  $('#form_modal_footer').empty('');
 
 
-var title = `
+  var title = `
 <div class="container-fluid py-2 border-bottom" >
   <div class="row align-items-center">
     <div class="col-3 d-flex align-items-center">
@@ -686,7 +678,7 @@ var title = `
 
 
 
-   var ficha =`
+  var ficha = `
 
 
   <div class="card-body px-4 py-4">
@@ -794,7 +786,7 @@ var title = `
 `;
 
 
-var footer = `
+  var footer = `
 <div class="container-fluid border-top pt-3" >
   <div class="row g-2">
 
@@ -820,35 +812,35 @@ var footer = `
 
 
 
-/// asignacion de valores  al modal
+  /// asignacion de valores  al modal
 
-$('#form_modal').append(ficha);
-$('#titulo_modal').append(title);
+  $('#form_modal').append(ficha);
+  $('#titulo_modal').append(title);
 
-$('#form_modal_footer').append(footer);
+  $('#form_modal_footer').append(footer);
 });
 
 
 // generacion de pdf
-$(document).on('click', '#btn_pdf', function() {
+$(document).on('click', '#btn_pdf', function () {
 
 
 
 
-  if(!llenar_tabla){
-   console.error('No se encontró el registro c');
+  if (!llenar_tabla) {
+    console.error('No se encontró el registro c');
     return;
   }
 
- 
+
 
   $.ajax({
     url: '../PDF/c_combustible.php',
     type: 'POST',
     data: { cp: JSON.stringify(llenar_tabla) },
     xhrFields: { responseType: 'blob' },
-    success: function(blob) {
-      if(blob.size === 0){
+    success: function (blob) {
+      if (blob.size === 0) {
         alert('Error: PDF vacío o contenido inválido');
         return;
       }
@@ -862,7 +854,7 @@ $(document).on('click', '#btn_pdf', function() {
       a.remove();
       window.URL.revokeObjectURL(url);
     },
-    error: function(xhr, status, error){
+    error: function (xhr, status, error) {
       console.error('Error AJAX:', error);
     }
   });
@@ -879,13 +871,13 @@ $(document).on('click', '#btn_pdf', function() {
 
 /// editar imputs 
 
-$(document).on('click', '#edit', function() {
+$(document).on('click', '#edit', function () {
 
   var input = $(this).siblings('input'); // busca el input hermano
- 
+
 
   if (input.prop('readonly')) {
-      
+
     input.prop('readonly', false);
 
     $(this).attr('title', 'Guardar fecha');
@@ -896,129 +888,129 @@ $(document).on('click', '#edit', function() {
 
     input.prop('readonly', true);
     $(this).attr('title', 'Editar fecha');
-    $(this).find('i').removeClass('fa-floppy-disk').addClass('fa-pencil');  
-  
+    $(this).find('i').removeClass('fa-floppy-disk').addClass('fa-pencil');
+
 
     // Aquí puedes agregar la lógica para guardar la nueva fecha en la base de datos si es necesario
 
-    var campo  = input.attr('id');
+    var campo = input.attr('id');
     update_dato = input.val();
 
     console.log('PK registro:', pk_registro);
 
     console.log('Nueva dato:', update_dato);
 
-        if(update_dato.length === 0){
-            mensaje('El campo no puede estar vacío', 'warning');
-            return;
+    if (update_dato.length === 0) {
+      mensaje('El campo no puede estar vacío', 'warning');
+      return;
 
 
-         }
+    }
 
-          $.post(
-                  '../DATABASE/up_items_c_combustible.php',
-                  { campo: campo, update_dato: update_dato, id: pk_registro },
-                  function(response) {
-                  
-     
-                    var json = JSON.parse(response);
+    $.post(
+      '../DATABASE/up_items_c_combustible.php',
+      { campo: campo, update_dato: update_dato, id: pk_registro },
+      function (response) {
 
-                    console.log('Respuesta del servidor:', response);
-                    mensaje(json.mensaje, json.status);
-                     c_com_aut(url, params); // refrescar la tabla después de la actualización
-                  }
-                );
 
-    
+        var json = JSON.parse(response);
+
+        console.log('Respuesta del servidor:', response);
+        mensaje(json.mensaje, json.status);
+        c_com_aut(url, params); // refrescar la tabla después de la actualización
+      }
+    );
+
+
   }
 
 
 });
 
- id_elemento = '';
+id_elemento = '';
 // editar  select
-$(document).on('click', '#edit_select', function() {
+$(document).on('click', '#edit_select', function () {
 
 
 
-    var input = $(this).siblings('input'); 
-     id_elemento  = input.attr('id');
-    var name = input.attr('name');
-    console.log('Campo a editar:', name);
+  var input = $(this).siblings('input');
+  id_elemento = input.attr('id');
+  var name = input.attr('name');
+  console.log('Campo a editar:', name);
 
-    // Ejecutar función cbx_<campo>
-    var cargar_cbx = `cbx_${id_elemento}`;
+  // Ejecutar función cbx_<campo>
+  var cargar_cbx = `cbx_${id_elemento}`;
 
-    if (typeof window[cargar_cbx] === "function") {
-        window[cargar_cbx]();
-    } else {
-        console.log("Función no encontrada:", cargar_cbx);
-        return;
-    }
+  if (typeof window[cargar_cbx] === "function") {
+    window[cargar_cbx]();
+  } else {
+    console.log("Función no encontrada:", cargar_cbx);
+    return;
+  }
 
-    // Crear select
-    var select = `
+  // Crear select
+  var select = `
         <select class="form-control form-control-sm" id="cbx_${id_elemento}" name="${name}"></select>
     `;
 
-    // Botón que aparecerá junto al select
-    var botonGuardar = `
+  // Botón que aparecerá junto al select
+  var botonGuardar = `
         <button type="button" class="btn btn-success btn-sm ml-2" id="btn_guardar">
             <i class="fa-solid fa-check"></i>
         </button>
     `;
 
-  
-    // Reemplazar input → select
-    input.replaceWith(select);
 
-    // Insertar botón después del select
-    $(this).after(botonGuardar);
+  // Reemplazar input → select
+  input.replaceWith(select);
+
+  // Insertar botón después del select
+  $(this).after(botonGuardar);
 
 });
 
 
 // Guardar selección del select editado
-$(document).on('click', '#btn_guardar', function() {
-    var select = $(this).siblings('select');
-    var name = select.attr('name');
-    let newText = select.find("option:selected").text();
-    
-    id_reg = select.val();
+$(document).on('click', '#btn_guardar', function () {
+  var select = $(this).siblings('select');
+  var name = select.attr('name');
+  let newText = select.find("option:selected").text();
 
-    if(id_reg.length === 0){
-        mensaje('Debes seleccionar una opción', 'warning');
-        
-    }else{
+  id_reg = select.val();
 
+  if (id_reg.length === 0) {
+    mensaje('Debes seleccionar una opción', 'warning');
 
-      $.post(
-                  '../DATABASE/up_items_c_combustible.php',
-                  { campo: name, update_dato: id_reg, id: pk_registro },
-                  function(response) {
-                  
-     
-                    var json = JSON.parse(response);
-
-                    console.log('Respuesta del servidor:', response);
-                    mensaje(json.mensaje, json.status);
-                     c_com_aut(url, params); // refrescar la tabla después de la actualización
-                  }
-                );
+  } else {
 
 
-    }
- 
-
-   
-     imput_replace = `<input type="text" class="form-control" name="${name}" id="${id_elemento}" value="${newText}" readonly>`;
-     console.log(imput_replace);
-
-    select.replaceWith(imput_replace);
-    $(this).remove();
+    $.post(
+      '../DATABASE/up_items_c_combustible.php',
+      { campo: name, update_dato: id_reg, id: pk_registro },
+      function (response) {
 
 
-  });
+        var json = JSON.parse(response);
+
+        console.log('Respuesta del servidor:', response);
+        mensaje(json.mensaje, json.status);
+        c_com_aut(url, params); // refrescar la tabla después de la actualización
+      }
+    );
+
+
+  }
+
+
+
+  imput_replace = `<input type="text" class="form-control" name="${name}" id="${id_elemento}" value="${newText}" readonly>`;
+  console.log(imput_replace);
+
+  select.replaceWith(imput_replace);
+  $(this).remove();
+
+
+});
 
 
 ///////exportar en excel 
@@ -1027,19 +1019,19 @@ $(document).on('click', '#btn_guardar', function() {
 
 $("#btn_export_excel").on("click", function () {
 
-    $.ajax({
-        url: "../EXCEL/RP_C_C_VH.php",
-        type: "POST",
-        data: { data: JSON.stringify(llenar_tabla) },
-        xhrFields: { responseType: "blob" },
+  $.ajax({
+    url: "../EXCEL/RP_C_C_VH.php",
+    type: "POST",
+    data: { data: JSON.stringify(llenar_tabla) },
+    xhrFields: { responseType: "blob" },
 
-        success: function (blob) {
-            const link = document.createElement("a");
-            link.href = window.URL.createObjectURL(blob);
-            link.download = "EC-HSE-F-53-CONSUMO-COMBUSTIBLE.xls";
-            link.click();
-        }
-    });
+    success: function (blob) {
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "EC-HSE-F-53-CONSUMO-COMBUSTIBLE.xls";
+      link.click();
+    }
+  });
 
 });
 
@@ -1048,18 +1040,18 @@ $("#btn_export_excel").on("click", function () {
 
 //// 
 
-function fil_mes(){
+function fil_mes() {
   $.ajax({
     url: '../DATABASE/cbx_mes_res_p.php',
     type: 'POST',
-    success: function(response){
+    success: function (response) {
       var json = JSON.parse(response);
-      if(!json.err){
+      if (!json.err) {
         $('#cbx_fil_mes').empty();
         $('#cbx_fil_mes').append('<option value="">MES</option>');
-        $.each(json, function(i,item){
-          if(i!="err"){
-            var option = '<option value="'+item.PK_mes+'">'+item.mes_res+'</option>';
+        $.each(json, function (i, item) {
+          if (i != "err") {
+            var option = '<option value="' + item.PK_mes + '">' + item.mes_res + '</option>';
             $('#cbx_fil_mes').append(option);
           }
         });
@@ -1069,18 +1061,18 @@ function fil_mes(){
 }
 
 
-function cbx_fil_ag(){
+function cbx_fil_ag() {
   $.ajax({
     url: '../DATABASE/cg_agencia_cbx.php',
     type: 'POST',
-    success: function(response){
+    success: function (response) {
       var json = JSON.parse(response);
-      if(!json.err){
+      if (!json.err) {
         $('#cbx_fil_ag').empty();
         $('#cbx_fil_ag').append('<option value="">AGENCIA</option>');
-        $.each(json, function(i,item){
-          if(i!="err"){
-            var option = '<option value="'+item.PK_pro+'">'+item.proyecto+'</option>';
+        $.each(json, function (i, item) {
+          if (i != "err") {
+            var option = '<option value="' + item.PK_pro + '">' + item.proyecto + '</option>';
             $('#cbx_fil_ag').append(option);
           }
         });
@@ -1092,18 +1084,18 @@ function cbx_fil_ag(){
 
 /// cargar cbx maquina
 
-function cbx_fil_mq(){
+function cbx_fil_mq() {
   $.ajax({
     url: '../DATABASE/cbx_ma_res.php',
     type: 'POST',
-    success: function(response){
+    success: function (response) {
       var json = JSON.parse(response);
-      if(!json.err){
+      if (!json.err) {
         $('#cbx_fil_mq').empty();
         $('#cbx_fil_mq').append('<option value="">MAQUINA</option>');
-        $.each(json, function(i,item){
-          if(i!="err"){
-            var option = '<option value="'+item.PK_maquina+'">'+item.serie_maquina+'</option>';
+        $.each(json, function (i, item) {
+          if (i != "err") {
+            var option = '<option value="' + item.PK_maquina + '">' + item.serie_maquina + '</option>';
             $('#cbx_fil_mq').append(option);
           }
         });
@@ -1114,18 +1106,18 @@ function cbx_fil_mq(){
 
 
 
-function cbx_fil_comb(){
+function cbx_fil_comb() {
   $.ajax({
     url: '../DATABASE/cbx_t_comb.php',
     type: 'POST',
-    success: function(response){
+    success: function (response) {
       var json = JSON.parse(response);
-      if(!json.err){
+      if (!json.err) {
         $('#cbx_fil_comb').empty();
         $('#cbx_fil_comb').append('<option value="">COMBUSTIBLE</option>');
-        $.each(json, function(i,item){
-          if(i!="err"){
-       var option = '<option value="'+item.PK_t_com+'">'+item.t_com+'</option>';
+        $.each(json, function (i, item) {
+          if (i != "err") {
+            var option = '<option value="' + item.PK_t_com + '">' + item.t_com + '</option>';
             $('#cbx_fil_comb').append(option);
           }
         });
@@ -1134,6 +1126,45 @@ function cbx_fil_comb(){
   });
 }
 
+/// cargar cbx rhomb para filtrar por victor Alvarez
+function cbx_fil_rhomb() {
+  $.ajax({
+    url: '../DATABASE/cbx_rhomb_combustible.php',
+    type: 'POST',
+    dataType: 'json',
+
+    success: function (json) {
+      $('#cbx_fil_rhomb').empty();
+
+      $('#cbx_fil_rhomb').append(
+        '<option value="">CLASIFICACIÓN RHOMB</option>'
+      );
+
+      if (json.err) {
+        console.warn(json.mensaje);
+        return;
+      }
+
+      $.each(json, function (i, item) {
+        if (i !== 'err') {
+          var option =
+            '<option value="' +
+            item.clf_comb_rhom +
+            '">' +
+            item.clf_comb_rhom +
+            '</option>';
+
+          $('#cbx_fil_rhomb').append(option);
+        }
+      });
+    },
+
+    error: function (xhr, status, error) {
+      console.error('Error al cargar clasificación RHOMB:', error);
+      console.error('Respuesta del servidor:', xhr.responseText);
+    }
+  });
+}
 
 
 
@@ -1142,23 +1173,25 @@ function cbx_fil_comb(){
 /// FILTROS
 
 function verificacar_filtro() {
-  
-/// vaibles de archivo y parametros de busqueda 
+
+  /// vaibles de archivo y parametros de busqueda 
   const url = '../DATABASE/fil_com_vh.php';
   let t_url = '../DATABASE/fil_com_totales.php';
   let params = {};
 
 
   /// variables de busqueda
-  const mes    = $('#cbx_fil_mes').val();
-  const agencia   = $('#cbx_fil_ag').val();
-  const com   = $('#cbx_fil_comb').val(); 
-  const mq = $('#cbx_fil_mq').val(); 
+  const mes = $('#cbx_fil_mes').val();
+  const agencia = $('#cbx_fil_ag').val();
+  const com = $('#cbx_fil_comb').val();
+  const mq = $('#cbx_fil_mq').val();
+  const rhomb = $('#cbx_fil_rhomb').val();// capturo el nombre de los campos para enviarlos al servidor
 
   const campo1 = $('#cbx_fil_mes').attr('name');
   const campo2 = $('#cbx_fil_ag').attr('name');
-  const campo3   = $('#cbx_fil_comb').attr('name');
+  const campo3 = $('#cbx_fil_comb').attr('name');
   const campo4 = $('#cbx_fil_mq').attr('name');
+  const campo5 = $('#cbx_fil_rhomb').attr('name');// capturo el nombre de los campos para enviarlos al servidor
 
 
   // Agregar filtros solo si tienen valor
@@ -1177,18 +1210,23 @@ function verificacar_filtro() {
   }
 
   if (mq) {
-      params.mq = mq;
-      params.campo4 = campo4;
-    }
+    params.mq = mq;
+    params.campo4 = campo4;
+  }
+  // Agregar filtro de rhomb solo si tiene valor por Victor Alvarez
+  if (rhomb) {
+    params.rhomb = rhomb;
+    params.campo5 = campo5;
+  }
 
 
-  
+
   // Validar que al menos un filtro esté seleccionado
   if (Object.keys(params).length === 0) {
     mensaje('Debes seleccionar al menos un filtro', 'warning');
     return;
   }
-  
+
   console.log('Filtros enviados:', params);
 
   c_com_aut(url, params);
@@ -1198,59 +1236,104 @@ function verificacar_filtro() {
 // ejecucion de la funcion filtar
 $('#btn_flt').click(function () {
 
-  verificacar_filtro(); 
+  verificacar_filtro();
 
 
 });
 
 let t_url = '../DATABASE/fil_com_totales.php';
 
-    function total(t_url, params) {
+function total(t_url, params) {
 
+  $.post(t_url, params, function (r) {
 
-      console.log('buenas' );
-        $.post(t_url, params, function (r) {
+    $('#resumen_totales').empty();
 
-        $('#totales').empty();
+    console.log('Respuesta total:', r);
 
-              console.log('Respuesta total:', r); // Verificar la respuesta del servidor
-                  
-              $.each(r, function (i, item) {
-                  if (i !== 'err') {
+    if (r.err) {
+      $('#resumen_totales').html(`
+        <div class="col-12">
+          <div class="alert alert-info mb-0">
+            No existen valores para los filtros seleccionados.
+          </div>
+        </div>
+      `);
 
+      return;
+    }
 
-                    var totales = ` 
-                    
-          <td colspan="10" class="tfoot-minimal">
+    $.each(r, function (i, item) {
 
-            <div class="tfoot-row">
+      if (i !== 'err') {
 
-              <span>Litros: <strong>${(item.t_litros ?? 0).toLocaleString()}</strong> L</span>
-            
-              <span>Galones: <strong>${(item.t_galones ?? 0).toLocaleString()}</strong></span>
-            
+        const litros = Number(item.t_litros ?? 0).toLocaleString('es-EC', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
 
-              <span class="total">
-                Metros Cubicos: <strong> ${(item.t_m3 ?? 0).toLocaleString()}</strong>
+        const galones = Number(item.t_galones ?? 0).toLocaleString('es-EC', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+
+        const metrosCubicos = Number(item.t_m3 ?? 0).toLocaleString('es-EC', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+
+        const totales = `
+          <div class="col-12 col-md-4">
+            <div class="border rounded-3 p-3 h-100 bg-light">
+              <small class="text-muted d-block mb-1">
+                Litros
+              </small>
+
+              <span class="fw-bold text-info">
+                ${litros} L
               </span>
-
             </div>
+          </div>
 
-          </td>
-              
-              `;
-                
+          <div class="col-12 col-md-4">
+            <div class="border rounded-3 p-3 h-100 bg-light">
+              <small class="text-muted d-block mb-1">
+                Galones
+              </small>
 
+              <span class="fw-bold text-primary">
+                ${galones} Gl
+              </span>
+            </div>
+          </div>
 
+          <div class="col-12 col-md-4">
+            <div class="border border-success rounded-3 p-3 h-100 bg-light">
+              <small class="text-muted d-block mb-1">
+                Metros cúbicos
+              </small>
 
+              <span class="fw-bold text-success">
+                ${metrosCubicos} m³
+              </span>
+            </div>
+          </div>
+        `;
 
-              $('#totales').append(totales);
-          
-                
-            }});
-            console.log(r);
-              
-        }, 'json');
-
-
+        $('#resumen_totales').append(totales);
       }
+    });
+
+  }, 'json').fail(function () {
+
+    $('#resumen_totales').html(`
+      <div class="col-12">
+        <div class="alert alert-danger mb-0">
+          No fue posible calcular las sumatorias.
+        </div>
+      </div>
+    `);
+
+  });
+
+}

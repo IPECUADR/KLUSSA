@@ -1,35 +1,39 @@
 <?php
-
+// Endpoint para actualizar un registro de consumo de aditivos por Victor Alvarez
 require('../CONFIG/sys.res.con.php');
 
 header('Content-Type: application/json; charset=utf-8');
 
-$fc_reg = trim($_POST['fc_reg'] ?? '');
+$id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+
+$fecha = trim($_POST['fecha'] ?? '');
 $pozo = trim($_POST['pozo'] ?? '');
 $responsable = trim($_POST['responsable'] ?? '');
 
-$agencia = filter_input(INPUT_POST, 'agencia', FILTER_VALIDATE_INT);
 $mes = filter_input(INPUT_POST, 'mes', FILTER_VALIDATE_INT);
-$ad = filter_input(INPUT_POST, 'ad', FILTER_VALIDATE_INT);
-$mq = filter_input(INPUT_POST, 'mq', FILTER_VALIDATE_INT);
+$maquina = filter_input(INPUT_POST, 'maquina', FILTER_VALIDATE_INT);
+$aditivo = filter_input(INPUT_POST, 'aditivo', FILTER_VALIDATE_INT);
+$proyecto = filter_input(INPUT_POST, 'proyecto', FILTER_VALIDATE_INT);
 
 $kgTexto = trim($_POST['kg'] ?? '');
-$litTexto = trim($_POST['lit'] ?? '');
+$litrosTexto = trim($_POST['litros'] ?? '');
 
 if (
-    $fc_reg === '' ||
+    !$id ||
+    $fecha === '' ||
     $pozo === '' ||
-    !$agencia ||
     !$mes ||
-    !$ad ||
-    !$mq ||
+    !$maquina ||
+    !$aditivo ||
+    !$proyecto ||
     $responsable === '' ||
     $kgTexto === '' ||
-    $litTexto === ''
+    $litrosTexto === ''
 ) {
     echo json_encode(
         array(
             'err' => true,
+            'status' => 'warning',
             'mensaje' => 'Completa todos los campos obligatorios.'
         ),
         JSON_UNESCAPED_UNICODE
@@ -39,11 +43,12 @@ if (
     exit;
 }
 
-if (!is_numeric($kgTexto) || !is_numeric($litTexto)) {
+if (!is_numeric($kgTexto) || !is_numeric($litrosTexto)) {
     echo json_encode(
         array(
             'err' => true,
-            'mensaje' => 'Los consumos en kg y litros deben ser valores numéricos.'
+            'status' => 'warning',
+            'mensaje' => 'Los consumos en kg y litros deben ser numéricos.'
         ),
         JSON_UNESCAPED_UNICODE
     );
@@ -53,12 +58,13 @@ if (!is_numeric($kgTexto) || !is_numeric($litTexto)) {
 }
 
 $kg = (float) $kgTexto;
-$lit = (float) $litTexto;
+$litros = (float) $litrosTexto;
 
-if ($kg < 0 || $lit < 0) {
+if ($kg < 0 || $litros < 0) {
     echo json_encode(
         array(
             'err' => true,
+            'status' => 'warning',
             'mensaje' => 'Ingresa solamente KG o solamente Litros.'
         ),
         JSON_UNESCAPED_UNICODE
@@ -68,10 +74,11 @@ if ($kg < 0 || $lit < 0) {
     exit;
 }
 
-if ($kg == 0 && $lit == 0) {
+if ($kg == 0 && $litros == 0) {
     echo json_encode(
         array(
             'err' => true,
+            'status' => 'warning',
             'mensaje' => 'Ingresa un consumo mayor que cero en kg o litros.'
         ),
         JSON_UNESCAPED_UNICODE
@@ -82,17 +89,18 @@ if ($kg == 0 && $lit == 0) {
 }
 
 $query = "
-    INSERT INTO c_aditivos (
-        fc_in_c_ad,
-        FK_mes,
-        FK_maquina,
-        pozo_c_ad,
-        FK_ad_rs,
-        kg_c_ad,
-        lit_c_ad,
-        FK_pro,
-        rp_in_c_ad
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    UPDATE c_aditivos
+    SET
+        fc_in_c_ad = ?,
+        FK_mes = ?,
+        FK_maquina = ?,
+        pozo_c_ad = ?,
+        FK_ad_rs = ?,
+        kg_c_ad = ?,
+        lit_c_ad = ?,
+        FK_pro = ?,
+        rp_in_c_ad = ?
+    WHERE PK_c_ad = ?
 ";
 
 $stmt = mysqli_prepare($con, $query);
@@ -101,7 +109,8 @@ if (!$stmt) {
     echo json_encode(
         array(
             'err' => true,
-            'mensaje' => 'No fue posible preparar el registro.'
+            'status' => 'error',
+            'mensaje' => 'No fue posible preparar la actualización.'
         ),
         JSON_UNESCAPED_UNICODE
     );
@@ -112,23 +121,25 @@ if (!$stmt) {
 
 mysqli_stmt_bind_param(
     $stmt,
-    'siisiddis',
-    $fc_reg,
+    'siisiddisi',
+    $fecha,
     $mes,
-    $mq,
+    $maquina,
     $pozo,
-    $ad,
+    $aditivo,
     $kg,
-    $lit,
-    $agencia,
-    $responsable
+    $litros,
+    $proyecto,
+    $responsable,
+    $id
 );
 
 if (mysqli_stmt_execute($stmt)) {
     echo json_encode(
         array(
             'err' => false,
-            'mensaje' => 'Registrado exitosamente.'
+            'status' => 'success',
+            'mensaje' => 'Registro actualizado correctamente.'
         ),
         JSON_UNESCAPED_UNICODE
     );
@@ -136,7 +147,8 @@ if (mysqli_stmt_execute($stmt)) {
     echo json_encode(
         array(
             'err' => true,
-            'mensaje' => 'No se pudo completar el registro. Intente nuevamente.'
+            'status' => 'error',
+            'mensaje' => 'No fue posible actualizar el registro.'
         ),
         JSON_UNESCAPED_UNICODE
     );

@@ -4,14 +4,15 @@ $(document).ready(function () {
   const user_log = $('#usuario_sistema').val();
 
   if (user_log && user_log.length !== 0) {
-   
+
     let url = '../DATABASE/cg_c_aditivos.php';
     let params = {};
 
     c_adtivos(url, params);
+    total_aditivos(params);
 
 
-   /// DEPENDENCIAS DE FILTROS
+    /// DEPENDENCIAS DE FILTROS
     cbx_fil_ag();
     fil_mes();
     cbx_fil_mq();
@@ -25,24 +26,25 @@ $(document).ready(function () {
 });
 
 /// variables de entorno
-    let url = '../DATABASE/cg_c_aditivos.php';
-    let params = {};
-    let llenar_tabla = []; 
+let url = '../DATABASE/cg_c_aditivos.php';
+let params = {};
+let llenar_tabla = [];
+let pk_registro_aditivo = 0;
 
 
 
-function c_adtivos (url, params){
+function c_adtivos(url, params) {
 
-  
 
-   
+
+
   $.ajax({
- 
+
     type: 'POST',
-    url:url ,
-    data:params, 
-  
-    success: function(response){
+    url: url,
+    data: params,
+
+    success: function (response) {
       console.log(response);
       $('#content_table').empty();
       llenar_tabla = Object.values(JSON.parse(response)).filter(item => typeof item === 'object');
@@ -50,27 +52,27 @@ function c_adtivos (url, params){
 
 
 
-      
-      if(!json.err){
-          var contador=1;
 
-        $.each(json, function(i,item){
-          
+      if (!json.err) {
+        var contador = 1;
 
-
-   
-          
-         
-        if(i!="err"){
-
-        
-          
-          
-         
-      
+        $.each(json, function (i, item) {
 
 
-          var codigo = `
+
+
+
+
+          if (i != "err") {
+
+
+
+
+
+
+
+
+            var codigo = `
               <tr>
 
                 <td>${contador}</td>
@@ -90,10 +92,16 @@ function c_adtivos (url, params){
 
                  
                   
-            
+                    <button
+                      type="button"
+                      class="btn btn-primary btn-sm mb-1 mt-1"
+                      id="btn_editar_aditivo"
+                      title="Editar registro">
+                      <i class="fas fa-edit"></i>
+                    </button>
                     
                   
-                    <button type="button" id="btn_delete" class="btn btn-danger btn-sm mb-1 mt-1">
+                    <button type="button" id="btn_delete" class="btn btn-danger btn-sm mb-1 mt-1" title="Eliminar registro">
                       <i class="fas fa-trash-alt"></i>
                     </button>
                   </td>
@@ -101,42 +109,42 @@ function c_adtivos (url, params){
 `;
 
 
-         
 
 
 
 
 
-         
-         
-         
-         
 
-          
 
-         
-     
-          
-      
-        
-       }
+
+
+
+
+
+
+
+
+
+
+
+          }
 
 
 
           //asignacion de informacion
 
-         $('#content_table').append(codigo);
-        
-         contador ++
+          $('#content_table').append(codigo);
+
+          contador++
 
 
         })
       }
-      else{
+      else {
 
-          mensaje(json.mensaje,'info');
-          
-          }
+        mensaje(json.mensaje, 'info');
+
+      }
     }
   })
 
@@ -151,17 +159,17 @@ function c_adtivos (url, params){
 
 
 
-$(document).on('click', '#bnt_reg', function() {
-
- 
-$('#modal').modal('show');
+$(document).on('click', '#bnt_reg', function () {
 
 
-    cbx_mes_res();
-    cbx_agencia();
-    modal_insert();
-    cbx_maquina();
-    cbx_aditivos();
+  $('#modal').modal('show');
+
+
+  cbx_mes_res();
+  cbx_agencia();
+  modal_insert();
+  cbx_maquina();
+  cbx_aditivos();
 
 })
 
@@ -170,16 +178,17 @@ $('#modal').modal('show');
 
 
 
-      function modal_insert(){
-
-      $('#modal').modal('show');
-      $('#titulo_modal').empty('');
-      $('#form_modal').empty('');
-      $('#form_modal_footer').empty('');
+function modal_insert() {
 
 
+  $('#modal').modal('show');
+  $('#titulo_modal').empty('');
+  $('#form_modal').empty('');
+  $('#form_modal_footer').empty('');
 
-        var title = `
+
+
+  var title = `
       <div class="container-fluid py-2 border-bottom" >
         <div class="row align-items-center">
           <div class="col-3 d-flex align-items-center">
@@ -199,7 +208,7 @@ $('#modal').modal('show');
       </button>
       `;
 
-        var form =`
+  var form = `
         
 <form id="detalle_residuo" class="container-fluid py-3">
 
@@ -256,12 +265,12 @@ $('#modal').modal('show');
         <div class="row g-3">
           <div class="col-md-6">
             <label class="form-label small fw-semibold text-muted">CONSUMO KG</label>
-            <input type="text" class="form-control form-control-sm" id="c_kg" name="c_kg" placeholder="Kg">
+            <input type="number" step="0.01" min="0" class="form-control form-control-sm" id="c_kg" name="c_kg" placeholder="0.00">
           </div>
 
           <div class="col-md-6">
             <label class="form-label small fw-semibold text-muted">CONSUMO L</label>
-            <input type="text" class="form-control form-control-sm" id="c_lit" name="c_lit" placeholder="Litros">
+            <input type="number" step="0.01" min="0" class="form-control form-control-sm" id="c_lit" name="c_lit" placeholder="0.00">
           </div>
         </div>
       </div>
@@ -290,7 +299,7 @@ $('#modal').modal('show');
         
         
         `;
-        var footer =`
+  var footer = `
 
         <div class="container-fluid border-top pt-3" >
         <div class="row g-2">
@@ -319,108 +328,634 @@ $('#modal').modal('show');
 
       </div>
         `;
-        
-
-      $('#modal').modal('show');
-      $('#titulo_modal').append(title);
-      $('#form_modal').append(form);
-      $('#form_modal_footer').append(footer);
 
 
-      }
+  $('#modal').modal('show');
+  $('#titulo_modal').append(title);
+  $('#form_modal').append(form);
+  $('#form_modal_footer').append(footer);
 
 
+}
 
 
-      function cbx_mes_res(){
-        $.ajax({
-          url: '../DATABASE/cbx_mes_res_p.php',
-          type: 'POST',
-          success: function(response){
-            var json = JSON.parse(response);
-            if(!json.err){
-              $('#cbx_mes_res').empty();
-              $('#cbx_mes_res').append('<option value="">SELECCIONE UNA OPCIÓN</option>');
-              $.each(json, function(i,item){
-                if(i!="err"){
-                  var option = '<option value="'+item.PK_mes+'">'+item.mes_res+'</option>';
-                  $('#cbx_mes_res').append(option);
-                }
-              });
-            }
-          }
-        });
-      }
+//Funcion para controlar la unidad de consumo de aditivos por Victor Alvarez, bloqueando el campo de litros si se ingresa un valor en kg y viceversa.
+function controlarUnidadAditivo(
+  selectorKg,
+  selectorLitros
+) {
+  const campoKg = $(selectorKg);
+  const campoLitros = $(selectorLitros);
+
+  const kg = Number(campoKg.val()) || 0;
+  const litros = Number(campoLitros.val()) || 0;
+
+  if (kg > 0) {
+    campoLitros
+      .val('')
+      .prop('disabled', true)
+      .attr(
+        'title',
+        'El campo Litros está bloqueado porque se ingresó un consumo en KG.'
+      );
+
+    campoKg
+      .prop('disabled', false)
+      .removeAttr('title');
+
+    return;
+  }
+
+  if (litros > 0) {
+    campoKg
+      .val('')
+      .prop('disabled', true)
+      .attr(
+        'title',
+        'El campo KG está bloqueado porque se ingresó un consumo en Litros.'
+      );
+
+    campoLitros
+      .prop('disabled', false)
+      .removeAttr('title');
+
+    return;
+  }
+
+  campoKg
+    .prop('disabled', false)
+    .removeAttr('title');
+
+  campoLitros
+    .prop('disabled', false)
+    .removeAttr('title');
+}
+
+/* Control de unidad en el formulario registrar*/
+$(document).on('input', '#c_kg, #c_lit', function () {
+  controlarUnidadAditivo('#c_kg', '#c_lit');
+});
+
+/* Control de unidad en el formulario editar registro*/
+$(document).on(
+  'input',
+  '#edit_kg_aditivo, #edit_litros_aditivo',
+  function () {
+    controlarUnidadAditivo(
+      '#edit_kg_aditivo',
+      '#edit_litros_aditivo'
+    );
+  }
+);
+
+//Funcion para formulario de editar registro de consumo de aditivos por victor alvarez
+$(document).on('click', '#btn_editar_aditivo', function () {
+
+  const celda = $(this).closest('td');
+  const id = celda.attr('id');
+
+  const cp = llenar_tabla.find(function (item) {
+    return String(item.id) === String(id);
+  });
+
+  if (!cp) {
+    mensaje('No se encontró la información del registro.', 'error');
+    return;
+  }
+
+  pk_registro_aditivo = cp.id;
+
+  $('#titulo_modal').empty();
+  $('#form_modal').empty();
+  $('#form_modal_footer').empty();
+
+  const titulo = `
+    <div class="container-fluid py-2 border-bottom">
+      <div class="row align-items-center">
+
+        <div class="col-3 d-flex align-items-center">
+          ../IMAGE/lg.png
+        </div>
+
+        <div class="col-6 text-center">
+          <span class="fw-semibold" style="font-size:0.95rem;">
+            EDITAR CONSUMO DE ADITIVOS
+          </span>
+        </div>
+
+        <div class="col-3 text-end">
+          <small class="text-light opacity-75 fw-semibold">
+            EC-HSE-F-53
+          </small>
+        </div>
+
+      </div>
+    </div>
+
+    <button
+      type="button"
+      class="btn btn-link text-danger p-0"
+      data-bs-dismiss="modal"
+      aria-label="Close"
+    >
+      <i class="fa-solid fa-xmark fa-lg"></i>
+    </button>
+  `;
+
+  const formulario = `
+    <form id="form_editar_aditivo" class="container-fluid py-3">
+
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-secondary text-white fw-semibold">
+          Datos generales
+        </div>
+
+        <div class="card-body">
+          <div class="row g-3">
+
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold text-muted">
+                Fecha
+              </label>
+
+              <input
+                type="date"
+                class="form-control form-control-sm"
+                id="edit_fecha_aditivo"
+                value="${cp.fr || ''}"
+              >
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold text-muted">
+                Mes
+              </label>
+
+              <select
+                class="form-select form-select-sm"
+                id="cbx_mes_res"
+              >
+                <option value="">Cargando...</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold text-muted">
+                Máquina
+              </label>
+
+              <select
+                class="form-select form-select-sm"
+                id="cbx_maquina"
+              >
+                <option value="">Cargando...</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold text-muted">
+                Pozo
+              </label>
+
+              <input
+                type="text"
+                class="form-control form-control-sm"
+                id="edit_pozo_aditivo"
+                value="${cp.pz || ''}"
+              >
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold text-muted">
+                Proyecto
+              </label>
+
+              <select
+                class="form-select form-select-sm"
+                id="cbx_agencia"
+              >
+                <option value="">Cargando...</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold text-muted">
+                Aditivo
+              </label>
+
+              <select
+                class="form-select form-select-sm"
+                id="cbx_aditivo"
+              >
+                <option value="">Cargando...</option>
+              </select>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-success text-white fw-semibold">
+          Consumo
+        </div>
+
+        <div class="card-body">
+          <div class="row g-3">
+
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold text-muted">
+                Consumo en kg
+              </label>
+
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                class="form-control form-control-sm"
+                id="edit_kg_aditivo"
+                value="${cp.kg ?? 0}"
+              >
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold text-muted">
+                Consumo en litros
+              </label>
+
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                class="form-control form-control-sm"
+                id="edit_litros_aditivo"
+                value="${cp.lt ?? 0}"
+              >
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-primary text-white fw-semibold">
+          Responsable
+        </div>
+
+        <div class="card-body">
+          <label class="form-label small fw-semibold text-muted">
+            Responsable
+          </label>
+
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            id="edit_responsable_aditivo"
+            value="${cp.rp || ''}"
+          >
+        </div>
+      </div>
+
+    </form>
+  `;
+
+  const pie = `
+    <div class="container-fluid border-top pt-3">
+      <div class="row g-2">
+
+        <div class="col-md-6 col-12">
+          <button
+            type="button"
+            class="btn btn-outline-primary w-100"
+            id="btn_guardar_edicion_aditivo"
+          >
+            <i class="fas fa-save"></i>
+            Guardar cambios
+          </button>
+        </div>
+
+        <div class="col-md-6 col-12">
+          <button
+            type="button"
+            class="btn btn-outline-danger w-100"
+            data-bs-dismiss="modal"
+          >
+            <i class="fas fa-times-circle"></i>
+            Cancelar
+          </button>
+        </div>
+
+      </div>
+    </div>
+  `;
+
+  $('#titulo_modal').append(titulo);
+  $('#form_modal').append(formulario);
+  $('#form_modal_footer').append(pie);
+
+  $('#modal').modal('show');
+
+  cbx_mes_res(cp.FK_mes);
+  cbx_maquina(cp.FK_maquina);
+  cbx_agencia(cp.FK_pro);
+  cbx_aditivos(cp.FK_ad_rs);
+
+  controlarUnidadAditivo(
+    '#edit_kg_aditivo',
+    '#edit_litros_aditivo'
+  );
+
+});
 
 
+//Funcion para el guardado de la edicion de registro de consumo de aditivos por victor alvarez
+$(document).on('click', '#btn_guardar_edicion_aditivo', function () {
+
+  const boton = $(this);
+
+  const id = pk_registro_aditivo;
+  const fecha = $('#edit_fecha_aditivo').val();
+  const mes = $('#cbx_mes_res').val();
+  const maquina = $('#cbx_maquina').val();
+  const pozo = $('#edit_pozo_aditivo').val().trim();
+  const proyecto = $('#cbx_agencia').val();
+  const aditivo = $('#cbx_aditivo').val();
+  const kg = $('#edit_kg_aditivo').prop('disabled') ? '0' : ($('#edit_kg_aditivo').val().trim() || '0');
+  const litros = $('#edit_litros_aditivo').prop('disabled') ? '0' : ($('#edit_litros_aditivo').val().trim() || '0');
+  const responsable = $('#edit_responsable_aditivo').val().trim();
+
+  if (!id) {
+    mensaje('No se pudo identificar el registro.', 'error');
+    return;
+  }
+
+  if (fecha === '') {
+    mensaje('La fecha es obligatoria.', 'warning');
+    return;
+  }
+
+  if (!mes) {
+    mensaje('Selecciona el mes.', 'warning');
+    return;
+  }
+
+  if (!maquina) {
+    mensaje('Selecciona la máquina.', 'warning');
+    return;
+  }
+
+  if (pozo === '') {
+    mensaje('El pozo es obligatorio.', 'warning');
+    return;
+  }
+
+  if (!proyecto) {
+    mensaje('Selecciona el proyecto.', 'warning');
+    return;
+  }
+
+  if (!aditivo) {
+    mensaje('Selecciona el aditivo.', 'warning');
+    return;
+  }
 
 
+  const kgNumero = Number(kg);
+  const litrosNumero = Number(litros);
 
+  if (
+    !Number.isFinite(kgNumero) ||
+    !Number.isFinite(litrosNumero)
+  ) {
+    mensaje(
+      'Los consumos deben ser valores numéricos.',
+      'warning'
+    );
+    return;
+  }
 
+  if (kgNumero < 0 || litrosNumero < 0) {
+    mensaje(
+      'Los consumos no pueden ser negativos.',
+      'warning'
+    );
+    return;
+  }
 
+  if (kgNumero === 0 && litrosNumero === 0) {
+    mensaje(
+      'Ingresa un consumo mayor que cero en kg o litros.',
+      'warning'
+    );
+    return;
+  }
 
+  if (responsable === '') {
+    mensaje('El responsable es obligatorio.', 'warning');
+    return;
+  }
 
-
-
-
-
-      function cbx_agencia(){
-        $.ajax({
-          url: '../DATABASE/cg_agencia_cbx.php',
-          type: 'POST',
-          success: function(response){
-            var json = JSON.parse(response);
-            if(!json.err){
-              $('#cbx_agencia').empty();
-              $('#cbx_agencia').append('<option value="">SELECCIONE UNA OPCIÓN</option>');
-              $.each(json, function(i,item){
-                if(i!="err"){
-                  var option = '<option value="'+item.PK_pro+'">'+item.proyecto+'</option>';
-                  $('#cbx_agencia').append(option);
-                }
-              });
-            }
-          }
-        });
-      }
-
-
-
-function cbx_maquina(){
   $.ajax({
-    url: '../DATABASE/cbx_ma_res.php',
+    url: '../DATABASE/up_c_aditivos.php',
     type: 'POST',
-    success: function(response){
-      var json = JSON.parse(response);
-      if(!json.err){
-        $('#cbx_maquina').empty();
-        $('#cbx_maquina').append('<option value="">SELECCIONE UNA OPCIÓN</option>');
-        $.each(json, function(i,item){
-          if(i!="err"){
-            var option = '<option value="'+item.PK_maquina+'">'+item.serie_maquina+'</option>';
-            $('#cbx_maquina').append(option);
+    dataType: 'json',
+
+    data: {
+      id,
+      fecha,
+      mes,
+      maquina,
+      pozo,
+      proyecto,
+      aditivo,
+      kg,
+      litros,
+      responsable
+    },
+
+    beforeSend: function () {
+      boton.prop('disabled', true);
+    },
+
+    success: function (json) {
+
+      mensaje(json.mensaje, json.status);
+
+      if (!json.err) {
+        boton.trigger('blur');
+        $('#modal').modal('hide');
+
+        c_adtivos(url, params);
+        total_aditivos(params);
+      }
+
+    },
+
+    error: function (xhr, status, error) {
+      console.error('Error al actualizar aditivo:', error);
+      console.error('Respuesta del servidor:', xhr.responseText);
+
+      mensaje(
+        'No fue posible actualizar el registro.',
+        'error'
+      );
+    },
+
+    complete: function () {
+      boton.prop('disabled', false);
+    }
+  });
+
+});
+
+
+// funciones de cbx para llenar selects
+function cbx_mes_res(valorSeleccionado = '') {
+  $.ajax({
+    url: '../DATABASE/cbx_mes_res_p.php',
+    type: 'POST',
+
+    success: function (response) {
+      const json = JSON.parse(response);
+
+      if (!json.err) {
+        $('#cbx_mes_res').empty();
+        $('#cbx_mes_res').append(
+          '<option value="">SELECCIONE UNA OPCIÓN</option>'
+        );
+
+        $.each(json, function (i, item) {
+          if (i !== 'err') {
+            const option = `
+              <option value="${item.PK_mes}">
+                ${item.mes_res}
+              </option>
+            `;
+
+            $('#cbx_mes_res').append(option);
           }
         });
+
+        if (valorSeleccionado !== '') {
+          $('#cbx_mes_res').val(String(valorSeleccionado));
+        }
       }
     }
   });
 }
 
-function cbx_aditivos(){
+
+
+
+
+
+
+
+
+
+
+
+
+function cbx_agencia(valorSeleccionado = '') {
+  $.ajax({
+    url: '../DATABASE/cg_agencia_cbx.php',
+    type: 'POST',
+
+    success: function (response) {
+      const json = JSON.parse(response);
+
+      if (!json.err) {
+        $('#cbx_agencia').empty();
+        $('#cbx_agencia').append(
+          '<option value="">SELECCIONE UNA OPCIÓN</option>'
+        );
+
+        $.each(json, function (i, item) {
+          if (i !== 'err') {
+            const option = `
+              <option value="${item.PK_pro}">
+                ${item.proyecto}
+              </option>
+            `;
+
+            $('#cbx_agencia').append(option);
+          }
+        });
+
+        if (valorSeleccionado !== '') {
+          $('#cbx_agencia').val(String(valorSeleccionado));
+        }
+      }
+    }
+  });
+}
+
+
+//Funcion para llenar el select de maquinas
+function cbx_maquina(valorSeleccionado = '') {
+  $.ajax({
+    url: '../DATABASE/cbx_ma_res.php',
+    type: 'POST',
+
+    success: function (response) {
+      const json = JSON.parse(response);
+
+      if (!json.err) {
+        $('#cbx_maquina').empty();
+        $('#cbx_maquina').append(
+          '<option value="">SELECCIONE UNA OPCIÓN</option>'
+        );
+
+        $.each(json, function (i, item) {
+          if (i !== 'err') {
+            const option = `
+              <option value="${item.PK_maquina}">
+                ${item.serie_maquina}
+              </option>
+            `;
+
+            $('#cbx_maquina').append(option);
+          }
+        });
+
+        if (valorSeleccionado !== '') {
+          $('#cbx_maquina').val(String(valorSeleccionado));
+        }
+      }
+    }
+  });
+}
+
+//Funcion para llenar el select de aditivos
+function cbx_aditivos(valorSeleccionado = '') {
   $.ajax({
     url: '../DATABASE/cbx_aditivos.php',
     type: 'POST',
-    success: function(response){
-      var json = JSON.parse(response);
-      if(!json.err){
+
+    success: function (response) {
+      const json = JSON.parse(response);
+
+      if (!json.err) {
         $('#cbx_aditivo').empty();
-        $('#cbx_aditivo').append('<option value="">SELECCIONE UNA OPCIÓN</option>');
-        $.each(json, function(i,item){
-          if(i!="err"){
-            var option = '<option value="'+item.PK_ad+'">'+item.ad_rs+'</option>';
+        $('#cbx_aditivo').append(
+          '<option value="">SELECCIONE UNA OPCIÓN</option>'
+        );
+
+        $.each(json, function (i, item) {
+          if (i !== 'err') {
+            const option = `
+              <option value="${item.PK_ad}">
+                ${item.ad_rs}
+              </option>
+            `;
+
             $('#cbx_aditivo').append(option);
           }
         });
+
+        if (valorSeleccionado !== '') {
+          $('#cbx_aditivo').val(String(valorSeleccionado));
+        }
       }
     }
   });
@@ -435,31 +970,59 @@ function cbx_aditivos(){
 
 
 $(document).on('click', '#btn_registro', function () {
-  
-// capturo datos del formulario
 
-     const agencia = $('#cbx_agencia').val().trim();
-     const mes = $('#cbx_mes_res').val().trim();
-     const fc_reg = $('#fc_reg').val().trim();
-     const pozo = $('#pz').val().trim();
-     const ad = $('#cbx_aditivo').val().trim();
-     const lit = $('#c_lit').val().trim();
-     const kg = $('#c_kg').val().trim();
-     const mq = $('#cbx_maquina').val().trim();
-    const responsable = $('#resposable').val().trim();
+  // capturo datos del formulario
 
- //  valor de  la  descripcion  del  residuo
-  
- 
-    if(fc_reg.length === 0 ) return mensaje('La fecha  es obligatoria','warning');
-    if(pozo.length === 0 ) return mensaje('El pozo es obligatoria','warning');
-    if(agencia.length === 0 ) return mensaje('La agencia es obligatoria','warning');
-    if(mes.length === 0 ) return mensaje('El mes es obligatorio','warning');
-    if(ad.length === 0 ) return mensaje('El aditivo es obligatorio','warning');
-    if(kg.length === 0 ) return mensaje('El consumo  en KG es obligatorio','warning');
-    if(lit.length === 0 ) return mensaje('El consumo en LT es obligatorio','warning');
-    if(mq.length === 0 ) return mensaje('La maquina es obligatoria','warning');
-    if(responsable.length === 0 ) return mensaje('El responsable es obligatorio','warning');
+  const agencia = $('#cbx_agencia').val().trim();
+  const mes = $('#cbx_mes_res').val().trim();
+  const fc_reg = $('#fc_reg').val().trim();
+  const pozo = $('#pz').val().trim();
+  const ad = $('#cbx_aditivo').val().trim();
+  const lit = $('#c_lit').prop('disabled') ? '0' : ($('#c_lit').val().trim() || '0');
+  const kg = $('#c_kg').prop('disabled') ? '0' : ($('#c_kg').val().trim() || '0');
+  const mq = $('#cbx_maquina').val().trim();
+  const responsable = $('#resposable').val().trim();
+  const kgNumero = Number(kg);
+  const litrosNumero = Number(lit);
+
+  //  valor de  la  descripcion  del  residuo
+
+
+  if (fc_reg.length === 0) return mensaje('La fecha  es obligatoria', 'warning');
+  if (pozo.length === 0) return mensaje('El pozo es obligatoria', 'warning');
+  if (agencia.length === 0) return mensaje('La agencia es obligatoria', 'warning');
+  if (mes.length === 0) return mensaje('El mes es obligatorio', 'warning');
+  if (ad.length === 0) return mensaje('El aditivo es obligatorio', 'warning');
+
+
+  if (!Number.isFinite(kgNumero) || !Number.isFinite(litrosNumero)) {
+    return mensaje(
+      'Los consumos en kg y litros deben ser numéricos.',
+      'warning'
+    );
+  }
+
+  if (kgNumero < 0 || litrosNumero < 0) {
+    return mensaje(
+      'Los consumos no pueden ser negativos.',
+      'warning'
+    );
+  }
+
+  if (kgNumero === 0 && litrosNumero === 0) {
+    return mensaje(
+      'Ingresa un consumo mayor que cero en kg o litros.',
+      'warning'
+    );
+  }
+
+  if (kgNumero > 0 && litrosNumero > 0) {
+    return mensaje(
+      'Ingresa el consumo solamente en KG o solamente en Litros.',
+      'warning');
+  }
+  if (mq.length === 0) return mensaje('La maquina es obligatoria', 'warning');
+  if (responsable.length === 0) return mensaje('El responsable es obligatorio', 'warning');
 
 
 
@@ -467,31 +1030,41 @@ $(document).on('click', '#btn_registro', function () {
   /// validdacion, si los campos estan vacios
 
 
-// envio de datos al  servidor
+  // envio de datos al  servidor
 
- $.ajax({
+  $.ajax({
     url: '../DATABASE/intert_c_aditivo.php',
     type: 'POST',
-    data: {fc_reg, pozo, agencia, mes, ad, kg, lit, mq, responsable},
-    
+    dataType: 'json',
+    data: { fc_reg, pozo, agencia, mes, ad, kg, lit, mq, responsable },
+
     beforeSend: function () {
       mensaje('Enviando datos...', 'info');
       $('#btn_registro').prop('disabled', true);
     },
-    success: function (response) {
-     
-       var json = JSON.parse(response);
-    
-        if(!json.err){  mensaje(json.mensaje,'success'); c_adtivos(url, params);  $('#modal').modal('hide'); }else{ mensaje( json.mensaje,'error')}
 
 
+    success: function (json) {
+
+      console.log('Respuesta del registro:', json);
+
+      if (!json.err) {
+        mensaje(json.mensaje, 'success');
+
+        c_adtivos(url, params);
+        total_aditivos(params);
+        $('#btn_registro').trigger('blur');
+        $('#modal').modal('hide');
+      } else {
+        mensaje(json.mensaje, 'error');
+      }
 
     },
     error: function (xhr, status, error) {
       console.error(error);
       mensaje('Ocurrió un error en la solicitud', 'error');
     },
-     complete: function () {
+    complete: function () {
       $('#btn_registro').prop('disabled', false);
     }
   });
@@ -502,21 +1075,18 @@ $(document).on('click', '#btn_registro', function () {
 
 function mensaje(mensaje, icono) {
 
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: icono,
-        title: mensaje,
-        showConfirmButton: false,
-        timer: 2500,
-        timerProgressBar: true
-      });
+  Swal.fire({
+    toast: true,
+    position: 'top-end',
+    icon: icono,
+    title: mensaje,
+    showConfirmButton: false,
+    timer: 2500,
+    timerProgressBar: true
+  });
 
 
-  }
-
-
-
+}
 
 
 
@@ -527,52 +1097,56 @@ function mensaje(mensaje, icono) {
 
 
 
-    /// eliminacion de registros//
-    $(document).on('click','#btn_delete',function(event){
-
-    // MOSTRAMOS LOS RECURSOS PARA CARGAR DATOS
-
-    var delete_info = $(this)[0].parentElement;
-    id = $(delete_info).attr("id");
-      
-    console.log(id);
-
-    Swal.fire({
-            title: "¿Deseas eliminar el registro?",
-            text: "Esta acción no se puede deshacer.",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Sí, eliminar",
-            cancelButtonText: "No, cancelar"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.post('../DATABASE/del_c_aditivo.php', { 
-                  
-                  
-                  id_delete: id  
 
 
-                })
-                    .done(function(response) {
-                      
-                            const res = JSON.parse(response);
-                            console.log(response);
 
-                                  mensaje(res.mensaje, res.status);
+/// eliminacion de registros//
+$(document).on('click', '#btn_delete', function (event) {
 
-                            if (res.status === 'success') {
-                        
-                                c_adtivos(url, params);
+  // MOSTRAMOS LOS RECURSOS PARA CARGAR DATOS
 
-                            }
-                  
-                    })
-                    
-            }
-        });
-    });
+  var delete_info = $(this)[0].parentElement;
+  id = $(delete_info).attr("id");
+
+  console.log(id);
+
+  Swal.fire({
+    title: "¿Deseas eliminar el registro?",
+    text: "Esta acción no se puede deshacer.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "No, cancelar"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.post('../DATABASE/del_c_aditivo.php', {
+
+
+        id_delete: id
+
+
+      })
+        .done(function (response) {
+
+          const res = JSON.parse(response);
+          console.log(response);
+
+          mensaje(res.mensaje, res.status);
+
+          if (res.status === 'success') {
+
+            c_adtivos(url, params);
+            total_aditivos(params);
+
+          }
+
+        })
+
+    }
+  });
+});
 
 
 /// variable de entorno
@@ -586,27 +1160,27 @@ function mensaje(mensaje, icono) {
 
 
 
-function armar_formulario(ficha, footer){
+function armar_formulario(ficha, footer) {
 
 
 
 
-          $('#modal').modal('show');
+  $('#modal').modal('show');
 
 
 
 
 
-        $('#titulo_modal').empty('');
-        $('#form_modal').empty('');
-        $('#form_modal_footer').empty('');
+  $('#titulo_modal').empty('');
+  $('#form_modal').empty('');
+  $('#form_modal_footer').empty('');
 
 
 
-        /// contenido dinamico
+  /// contenido dinamico
 
 
-        var title = `
+  var title = `
         <div class="container-fluid py-2 border-bottom" >
           <div class="row align-items-center">
             <div class="col-3 d-flex align-items-center">
@@ -632,36 +1206,36 @@ function armar_formulario(ficha, footer){
 
 
 
-        /// asignacion de valores  al modal
+  /// asignacion de valores  al modal
 
-        $('#form_modal').append(ficha);
-        $('#titulo_modal').append(title);
+  $('#form_modal').append(ficha);
+  $('#titulo_modal').append(title);
 
-        $('#form_modal_footer').append(footer);
+  $('#form_modal_footer').append(footer);
 
 
-        }
+}
 
 
 /// turno dia 
 
-      $(document).on('click', '#btn_t_dia', function() {
+$(document).on('click', '#btn_t_dia', function () {
 
-        // capturo el id del registro
-        let view_info = $(this).closest('td');
-        let id = view_info.attr('id');  // más limpio que parentElement
+  // capturo el id del registro
+  let view_info = $(this).closest('td');
+  let id = view_info.attr('id');  // más limpio que parentElement
 
-        console.log('ID capturado:', id);
-        console.log('llenar_tabla:', llenar_tabla); // 👈 verifica que tenga datos antes de buscar
+  console.log('ID capturado:', id);
+  console.log('llenar_tabla:', llenar_tabla); // 👈 verifica que tenga datos antes de buscar
 
-        // buscar el objeto correspondiente en el JSON global
-        let cp = llenar_tabla.find(item => item.id == parseInt(id));
-        
-
-        pk_registro = cp.id; // asignar a variable global si es necesario
+  // buscar el objeto correspondiente en el JSON global
+  let cp = llenar_tabla.find(item => item.id == parseInt(id));
 
 
-      let ficha =   `
+  pk_registro = cp.id; // asignar a variable global si es necesario
+
+
+  let ficha = `
 
 
 
@@ -761,8 +1335,8 @@ function armar_formulario(ficha, footer){
 
 `;
 
-        
-      var footer = `
+
+  var footer = `
       <div class="container-fluid border-top pt-3" >
         <div class="row g-2">
 
@@ -788,14 +1362,14 @@ function armar_formulario(ficha, footer){
       `;
 
 
-        armar_formulario(ficha, footer);
+  armar_formulario(ficha, footer);
 
 
 
 
 
 
-      });
+});
 
 
 
@@ -804,15 +1378,15 @@ function armar_formulario(ficha, footer){
 
 // generacion de pdf
 
-$(document).on('click', '#btn_pdf', function() {
+$(document).on('click', '#btn_pdf', function () {
 
-    var delete_info = $(this)[0].parentElement;
-    id = $(delete_info).attr("id");
+  var delete_info = $(this)[0].parentElement;
+  id = $(delete_info).attr("id");
 
   let cp = llenar_tabla.find(item => item.id == parseInt(id));
 
-  if(!cp){
-   console.error('No se encontró el registro c');
+  if (!cp) {
+    console.error('No se encontró el registro c');
     return;
   }
 
@@ -821,8 +1395,8 @@ $(document).on('click', '#btn_pdf', function() {
     type: 'POST',
     data: { cp: JSON.stringify(cp) },
     xhrFields: { responseType: 'blob' },
-    success: function(blob) {
-      if(blob.size === 0){
+    success: function (blob) {
+      if (blob.size === 0) {
         alert('Error: PDF vacío o contenido inválido');
         return;
       }
@@ -836,7 +1410,7 @@ $(document).on('click', '#btn_pdf', function() {
       a.remove();
       window.URL.revokeObjectURL(url);
     },
-    error: function(xhr, status, error){
+    error: function (xhr, status, error) {
       console.error('Error AJAX:', error);
     }
   });
@@ -848,12 +1422,12 @@ $(document).on('click', '#btn_pdf', function() {
 
 // generacion de pdf
 
-$(document).on('click', '#btn_pdf_g', function() {
+$(document).on('click', '#btn_pdf_g', function () {
 
 
 
-  if(!llenar_tabla){
-   console.error('No se encontró el registro c');
+  if (!llenar_tabla) {
+    console.error('No se encontró el registro c');
     return;
   }
 
@@ -862,8 +1436,8 @@ $(document).on('click', '#btn_pdf_g', function() {
     type: 'POST',
     data: { cp: JSON.stringify(llenar_tabla) },
     xhrFields: { responseType: 'blob' },
-    success: function(blob) {
-      if(blob.size === 0){
+    success: function (blob) {
+      if (blob.size === 0) {
         alert('Error: PDF vacío o contenido inválido');
         return;
       }
@@ -877,7 +1451,7 @@ $(document).on('click', '#btn_pdf_g', function() {
       a.remove();
       window.URL.revokeObjectURL(url);
     },
-    error: function(xhr, status, error){
+    error: function (xhr, status, error) {
       console.error('Error AJAX:', error);
     }
   });
@@ -889,13 +1463,13 @@ $(document).on('click', '#btn_pdf_g', function() {
 
 /// editar imputs 
 
-$(document).on('click', '#edit', function() {
+$(document).on('click', '#edit', function () {
 
   var input = $(this).siblings('input'); // busca el input hermano
- 
+
 
   if (input.prop('readonly')) {
-      
+
     input.prop('readonly', false);
 
     $(this).attr('title', 'Guardar fecha');
@@ -906,40 +1480,40 @@ $(document).on('click', '#edit', function() {
 
     input.prop('readonly', true);
     $(this).attr('title', 'Editar fecha');
-    $(this).find('i').removeClass('fa-floppy-disk').addClass('fa-pencil');  
-  
+    $(this).find('i').removeClass('fa-floppy-disk').addClass('fa-pencil');
+
 
     // Aquí puedes agregar la lógica para guardar la nueva fecha en la base de datos si es necesario
 
-    var campo  = input.attr('id');
+    var campo = input.attr('id');
     update_dato = input.val();
 
     console.log('PK registro:', pk_registro);
 
     console.log('Nueva dato:', update_dato);
 
-        if(update_dato.length === 0){
-            mensaje('El campo no puede estar vacío', 'warning');
-            return;
+    if (update_dato.length === 0) {
+      mensaje('El campo no puede estar vacío', 'warning');
+      return;
 
 
-         }
+    }
 
-          $.post(
-                  '../DATABASE/up_c_en_im.php',
-                  { campo: campo, update_dato: update_dato, id: pk_registro },
-                  function(response) {
-                  
-     
-                    var json = JSON.parse(response);
+    $.post(
+      '../DATABASE/up_c_en_im.php',
+      { campo: campo, update_dato: update_dato, id: pk_registro },
+      function (response) {
 
-                    console.log('Respuesta del servidor:', response);
-                    mensaje(json.mensaje, json.status);
-                    c_energia_sedes(); // refrescar la tabla después de la actualización
-                  }
-                );
 
-    
+        var json = JSON.parse(response);
+
+        console.log('Respuesta del servidor:', response);
+        mensaje(json.mensaje, json.status);
+        c_energia_sedes(); // refrescar la tabla después de la actualización
+      }
+    );
+
+
   }
 
 
@@ -948,113 +1522,113 @@ $(document).on('click', '#edit', function() {
 //// editar selects 
 
 
- id_elemento = '';
+id_elemento = '';
 // editar  select
-$(document).on('click', '#edit_select', function() {
+$(document).on('click', '#edit_select', function () {
 
 
 
-    var input = $(this).siblings('input'); 
-     id_elemento  = input.attr('id');
-    var name = input.attr('name');
-    console.log('Campo a editar:', name);
+  var input = $(this).siblings('input');
+  id_elemento = input.attr('id');
+  var name = input.attr('name');
+  console.log('Campo a editar:', name);
 
-    // Ejecutar función cbx_<campo>
-    var cargar_cbx = `cbx_${id_elemento}`;
+  // Ejecutar función cbx_<campo>
+  var cargar_cbx = `cbx_${id_elemento}`;
 
-    if (typeof window[cargar_cbx] === "function") {
-        window[cargar_cbx]();
-    } else {
-        console.log("Función no encontrada:", cargar_cbx);
-        return;
-    }
+  if (typeof window[cargar_cbx] === "function") {
+    window[cargar_cbx]();
+  } else {
+    console.log("Función no encontrada:", cargar_cbx);
+    return;
+  }
 
-    // Crear select
-    var select = `
+  // Crear select
+  var select = `
         <select class="form-control-plaintext form-control-sm" id="cbx_${id_elemento}" name="${name}"></select>
     `;
 
-    // Botón que aparecerá junto al select
-    var botonGuardar = `
+  // Botón que aparecerá junto al select
+  var botonGuardar = `
         <button type="button" class="btn btn-success btn-sm ml-2" id="btn_guardar">
             <i class="fa-solid fa-check"></i>
         </button>
     `;
 
-  
-    // Reemplazar input → select
-    input.replaceWith(select);
 
-    // Insertar botón después del select
-    $(this).after(botonGuardar);
+  // Reemplazar input → select
+  input.replaceWith(select);
+
+  // Insertar botón después del select
+  $(this).after(botonGuardar);
 
 });
 
 
 // Guardar selección del select editado
-$(document).on('click', '#btn_guardar', function() {
-    var select = $(this).siblings('select');
-    var name = select.attr('name');
-    let newText = select.find("option:selected").text();
-    
-    id_reg = select.val();
+$(document).on('click', '#btn_guardar', function () {
+  var select = $(this).siblings('select');
+  var name = select.attr('name');
+  let newText = select.find("option:selected").text();
 
-    if(id_reg.length === 0){
-        mensaje('Debes seleccionar una opción', 'warning');
-        
-    }else{
+  id_reg = select.val();
 
+  if (id_reg.length === 0) {
+    mensaje('Debes seleccionar una opción', 'warning');
 
-      $.post(
-                  '../DATABASE/up_c_en.php',
-                  { campo: name, update_dato: id_reg, id: pk_registro },
-                  function(response) {
-                  
-     
-                    var json = JSON.parse(response);
-
-                    console.log('Respuesta del servidor:', response);
-                    mensaje(json.mensaje, json.status);
-                    c_energia_sedes(); // refrescar la tabla después de la actualización
-                  }
-                );
+  } else {
 
 
-    }
- 
-
-   
-     imput_replace = `<input type="text" class="form-control-plaintext" name="${name}" id="${id_elemento}" value="${newText}" readonly>`;
-     console.log(imput_replace);
-
-    select.replaceWith(imput_replace);
-    $(this).remove();
+    $.post(
+      '../DATABASE/up_c_en.php',
+      { campo: name, update_dato: id_reg, id: pk_registro },
+      function (response) {
 
 
-  });
+        var json = JSON.parse(response);
+
+        console.log('Respuesta del servidor:', response);
+        mensaje(json.mensaje, json.status);
+        c_energia_sedes(); // refrescar la tabla después de la actualización
+      }
+    );
+
+
+  }
+
+
+
+  imput_replace = `<input type="text" class="form-control-plaintext" name="${name}" id="${id_elemento}" value="${newText}" readonly>`;
+  console.log(imput_replace);
+
+  select.replaceWith(imput_replace);
+  $(this).remove();
+
+
+});
 
 
 // exportar a excel
 
 
 
-        $("#btn_excel").on("click", function () {
+$("#btn_excel").on("click", function () {
 
-            $.ajax({
-                url: "../EXCEL/RP_C_AD.php",
-                type: "POST",
-                data: { data: JSON.stringify(llenar_tabla) },
-                xhrFields: { responseType: "blob" },
+  $.ajax({
+    url: "../EXCEL/RP_C_AD.php",
+    type: "POST",
+    data: { data: JSON.stringify(llenar_tabla) },
+    xhrFields: { responseType: "blob" },
 
-                success: function (blob) {
-                    const link = document.createElement("a");
-                    link.href = window.URL.createObjectURL(blob);
-                    link.download = "EC-HSE-F-53-CONSUMO_ADITIVOS.xls";
-                    link.click();
-                }
-            });
+    success: function (blob) {
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "EC-HSE-F-53-CONSUMO_ADITIVOS.xls";
+      link.click();
+    }
+  });
 
-        });
+});
 
 
 
@@ -1062,18 +1636,18 @@ $(document).on('click', '#btn_guardar', function() {
 
 //// 
 
-function fil_mes(){
+function fil_mes() {
   $.ajax({
     url: '../DATABASE/cbx_mes_res_p.php',
     type: 'POST',
-    success: function(response){
+    success: function (response) {
       var json = JSON.parse(response);
-      if(!json.err){
+      if (!json.err) {
         $('#cbx_fil_mes').empty();
         $('#cbx_fil_mes').append('<option value="">MES</option>');
-        $.each(json, function(i,item){
-          if(i!="err"){
-            var option = '<option value="'+item.PK_mes+'">'+item.mes_res+'</option>';
+        $.each(json, function (i, item) {
+          if (i != "err") {
+            var option = '<option value="' + item.PK_mes + '">' + item.mes_res + '</option>';
             $('#cbx_fil_mes').append(option);
           }
         });
@@ -1083,18 +1657,18 @@ function fil_mes(){
 }
 
 
-function cbx_fil_ag(){
+function cbx_fil_ag() {
   $.ajax({
     url: '../DATABASE/cg_agencia_cbx.php',
     type: 'POST',
-    success: function(response){
+    success: function (response) {
       var json = JSON.parse(response);
-      if(!json.err){
+      if (!json.err) {
         $('#cbx_fil_ag').empty();
         $('#cbx_fil_ag').append('<option value="">AGENCIA</option>');
-        $.each(json, function(i,item){
-          if(i!="err"){
-            var option = '<option value="'+item.PK_pro+'">'+item.proyecto+'</option>';
+        $.each(json, function (i, item) {
+          if (i != "err") {
+            var option = '<option value="' + item.PK_pro + '">' + item.proyecto + '</option>';
             $('#cbx_fil_ag').append(option);
           }
         });
@@ -1106,18 +1680,18 @@ function cbx_fil_ag(){
 
 /// cargar cbx maquina
 
-function cbx_fil_mq(){
+function cbx_fil_mq() {
   $.ajax({
     url: '../DATABASE/cbx_ma_res.php',
     type: 'POST',
-    success: function(response){
+    success: function (response) {
       var json = JSON.parse(response);
-      if(!json.err){
+      if (!json.err) {
         $('#cbx_fil_mq').empty();
         $('#cbx_fil_mq').append('<option value="">MAQUINA</option>');
-        $.each(json, function(i,item){
-          if(i!="err"){
-            var option = '<option value="'+item.PK_maquina+'">'+item.serie_maquina+'</option>';
+        $.each(json, function (i, item) {
+          if (i != "err") {
+            var option = '<option value="' + item.PK_maquina + '">' + item.serie_maquina + '</option>';
             $('#cbx_fil_mq').append(option);
           }
         });
@@ -1128,18 +1702,18 @@ function cbx_fil_mq(){
 
 
 
-function cbx_fil_adt(){
+function cbx_fil_adt() {
   $.ajax({
     url: '../DATABASE/cbx_aditivos.php',
     type: 'POST',
-    success: function(response){
+    success: function (response) {
       var json = JSON.parse(response);
-      if(!json.err){
+      if (!json.err) {
         $('#cbx_fil_adt').empty();
         $('#cbx_fil_adt').append('<option value="">ADITIVO</option>');
-        $.each(json, function(i,item){
-          if(i!="err"){
-       var option = '<option value="'+item.PK_ad+'">'+item.ad_rs+'</option>';
+        $.each(json, function (i, item) {
+          if (i != "err") {
+            var option = '<option value="' + item.PK_ad + '">' + item.ad_rs + '</option>';
             $('#cbx_fil_adt').append(option);
           }
         });
@@ -1159,21 +1733,21 @@ function cbx_fil_adt(){
 /// FILTROS
 
 function verificacar_filtro() {
-  
-/// vaibles de archivo y parametros de busqueda 
-  const url = '../DATABASE/fil_c_aditivos.php';
-  let params = {};
+
+  /// vaibles de archivo y parametros de busqueda 
+  url = '../DATABASE/fil_c_aditivos.php';
+  params = {};
 
 
   /// variables de busqueda
-  const mes    = $('#cbx_fil_mes').val();
-  const agencia   = $('#cbx_fil_ag').val();
-  const adt   = $('#cbx_fil_adt').val(); 
-  const mq = $('#cbx_fil_mq').val(); 
+  const mes = $('#cbx_fil_mes').val();
+  const agencia = $('#cbx_fil_ag').val();
+  const adt = $('#cbx_fil_adt').val();
+  const mq = $('#cbx_fil_mq').val();
 
   const campo1 = $('#cbx_fil_mes').attr('name');
   const campo2 = $('#cbx_fil_ag').attr('name');
-  const campo3   = $('#cbx_fil_adt').attr('name');
+  const campo3 = $('#cbx_fil_adt').attr('name');
   const campo4 = $('#cbx_fil_mq').attr('name');
 
 
@@ -1193,28 +1767,117 @@ function verificacar_filtro() {
   }
 
   if (mq) {
-      params.mq = mq;
-      params.campo4 = campo4;
-    }
+    params.mq = mq;
+    params.campo4 = campo4;
+  }
 
 
-  
+
   // Validar que al menos un filtro esté seleccionado
   if (Object.keys(params).length === 0) {
     mensaje('Debes seleccionar al menos un filtro', 'warning');
     return;
   }
-  
+
   console.log('Filtros enviados:', params);
 
   c_adtivos(url, params);
+  total_aditivos(params);
 
 }
 
 // ejecucion de la funcion filtar
 $('#btn_flt').click(function () {
 
-  verificacar_filtro(); 
+  verificacar_filtro();
 
 
 });
+
+// funcion para calcular totales de aditivos por victor alvarez
+function total_aditivos(params = {}) {
+
+  $.ajax({
+    url: '../DATABASE/fil_totales_aditivos.php',
+    type: 'POST',
+    dataType: 'json',
+    data: params,
+
+    success: function (json) {
+
+      const contenedor = $('#resumen_totales_aditivos');
+
+      contenedor.empty();
+
+      console.log('Totales de aditivos:', json);
+
+      if (json.err) {
+        contenedor.html(`
+          <div class="col-12">
+            <div class="alert alert-info mb-0">
+              ${json.mensaje || 'No existen valores para los filtros seleccionados.'}
+            </div>
+          </div>
+        `);
+
+        return;
+      }
+
+      const kilogramos = Number(json.total_kg ?? 0).toLocaleString(
+        'es-EC',
+        {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }
+      );
+
+      const litros = Number(json.total_litros ?? 0).toLocaleString(
+        'es-EC',
+        {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }
+      );
+
+      contenedor.html(`
+        <div class="col-12 col-md-6">
+          <div class="border border-success rounded-3 p-3 h-100 bg-light">
+            <small class="text-muted d-block mb-1">
+              Kilogramos
+            </small>
+
+            <span class="fw-bold text-success">
+              ${kilogramos} kg
+            </span>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-6">
+          <div class="border border-primary rounded-3 p-3 h-100 bg-light">
+            <small class="text-muted d-block mb-1">
+              Litros
+            </small>
+
+            <span class="fw-bold text-primary">
+              ${litros} L
+            </span>
+          </div>
+        </div>
+      `);
+
+    },
+
+    error: function (xhr, status, error) {
+      console.error('Error al calcular totales de aditivos:', error);
+      console.error('Respuesta del servidor:', xhr.responseText);
+
+      $('#resumen_totales_aditivos').html(`
+        <div class="col-12">
+          <div class="alert alert-danger mb-0">
+            No fue posible calcular las sumatorias.
+          </div>
+        </div>
+      `);
+    }
+  });
+}

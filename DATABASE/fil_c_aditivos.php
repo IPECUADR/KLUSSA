@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 
 require('../CONFIG/sys.res.con.php');
@@ -45,7 +45,7 @@ if (!empty($filtros)) {
 
 
 
-  $query="SELECT 
+$query = "SELECT 
 
    fc_in_c_ad as fr, 
    maquina.serie_maquina as mq,
@@ -56,7 +56,11 @@ if (!empty($filtros)) {
    mes.mes_res as mes,
    proyectos.proyecto as pro,
    c_aditivos.PK_c_ad as id,
-   c_aditivos.rp_in_c_ad as rp
+   c_aditivos.rp_in_c_ad AS rp,
+   c_aditivos.FK_mes AS FK_mes,
+   c_aditivos.FK_maquina AS FK_maquina,
+   c_aditivos.FK_ad_rs AS FK_ad_rs,
+   c_aditivos.FK_pro AS FK_pro
 
  FROM
 
@@ -75,47 +79,48 @@ if (!empty($filtros)) {
        $ex_where
  ORDER BY
 
-       FK_mes ASC";
+       c_aditivos.fc_in_c_ad ASC,
+       c_aditivos.PK_c_ad ASC
+ ";
 
 
-	$result = mysqli_query($con,$query); 
-	
+$result = mysqli_query($con, $query);
 
 
-if($result){
-       
-	 $json = array('err'=>false);
-                  while ($row = mysqli_fetch_array($result)) {
-                     $json[]=array(
-                        
-                        'fr'=> $row['fr'],
-                        'mq'=> $row['mq'],
-                        'mes'=> $row['mes'],
-                        'pro'=> $row['pro'],
-                        'pz'=> $row['pz'],
-                        'ad'=> $row['ad'], 
-                        'lt'=> $row['lt'],
-                        'kg'=> $row['kg'],
-                        'id'=> $row['id'],
-                        'rp'=> $row['rp']
-                     
 
-                     );
+if ($result) {
 
-                  }
-                  if(isset($json[0]['id'])){
-                        echo json_encode($json);
-                  }else{
-                  echo json_encode(array('err'=>true, 'mensaje'=>'Ups. No tenemos nada que mostrarte!!'));	
-                  }
+    $json = array('err' => false);
+    while ($row = mysqli_fetch_array($result)) {
+        $json[] = array(
 
-	
-	}else{
-
-		echo json_encode(array('err'=>true, 'mensaje'=>'ERROR EN BDD '));
-
-	}
+            'fr' => $row['fr'],
+            'mq' => $row['mq'],
+            'mes' => $row['mes'],
+            'pro' => $row['pro'],
+            'pz' => $row['pz'],
+            'ad' => $row['ad'],
+            'lt' => $row['lt'],
+            'kg' => $row['kg'],
+            'id' => $row['id'],
+            'rp' => $row['rp'],
+            'FK_mes' => $row['FK_mes'],
+            'FK_maquina' => $row['FK_maquina'],
+            'FK_ad_rs' => $row['FK_ad_rs'],
+            'FK_pro' => $row['FK_pro']
 
 
-	mysqli_close($con);
-?>
+        );
+    }
+    if (isset($json[0]['id'])) {
+        echo json_encode($json);
+    } else {
+        echo json_encode(array('err' => true, 'mensaje' => 'Ups. No tenemos nada que mostrarte!!'));
+    }
+} else {
+
+    echo json_encode(array('err' => true, 'mensaje' => 'ERROR EN BDD '));
+}
+
+
+mysqli_close($con);

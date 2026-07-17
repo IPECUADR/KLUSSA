@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 
 require('../CONFIG/sys.res.con.php');
@@ -6,6 +6,7 @@ require('../CONFIG/sys.res.con.php');
 $mes     = $_POST['mes']    ?? '';
 $agencia = $_POST['agencia']   ?? '';
 $mq      = $_POST['mq'] ?? '';
+$pozo    = trim($_POST['pozo'] ?? ''); // Filtro de pozo agregado por Victor Alvarez
 
 $campo1 = $_POST['campo1'] ?? '';
 $campo2 = $_POST['campo2'] ?? '';
@@ -38,12 +39,20 @@ if (!empty($filtros)) {
     $ex_where = ' AND ' . implode(' AND ', $filtros);
 }
 
+// Agregar filtro de pozo solo si se proporciona por Victor Alvarez
+if ($pozo !== '') {
+    $pozoSeguro = mysqli_real_escape_string($con, $pozo);
 
-  $query="SELECT  
+    $ex_where .= "
+        AND TRIM(c_ag_posos.pozo_c_ag_ps) = '$pozoSeguro'
+    ";
+}
 
-  ROUND(SUM(c_ag_posos.cm_t_gl_c_ag_ps), 2) AS t_gl_apz, 
-  ROUND(SUM(c_ag_posos.cm_t_li_c_ag_ps), 2) AS t_lit_apz, 
-  ROUND(SUM(c_ag_posos.cm_t_gl_c_ag_ps) / 264.172, 2) AS t_m3_apz
+
+$query = "SELECT  
+
+  ROUND(SUM(c_ag_posos.cm_t_gl_c_ag_ps), 2) AS t_m3_apz,
+  ROUND(SUM(c_ag_posos.cm_t_li_c_ag_ps), 2) AS t_lit_apz
 
   FROM 
   
@@ -63,38 +72,33 @@ if (!empty($filtros)) {
  ";
 
 
-	$result = mysqli_query($con,$query); 
-	
+$result = mysqli_query($con, $query);
 
 
-if($result){
-       
-	 $json = array('err'=>false);
-                  while ($row = mysqli_fetch_array($result)) {
-                     $json[]=array(
-                        
-                         't_gl_apz'=> $row['t_gl_apz'],
-                         't_lit_apz'=> $row['t_lit_apz'],
-                         't_m3_apz'=> $row['t_m3_apz']
-                      
-                
 
-                     );
+if ($result) {
 
-                  }
-                  if(isset($json[0]['t_lit_apz'])){
-                        echo json_encode($json);
-                  }else{
-                  echo json_encode(array('err'=>true, 'mensaje'=>'Datos incorrectos.'));	
-                  }
+    $json = array('err' => false);
+    while ($row = mysqli_fetch_array($result)) {
+        $json[] = array(
 
-	
-	}else{
-
-		echo json_encode(array('err'=>true, 'mensaje'=>'ERROR EN BDD '));
-
-	}
+            't_m3_apz'  => $row['t_m3_apz'],
+            't_lit_apz' => $row['t_lit_apz']
 
 
-	mysqli_close($con);
-?>
+
+
+        );
+    }
+    if (isset($json[0]['t_lit_apz'])) {
+        echo json_encode($json);
+    } else {
+        echo json_encode(array('err' => true, 'mensaje' => 'Datos incorrectos.'));
+    }
+} else {
+
+    echo json_encode(array('err' => true, 'mensaje' => 'ERROR EN BDD '));
+}
+
+
+mysqli_close($con);

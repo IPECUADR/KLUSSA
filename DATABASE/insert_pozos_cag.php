@@ -10,6 +10,7 @@ $agencia     = $_POST['agencia']     ?? '';
 $mes         = $_POST['mes']         ?? '';
 $maquina     = $_POST['maquina']     ?? '';
 $ubicacion   = $_POST['ubicacion']   ?? '';
+$plataforma  = $_POST['plataforma']  ?? '';
 $pozo        = $_POST['pozo']        ?? '';
 $responsable = $_POST['responsable'] ?? '';
 $dia_ini = $_POST['dia_ini'] ?? '';
@@ -31,7 +32,7 @@ $t_li = $dia_litros + $noche_litros;
 ================================ */
 if (
     !$fc_inicio || !$fc_cierre || !$agencia || !$mes ||
-    !$maquina || !$ubicacion || !$pozo || !$responsable
+    !$maquina || !$ubicacion || !$plataforma || !$pozo || !$responsable
     || !$coment
 ) {
     echo json_encode([
@@ -55,6 +56,7 @@ $busqueda = "
         AND pozo_c_ag_ps = '$pozo'
         AND FK_maquina = '$maquina'
         AND FK_ubicacion = '$ubicacion'
+        AND plataforma_c_ag_ps = '$plataforma'
     LIMIT 1
 ";
 
@@ -86,6 +88,7 @@ $insert = "
         FK_mes,
         FK_maquina,
         FK_ubicacion,
+        plataforma_c_ag_ps,
         pozo_c_ag_ps,
         t_d_md_in,
         t_d_md_fn,
@@ -102,6 +105,7 @@ $insert = "
         '$mes',
         '$maquina',
         '$ubicacion',
+        '$plataforma',
         '$pozo',
         '$dia_ini',
         '$dia_fin',

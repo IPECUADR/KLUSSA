@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 
 require('../CONFIG/sys.res.con.php');
@@ -6,6 +6,7 @@ require('../CONFIG/sys.res.con.php');
 $mes     = $_POST['mes']    ?? '';
 $agencia = $_POST['agencia']   ?? '';
 $mq      = $_POST['mq'] ?? '';
+$pozo    = trim($_POST['pozo'] ?? ''); // Filtro de pozo agregado por Victor Alvarez
 
 $campo1 = $_POST['campo1'] ?? '';
 $campo2 = $_POST['campo2'] ?? '';
@@ -38,8 +39,17 @@ if (!empty($filtros)) {
     $ex_where = ' AND ' . implode(' AND ', $filtros);
 }
 
+// Agregar filtro de pozo solo si se proporciona por Victor Alvarez
+if ($pozo !== '') {
+    $pozoSeguro = mysqli_real_escape_string($con, $pozo);
 
-  $query="SELECT 
+    $ex_where .= "
+        AND TRIM(c_ag_posos.pozo_c_ag_ps) = '$pozoSeguro'
+    ";
+}
+
+
+$query = "SELECT 
 
       c_ag_posos.fc_in_p_c_ag_ps as fi,
       mes.mes_res as mes,
@@ -53,8 +63,15 @@ if (!empty($filtros)) {
       c_ag_posos.t_d_md_fn as dia_fin,
       c_ag_posos.t_n_md_in as noche_ini,
       c_ag_posos.t_n_md_fn as noche_fin, 
-      maquina.serie_maquina as maquina, 
-      comts_c_ag_pz
+      maquina.serie_maquina AS maquina,
+      c_ag_posos.plataforma_c_ag_ps AS plataforma,
+      proyectos.proyecto AS proyecto,
+      c_ag_posos.FK_mes AS FK_mes,
+      c_ag_posos.FK_maquina AS FK_maquina,
+      c_ag_posos.FK_ubicacion AS FK_ubicacion,
+      c_ag_posos.FK_pro AS FK_pro,
+      c_ag_posos.user_rp_ca_ag_ps AS responsable,
+      c_ag_posos.comts_c_ag_pz
 
 
 
@@ -74,50 +91,55 @@ if (!empty($filtros)) {
       AND mes.PK_mes = c_ag_posos.FK_mes
       $ex_where
  ORDER BY
-
-       FK_mes ASC";
-
-
-	$result = mysqli_query($con,$query); 
-	
+    c_ag_posos.fc_in_p_c_ag_ps ASC,
+    c_ag_posos.fc_fn_p_c_ag_ps ASC,
+    c_ag_posos.PK_c_ag_ps ASC
+";
 
 
-if($result){
-       
-	 $json = array('err'=>false);
-                  while ($row = mysqli_fetch_array($result)) {
-                     $json[]=array(
-                        
-                        'fi'=> $row['fi'],
-                        'fn'=> $row['fn'],
-                        'mes'=> $row['mes'],
-                        'sede'=> $row['pro'],
-                        'gal'=> $row['t_gl'],
-                        'litros'=> $row['t_l'],
-                        'id'=> $row['id'], 
-                        'pozo'=> $row['ps'],
-                        'dia_ini'=> $row['dia_ini'],
-                        'dia_fin'=> $row['dia_fin'],
-                        'noche_ini'=> $row['noche_ini'],
-                        'noche_fin'=> $row['noche_fin'],
-                        'maquina'=> $row['maquina'],
-                        'comts_c_ag_pz'=> $row['comts_c_ag_pz']
-                     );
-
-                  }
-                  if(isset($json[0]['id'])){
-                        echo json_encode($json);
-                  }else{
-                  echo json_encode(array('err'=>true, 'mensaje'=>'Ups. No tenemos nada que mostrarte!!'));	
-                  }
-
-	
-	}else{
-
-		echo json_encode(array('err'=>true, 'mensaje'=>'ERROR EN BDD '));
-
-	}
+$result = mysqli_query($con, $query);
 
 
-	mysqli_close($con);
-?>
+
+if ($result) {
+
+    $json = array('err' => false);
+    while ($row = mysqli_fetch_array($result)) {
+        $json[] = array(
+
+            'fi' => $row['fi'],
+            'fn' => $row['fn'],
+            'mes' => $row['mes'],
+            'sede' => $row['pro'],
+            'gal' => $row['t_gl'],
+            'litros' => $row['t_l'],
+            'id' => $row['id'],
+            'pozo' => $row['ps'],
+            'dia_ini' => $row['dia_ini'],
+            'dia_fin' => $row['dia_fin'],
+            'noche_ini' => $row['noche_ini'],
+            'noche_fin' => $row['noche_fin'],
+            // Agregar los nuevos campos al array JSON para que se devuelvan al frontend por victor Alvarez
+            'maquina' => $row['maquina'],
+            'plataforma' => $row['plataforma'],
+            'proyecto' => $row['proyecto'],
+            'FK_mes' => $row['FK_mes'],
+            'FK_maquina' => $row['FK_maquina'],
+            'FK_ubicacion' => $row['FK_ubicacion'],
+            'FK_pro' => $row['FK_pro'],
+            'responsable' => $row['responsable'],
+            'comts_c_ag_pz' => $row['comts_c_ag_pz']
+        );
+    }
+    if (isset($json[0]['id'])) {
+        echo json_encode($json);
+    } else {
+        echo json_encode(array('err' => true, 'mensaje' => 'Ups. No tenemos nada que mostrarte!!'));
+    }
+} else {
+
+    echo json_encode(array('err' => true, 'mensaje' => 'ERROR EN BDD '));
+}
+
+
+mysqli_close($con);

@@ -1,17 +1,43 @@
 <?php
+
 header("Content-Type: application/vnd.ms-excel; charset=utf-8");
-header("Content-Disposition: attachment; filename=bitacora_consumo_agua_" . date('Y-m-d_H-i-s') . ".xls");
+header(
+    "Content-Disposition: attachment; filename=EC-HSE-F-53-AGUA-POZOS-" .
+    date('Y-m-d_H-i-s') .
+    ".xls"
+);
 header("Pragma: no-cache");
 header("Expires: 0");
 
-$data = isset($_POST['data']) ? json_decode($_POST['data'], true) : [];
+$data = isset($_POST['data'])
+    ? json_decode($_POST['data'], true)
+    : array();
 
-echo "\xEF\xBB\xBF"; // BOM para Excel
+if (!is_array($data)) {
+    $data = array();
+}
+
+function esc($valor)
+{
+    return htmlspecialchars(
+        (string) ($valor ?? ''),
+        ENT_QUOTES,
+        'UTF-8'
+    );
+}
+
+echo "\xEF\xBB\xBF";
 ?>
 
 <style>
-    body { font-family: Arial, sans-serif; }
-    table { width: 100%; border-collapse: collapse; }
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
 
     .titulo {
         font-size: 20px;
@@ -45,6 +71,7 @@ echo "\xEF\xBB\xBF"; // BOM para Excel
         padding: 6px;
         font-size: 11px;
         text-align: center;
+        vertical-align: middle;
     }
 
     td {
@@ -52,22 +79,51 @@ echo "\xEF\xBB\xBF"; // BOM para Excel
         padding: 5px;
         font-size: 11px;
         text-align: center;
+        vertical-align: middle;
     }
 
     .total {
         font-weight: bold;
         background-color: #dde6f5;
     }
+
+    .sin-registrar {
+        color: #7f6000;
+        background-color: #fff2cc;
+    }
+
+    .pozo {
+        font-weight: bold;
+    }
+
+    .numero {
+        mso-number-format: "0";
+    }
+
+    .decimal {
+        mso-number-format: "0.00";
+    }
+
+    .fecha {
+        mso-number-format: "yyyy-mm-dd";
+    }
 </style>
 
-<!-- ================= ENCABEZADO ================= -->
+<!-- ENCABEZADO INSTITUCIONAL -->
 <table>
     <tr>
-        <td rowspan="2" style="width:120px;text-align:center;border:2px solid #002060;">
-            <img src="https://kluane.itdospuntocero.net/PTH/IMG/logoKDE.png" width="90">
+        <td
+            rowspan="2"
+            style="width:120px;text-align:center;border:2px solid #002060;"
+        >
+            <img
+                src="https://kluane.itdospuntocero.net/PTH/IMG/logoKDE.png"
+                width="90"
+                alt="Kluane Drilling Ecuador"
+            >
         </td>
 
-        <td class="titulo" colspan="11">
+        <td class="titulo" colspan="12">
             BITÁCORA DE GESTIÓN AMBIENTAL
         </td>
 
@@ -79,82 +135,160 @@ echo "\xEF\xBB\xBF"; // BOM para Excel
     </tr>
 
     <tr>
-        <td class="subtitulo" colspan="11">
-            CONTROL DE CONSUMO DE AGUA
+        <td class="subtitulo" colspan="12">
+            CONTROL DE CONSUMO DE AGUA POR POZOS
         </td>
     </tr>
 </table>
 
 <br>
 
-<!-- ================= TABLA PRINCIPAL ================= -->
+<!-- TABLA PRINCIPAL -->
 <table>
     <thead>
         <tr>
             <th rowspan="2">N°</th>
+            <th rowspan="2">FECHA INICIO</th>
+            <th rowspan="2">FECHA FIN</th>
             <th rowspan="2">MES</th>
             <th rowspan="2">MÁQUINA</th>
             <th rowspan="2">PLATAFORMA</th>
             <th rowspan="2">POZO</th>
-            <th rowspan="2">FECHA INICIO</th>
-            <th rowspan="2">FECHA CORTE</th>
+
             <th colspan="2">TURNO DÍA</th>
             <th colspan="2">TURNO NOCHE</th>
-            <th rowspan="2">CONSUMO (m³)</th>
-            <th rowspan="2">CONSUMO (L)</th>
+
+            <th rowspan="2">CONSUMO TOTAL (m³)</th>
+            <th rowspan="2">CONSUMO EN LITROS</th>
+            <th rowspan="2">PROYECTO</th>
         </tr>
+
         <tr>
-            <th>MED. INI</th>
-            <th>MED. FIN</th>
-            <th>MED. INI</th>
-            <th>MED. FIN</th>
+            <th>MED. INICIAL</th>
+            <th>MED. FINAL</th>
+            <th>MED. INICIAL</th>
+            <th>MED. FINAL</th>
         </tr>
     </thead>
 
     <tbody>
         <?php
-        $i = 1;
-        $total_m3 = 0;
-        $total_lt = 0;
+
+        $contador = 1;
+        $totalMetrosCubicos = 0;
+        $totalLitros = 0;
 
         if (!empty($data)):
+
             foreach ($data as $item):
-                $total_m3 += floatval($item['gal'] ?? 0);
-                $total_lt += floatval($item['litros'] ?? 0);
+
+                $consumoMetrosCubicos = (float) ($item['gal'] ?? 0);
+                $consumoLitros = (float) ($item['litros'] ?? 0);
+
+                $totalMetrosCubicos += $consumoMetrosCubicos;
+                $totalLitros += $consumoLitros;
+
+                $plataforma = trim(
+                    (string) ($item['plataforma'] ?? '')
+                );
+
+                $plataformaVisible = $plataforma !== ''
+                    ? $plataforma
+                    : 'SIN REGISTRAR';
+
+                $clasePlataforma = $plataforma !== ''
+                    ? ''
+                    : 'sin-registrar';
         ?>
+
         <tr>
-            <td><?= $i++ ?></td>
-            <td><?= $item['mes'] ?? '' ?></td>
-            <td><?= $item['maquina'] ?? '' ?></td>
-            <td><?= $item['sede'] ?? '' ?></td>
-            <td><strong><?= $item['pozo'] ?? '' ?></strong></td>
-            <td><?= $item['fi'] ?? '' ?></td>
-            <td><?= $item['fn'] ?? '' ?></td>
+            <td class="numero">
+                <?= $contador++ ?>
+            </td>
 
-            <!-- TURNO DÍA -->
-            <td><?= $item['dia_ini'] ?? '-' ?></td>
-            <td><?= $item['dia_fin'] ?? '-' ?></td>
+            <td class="fecha">
+                <?= esc($item['fi'] ?? '') ?>
+            </td>
 
-            <!-- TURNO NOCHE -->
-            <td><?= $item['noche_ini'] ?? '-' ?></td>
-            <td><?= $item['noche_fin'] ?? '-' ?></td>
+            <td class="fecha">
+                <?= esc($item['fn'] ?? '') ?>
+            </td>
 
-            <!-- CONSUMOS -->
-            <td><?= $item['gal'] ?? '' ?></td>
-            <td><?= $item['litros'] ?? '' ?></td>
+            <td>
+                <?= esc(trim((string) ($item['mes'] ?? ''))) ?>
+            </td>
+
+            <td>
+                <?= esc($item['maquina'] ?? '') ?>
+            </td>
+
+            <td class="<?= $clasePlataforma ?>">
+                <?= esc($plataformaVisible) ?>
+            </td>
+
+            <td class="pozo">
+                <?= esc($item['pozo'] ?? '') ?>
+            </td>
+
+            <td class="numero">
+                <?= esc($item['dia_ini'] ?? 0) ?>
+            </td>
+
+            <td class="numero">
+                <?= esc($item['dia_fin'] ?? 0) ?>
+            </td>
+
+            <td class="numero">
+                <?= esc($item['noche_ini'] ?? 0) ?>
+            </td>
+
+            <td class="numero">
+                <?= esc($item['noche_fin'] ?? 0) ?>
+            </td>
+
+            <td class="decimal">
+                <?= number_format($consumoMetrosCubicos, 2, '.', '') ?>
+            </td>
+
+            <td class="decimal">
+                <?= number_format($consumoLitros, 2, '.', '') ?>
+            </td>
+
+            <td>
+                <?= esc($item['proyecto'] ?? $item['sede'] ?? '') ?>
+            </td>
         </tr>
-        <?php endforeach; ?>
+
+        <?php
+            endforeach;
+        ?>
 
         <tr class="total">
-            <td colspan="11">TOTAL</td>
-            <td><?= number_format($total_m3, 2) ?></td>
-            <td><?= number_format($total_lt, 2) ?></td>
+            <td colspan="11">
+                TOTAL
+            </td>
+
+            <td class="decimal">
+                <?= number_format($totalMetrosCubicos, 2, '.', '') ?>
+            </td>
+
+            <td class="decimal">
+                <?= number_format($totalLitros, 2, '.', '') ?>
+            </td>
+
+            <td>
+                REGISTROS: <?= count($data) ?>
+            </td>
         </tr>
 
         <?php else: ?>
+
         <tr>
-            <td colspan="13">SIN REGISTROS</td>
+            <td colspan="14">
+                SIN REGISTROS
+            </td>
         </tr>
+
         <?php endif; ?>
     </tbody>
 </table>

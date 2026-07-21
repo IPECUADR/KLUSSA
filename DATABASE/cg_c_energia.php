@@ -1,11 +1,11 @@
-<?php 
+<?php
 
 
 require('../CONFIG/sys.res.con.php');
 
 
 
-  $query="SELECT 
+$query = "SELECT 
 
    fc_in_en_ag as fi, 
    fc_fn_en_ag as fn, 
@@ -13,7 +13,9 @@ require('../CONFIG/sys.res.con.php');
    proyectos.proyecto as pro,
    c_en_ag as c, 
    rp_rg_en_ag as p, 
-   PK_c_en_ag as id
+   PK_c_en_ag AS id,
+   c_en_ag.FK_mes AS FK_mes,
+   c_en_ag.FK_ag AS FK_ag
 
 
  FROM
@@ -30,45 +32,44 @@ require('../CONFIG/sys.res.con.php');
       AND mes.PK_mes = c_en_ag.FK_mes 
 
  ORDER BY
-
-       FK_mes ASC";
-
-
-	$result = mysqli_query($con,$query); 
-	
+    c_en_ag.fc_in_en_ag ASC,
+    c_en_ag.fc_fn_en_ag ASC,
+    c_en_ag.PK_c_en_ag ASC
+ ";
 
 
-if($result){
-       
-	 $json = array('err'=>false);
-                  while ($row = mysqli_fetch_array($result)) {
-                     $json[]=array(
-                        
-                        'fi'=> $row['fi'],
-                        'fn'=> $row['fn'],
-                        'mes'=> $row['mes'],
-                        'pro'=> $row['pro'],
-                        'c'=> $row['c'],
-                        'p'=> $row['p'], 
-                         'id'=> $row['id']
-                     
-
-                     );
-
-                  }
-                  if(isset($json[0]['id'])){
-                        echo json_encode($json);
-                  }else{
-                 echo json_encode(array('err'=>true, 'mensaje'=>'Ups. No tenemos nada que mostrarte!!'));
-                  }
-
-	
-	}else{
-
-		echo json_encode(array('err'=>true, 'mensaje'=>'ERROR EN BDD '));
-
-	}
+$result = mysqli_query($con, $query);
 
 
-	mysqli_close($con);
-?>
+
+if ($result) {
+
+     $json = array('err' => false);
+     while ($row = mysqli_fetch_array($result)) {
+          $json[] = array(
+
+               'fi' => $row['fi'],
+               'fn' => $row['fn'],
+               'mes' => $row['mes'],
+               'pro' => $row['pro'],
+               'c' => $row['c'],
+               'p' => $row['p'],
+               'id' => $row['id'],
+               'FK_mes' => $row['FK_mes'],
+               'FK_ag' => $row['FK_ag']
+
+
+          );
+     }
+     if (isset($json[0]['id'])) {
+          echo json_encode($json);
+     } else {
+          echo json_encode(array('err' => true, 'mensaje' => 'Ups. No tenemos nada que mostrarte!!'));
+     }
+} else {
+
+     echo json_encode(array('err' => true, 'mensaje' => 'ERROR EN BDD '));
+}
+
+
+mysqli_close($con);

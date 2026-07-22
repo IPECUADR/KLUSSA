@@ -14,7 +14,6 @@ if (!isset($_SESSION['user']) || empty($_SESSION['user'])) {
       $rol      = $_SESSION['user']['rol'];
       $USUARIO = $_SESSION['user']['username'];
 
-$USUARIO = $_SESSION['username'];
 
    require_once('../TEMP-RES/header.php');
    require_once('../INTERFACE/adt_admin.php');

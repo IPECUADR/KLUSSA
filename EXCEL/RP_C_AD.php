@@ -1,15 +1,31 @@
 <?php
+
 header("Content-Type: application/vnd.ms-excel; charset=utf-8");
-header("Content-Disposition: attachment; filename=reporte_consumo_residuos_" . date('Y-m-d_H-i-s') . ".xls");
+header(
+    "Content-Disposition: attachment; filename=EC-HSE-F-53-CONSUMO-ADITIVOS-" .
+    date('Y-m-d_H-i-s') .
+    ".xls"
+);
 header("Pragma: no-cache");
 header("Expires: 0");
 
-// Data
 $llenar_tabla = isset($_POST['data'])
     ? json_decode($_POST['data'], true)
-    : [];
+    : array();
 
-// BOM UTF-8
+if (!is_array($llenar_tabla)) {
+    $llenar_tabla = array();
+}
+
+function esc($valor)
+{
+    return htmlspecialchars(
+        (string) ($valor ?? ''),
+        ENT_QUOTES,
+        'UTF-8'
+    );
+}
+
 echo "\xEF\xBB\xBF";
 ?>
 
@@ -50,11 +66,12 @@ echo "\xEF\xBB\xBF";
 
     th {
         background-color: #002060;
-        color: white;
+        color: #ffffff;
         border: 1px solid #002060;
         padding: 6px;
         font-size: 12px;
         text-align: center;
+        vertical-align: middle;
     }
 
     td {
@@ -62,15 +79,40 @@ echo "\xEF\xBB\xBF";
         padding: 5px;
         font-size: 12px;
         text-align: center;
+        vertical-align: middle;
         background-color: #f7fbff;
+    }
+
+    .numero {
+        mso-number-format: "0";
+    }
+
+    .decimal {
+        mso-number-format: "0.00";
+    }
+
+    .fecha {
+        mso-number-format: "yyyy-mm-dd";
+    }
+
+    .total td {
+        background-color: #dde6f5;
+        font-weight: bold;
     }
 </style>
 
-<!-- ENCABEZADO -->
+<!-- ENCABEZADO INSTITUCIONAL -->
 <table>
     <tr>
-        <td rowspan="2" style="width:120px; text-align:center; border:1px solid #002060;">
-            <img src="https://kluane.itdospuntocero.net/PTH/IMG/logoKDE.png" width="90">
+        <td
+            rowspan="2"
+            style="width:120px; text-align:center; border:1px solid #002060;"
+        >
+            <img
+                src="https://kluane.itdospuntocero.net/PTH/IMG/logoKDE.png"
+                width="90"
+                alt="Kluane Drilling Ecuador"
+            >
         </td>
 
         <td class="titulo" colspan="8">
@@ -86,7 +128,7 @@ echo "\xEF\xBB\xBF";
 
     <tr>
         <td class="subtitulo" colspan="8">
-            CONTROL DE CONSUMO DE ADITIVOS / RESIDUOS
+            CONTROL DE CONSUMO DE ADITIVOS
         </td>
     </tr>
 </table>
@@ -100,37 +142,106 @@ echo "\xEF\xBB\xBF";
             <th>N°</th>
             <th>FECHA</th>
             <th>MES</th>
-            <th>MAQUINA</th>
+            <th>MÁQUINA</th>
             <th>POZO</th>
             <th>ADITIVO</th>
             <th>KG</th>
             <th>LT</th>
-            <th>PROYECTOS</th>
+            <th>PROYECTO</th>
             <th>RESPONSABLE</th>
         </tr>
     </thead>
 
     <tbody>
-        <?php if (!empty($llenar_tabla)): ?>
-            <?php $i = 1; ?>
-            <?php foreach ($llenar_tabla as $item): ?>
-                <tr>
-                    <td><?= $i++ ?></td>
-                    <td><?= $item['fr'] ?? '' ?></td>
-                    <td><?= $item['mes'] ?? '' ?></td>
-                    <td><?= $item['mq'] ?? '' ?></td>
-                    <td><?= $item['pz'] ?? '' ?></td>
-                    <td><?= $item['ad'] ?? '' ?></td>
-                    <td><?= $item['kg'] ?? '' ?></td>
-                    <td><?= $item['lt'] ?? '' ?></td>
-                    <td><?= $item['pro'] ?? '' ?></td>
-                    <td><?= $item['rp'] ?? '' ?></td>
-                </tr>
-            <?php endforeach; ?>
+        <?php
+
+        $contador = 1;
+        $totalKilogramos = 0;
+        $totalLitros = 0;
+
+        if (!empty($llenar_tabla)):
+
+            foreach ($llenar_tabla as $item):
+
+                $kilogramos = (float) ($item['kg'] ?? 0);
+                $litros = (float) ($item['lt'] ?? 0);
+
+                $totalKilogramos += $kilogramos;
+                $totalLitros += $litros;
+        ?>
+
+        <tr>
+            <td class="numero">
+                <?= $contador++ ?>
+            </td>
+
+            <td class="fecha">
+                <?= esc($item['fr'] ?? '') ?>
+            </td>
+
+            <td>
+                <?= esc(trim((string) ($item['mes'] ?? ''))) ?>
+            </td>
+
+            <td>
+                <?= esc($item['mq'] ?? '') ?>
+            </td>
+
+            <td>
+                <?= esc($item['pz'] ?? '') ?>
+            </td>
+
+            <td>
+                <?= esc($item['ad'] ?? '') ?>
+            </td>
+
+            <td class="decimal">
+                <?= number_format($kilogramos, 2, '.', '') ?>
+            </td>
+
+            <td class="decimal">
+                <?= number_format($litros, 2, '.', '') ?>
+            </td>
+
+            <td>
+                <?= esc($item['pro'] ?? '') ?>
+            </td>
+
+            <td>
+                <?= esc($item['rp'] ?? '') ?>
+            </td>
+        </tr>
+
+        <?php
+            endforeach;
+        ?>
+
+        <tr class="total">
+            <td colspan="6">
+                TOTAL
+            </td>
+
+            <td class="decimal">
+                <?= number_format($totalKilogramos, 2, '.', '') ?>
+            </td>
+
+            <td class="decimal">
+                <?= number_format($totalLitros, 2, '.', '') ?>
+            </td>
+
+            <td colspan="2">
+                REGISTROS: <?= count($llenar_tabla) ?>
+            </td>
+        </tr>
+
         <?php else: ?>
-            <tr>
-                <td colspan="10">SIN REGISTROS</td>
-            </tr>
+
+        <tr>
+            <td colspan="10">
+                SIN REGISTROS
+            </td>
+        </tr>
+
         <?php endif; ?>
     </tbody>
 </table>

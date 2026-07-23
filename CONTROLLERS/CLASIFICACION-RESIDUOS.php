@@ -13,7 +13,6 @@ if (!isset($_SESSION['user']) || empty($_SESSION['user'])) {
       $apellido = $_SESSION['user']['apellido'];
       $rol      = $_SESSION['user']['rol'];
       $USUARIO = $_SESSION['user']['username'];
-|
 
    require_once('../TEMP-RES/header.php');
    require_once('../INTERFACE/g_t_residuo.php');

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 
 require('../CONFIG/sys.res.con.php');
@@ -9,6 +9,8 @@ $mes    = $_POST['mes']    ?? '';
 $agencia   = $_POST['agencia']   ?? '';
 $com = $_POST['com'] ?? '';
 $mq = $_POST['mq'] ?? '';
+$rhomb = $_POST['rhomb'] ?? ''; // Filtro de clasificación RHOMB para el total por Victor Alvarez
+
 
 $campo1 = $_POST['campo1'] ?? '';
 $campo2 = $_POST['campo2'] ?? '';
@@ -44,63 +46,62 @@ if (!empty($filtros)) {
     $ex_where = ' AND ' . implode(' AND ', $filtros);
 }
 
+// Agregar filtro de clasificación RHOMB si se proporciona por Victor Alvarez
+if ($rhomb !== '') {
+    $rhombSeguro = mysqli_real_escape_string($con, $rhomb);
+    $ex_where .= " AND TRIM(t_vehiculo.clf_comb_rhom) = '$rhombSeguro'";
+}
 
 
-
-
-  $query="SELECT  
+$query = "SELECT  
 
       ROUND(SUM(con_lit_vh_ag), 2) AS  t_litros,  
       ROUND(SUM(con_gal_vh_ag), 2) AS t_galones, 
 
       ROUND(SUM(con_gal_vh_ag) * 0.00378541, 2) AS t_m3
 
+        FROM
+            c_co_vh_ag
+        INNER JOIN mes
+            ON mes.PK_mes = c_co_vh_ag.FK_mes
+        INNER JOIN maquina
+            ON maquina.PK_maquina = c_co_vh_ag.FK_maquina
+        INNER JOIN t_vehiculo
+            ON t_vehiculo.PK_t_vehiculo = maquina.FK_t_vehiculo
 
-      FROM 
-
-         c_co_vh_ag, 
-         mes
-
-      WHERE
-
-         mes.PK_mes = c_co_vh_ag.FK_mes
-         $ex_where
+        WHERE 1 = 1
+            $ex_where
 
       
 
       
       ";
 
-	$result = mysqli_query($con,$query); 
-	
+$result = mysqli_query($con, $query);
 
 
-if($result){
-       
-	 $json = array('err'=>false);
-                  while ($row = mysqli_fetch_array($result)) {
-                     $json[]=array(
-                        
-                        't_litros'=> $row['t_litros'],
-                        't_galones'=> $row['t_galones'],
-                        't_m3'=> $row['t_m3']
-                  
-                     );
 
-                  }
-                  if(isset($json[0]['t_litros'])){
-                        echo json_encode($json);
-                  }else{
-                  echo json_encode(array('err'=>true, 'mensaje'=>'Datos incorrectos.'));	
-                  }
+if ($result) {
 
-	
-	}else{
+    $json = array('err' => false);
+    while ($row = mysqli_fetch_array($result)) {
+        $json[] = array(
 
-		echo json_encode(array('err'=>true, 'mensaje'=>'ERROR EN BDD '));
+            't_litros' => $row['t_litros'],
+            't_galones' => $row['t_galones'],
+            't_m3' => $row['t_m3']
 
-	}
+        );
+    }
+    if (isset($json[0]['t_litros'])) {
+        echo json_encode($json);
+    } else {
+        echo json_encode(array('err' => true, 'mensaje' => 'Datos incorrectos.'));
+    }
+} else {
+
+    echo json_encode(array('err' => true, 'mensaje' => 'ERROR EN BDD '));
+}
 
 
-	mysqli_close($con);
-?>
+mysqli_close($con);

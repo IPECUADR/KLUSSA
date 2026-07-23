@@ -1,7 +1,7 @@
 <?php
 require('../CONFIG/sys.res.con.php');
 
-$query = "SELECT * FROM certib ORDER BY PK_ceti ASC";
+$query = "SELECT * FROM certib ORDER BY CRTIB ASC";
 $result = mysqli_query($con, $query);
 
 if ($result) {

@@ -1,7 +1,7 @@
 <?php
 require('../CONFIG/sys.res.con.php');
 
-$query = "SELECT * FROM t_residuo where t_res_p= 2 ORDER BY PK_t_res ASC";
+$query = "SELECT * FROM t_residuo WHERE t_res_p = 2 ORDER BY t_residuo ASC";
 $result = mysqli_query($con, $query);
 
 if ($result) {

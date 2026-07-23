@@ -1,7 +1,7 @@
 <?php
 require('../CONFIG/sys.res.con.php');
 
-$query = "SELECT * FROM aditivos_rs ORDER BY PK_ad ASC";
+$query = "SELECT * FROM aditivos_rs ORDER BY ad_rs ASC";
 $result = mysqli_query($con, $query);
 
 if ($result) {

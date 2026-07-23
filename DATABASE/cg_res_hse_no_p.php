@@ -70,7 +70,7 @@ if($result){
                            'code_res'          => $row['code_res'],
                            'descrip_residuo'   => $row['descrip_residuo'],
                            'serie_maquina'     => $row['serie_maquina'],
-                           'T_maquina'         => $row['T_maquina'],
+                           'T_maquina' => $row['T_maquina'] ?? '',
                            'ct_kg'             => $row['ct_kg'],
                            'ct_tn'             => $row['ct_tn'],
                            'ct_lit'            => $row['ct_lit'],

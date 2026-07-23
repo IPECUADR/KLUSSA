@@ -1,7 +1,7 @@
 <?php
 require('../CONFIG/sys.res.con.php');
 
-$query = "SELECT * FROM t_combustible  ORDER BY PK_t_com ASC";
+$query = "SELECT * FROM t_combustible ORDER BY t_com ASC";
 $result = mysqli_query($con, $query);
 
 if ($result) {

@@ -1,11 +1,11 @@
-<?php 
+<?php
 
 
 require('../CONFIG/sys.res.con.php');
 
 
 
-  $query="SELECT 
+$query = "SELECT 
   
   fc_in_ca_ag as fc_inicio, 
   fc_crt_ca_ag as fc_corte,
@@ -25,47 +25,45 @@ require('../CONFIG/sys.res.con.php');
   
   WHERE
   
-      mes.PK_mes = c_agua_ag.FK_mes
-  AND proyectos.PK_pro  = c_agua_ag.FK_ag 
+    mes.PK_mes = c_agua_ag.FK_mes
+    AND proyectos.PK_pro  = c_agua_ag.FK_ag 
 
-  
+  ORDER BY
+    c_agua_ag.fc_in_ca_ag ASC,
+    proyectos.proyecto ASC,
+    c_agua_ag.PK_ca_ag ASC
   
   ";
 
-	$result = mysqli_query($con,$query); 
-	
+$result = mysqli_query($con, $query);
 
 
-if($result){
-       
-	 $json = array('err'=>false);
-                  while ($row = mysqli_fetch_array($result)) {
-                     $json[]=array(
-                        
-                        'fc_inicio'=> $row['fc_inicio'],
-                        'fc_corte'=> $row['fc_corte'],
-                        'mes'=> $row['mes'],
-                        'sede'=> $row['sede'],
-                        'm_cubicos'=> $row['m_cubicos'],
-                        'litros'=> $row['litros'],
-                        'usuario'=> $row['usuario'],
-                        'id'=> $row['id']
-                     );
 
-                  }
-                  if(isset($json[0]['id'])){
-                        echo json_encode($json);
-                  }else{
-                  echo json_encode(array('err'=>true, 'mensaje'=>'Ups. No tenemos nada que mostrarte!!'));	
-                  }
+if ($result) {
 
-	
-	}else{
+   $json = array('err' => false);
+   while ($row = mysqli_fetch_array($result)) {
+      $json[] = array(
 
-		echo json_encode(array('err'=>true, 'mensaje'=>'ERROR EN BDD '));
+         'fc_inicio' => $row['fc_inicio'],
+         'fc_corte' => $row['fc_corte'],
+         'mes' => $row['mes'],
+         'sede' => $row['sede'],
+         'm_cubicos' => $row['m_cubicos'],
+         'litros' => $row['litros'],
+         'usuario' => $row['usuario'],
+         'id' => $row['id']
+      );
+   }
+   if (isset($json[0]['id'])) {
+      echo json_encode($json);
+   } else {
+      echo json_encode(array('err' => true, 'mensaje' => 'Ups. No tenemos nada que mostrarte!!'));
+   }
+} else {
 
-	}
+   echo json_encode(array('err' => true, 'mensaje' => 'ERROR EN BDD '));
+}
 
 
-	mysqli_close($con);
-?>
+mysqli_close($con);

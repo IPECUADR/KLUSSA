@@ -79,17 +79,16 @@ $query = "SELECT
 
       WHERE
 
-      mes.PK_mes = c_co_vh_ag.FK_mes
-      AND maquina.PK_maquina = c_co_vh_ag.FK_maquina
-      AND t_combustible.PK_t_com = c_co_vh_ag.FK_t_com
-      AND proyectos.PK_pro = c_co_vh_ag.FK_pro
-      AND t_vehiculo.PK_t_vehiculo = maquina.FK_t_vehiculo
+         mes.PK_mes = c_co_vh_ag.FK_mes
+         AND maquina.PK_maquina = c_co_vh_ag.FK_maquina
+         AND t_combustible.PK_t_com = c_co_vh_ag.FK_t_com
+         AND proyectos.PK_pro = c_co_vh_ag.FK_pro
+         AND t_vehiculo.PK_t_vehiculo = maquina.FK_t_vehiculo
       $ex_where
       ORDER BY
-      
-         fc_in_c_vh_ag
-      
-      ASC 
+         c_co_vh_ag.fc_in_c_vh_ag ASC,
+         proyectos.proyecto ASC,
+         c_co_vh_ag.PK_co_vh_ag ASC
       
       ";
 

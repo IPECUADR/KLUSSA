@@ -1,7 +1,8 @@
 <?php
 require('../CONFIG/sys.res.con.php');
 
-$query = "SELECT * FROM clf_sis_r ORDER BY PK_clf_sis_r ASC";
+$query = "SELECT * FROM clf_sis_r ORDER BY clf_sis_r ASC";
+
 $result = mysqli_query($con, $query);
 
 if ($result) {

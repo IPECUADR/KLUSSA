@@ -1,7 +1,7 @@
 <?php
 require('../CONFIG/sys.res.con.php');
 
-$query = "SELECT * FROM clf_desechos ORDER BY PK_clf_des ASC";
+$query = "SELECT * FROM clf_desechos ORDER BY clf_desechos ASC";
 $result = mysqli_query($con, $query);
 
 if ($result) {

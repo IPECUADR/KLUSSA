@@ -1,7 +1,7 @@
 <?php
 require('../CONFIG/sys.res.con.php');
 
-$query = "SELECT * FROM t_vehiculo ORDER BY PK_t_vehiculo ASC";
+$query = "SELECT * FROM t_vehiculo ORDER BY tipo_vehiculo ASC";
 $result = mysqli_query($con, $query);
 
 if ($result) {

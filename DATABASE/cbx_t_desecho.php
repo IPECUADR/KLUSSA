@@ -4,7 +4,7 @@ require('../CONFIG/sys.res.con.php');
 $id = $_POST['id'] ?? '';
 
 
-$query = "SELECT * FROM t_residuo where t_res_p = '$id' ORDER BY PK_t_res ASC";
+$query = "SELECT * FROM t_residuo WHERE t_res_p = '$id' ORDER BY t_residuo ASC";
 $result = mysqli_query($con, $query);
 
 if ($result) {

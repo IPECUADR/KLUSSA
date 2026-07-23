@@ -36,7 +36,7 @@ if ($usuario) {
 
     $rol = $usuario['FK_t_user'];
 
-    $roles_permitidos = [1,5,6,7];
+    $roles_permitidos = [1, 2, 5, 6, 7];
 
     if (in_array($rol, $roles_permitidos)) {
 
